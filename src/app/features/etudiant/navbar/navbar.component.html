@@ -1,0 +1,67 @@
+<nav class="navbar">
+  <!-- Logo -->
+  <a class="navbar__brand" routerLink="/">
+    <img src="LogoEsprit.png" alt="ESPRIT" class="navbar__logo-icon">
+  </a>
+
+  <!-- Right Actions -->
+  <div class="navbar__actions">
+    <!-- Messages -->
+    <button class="navbar__icon-btn" aria-label="Messages">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+      </svg>
+      @if (msgCount() > 0) {
+        <span class="navbar__badge">{{ msgCount() }}</span>
+      }
+    </button>
+
+    <!-- Notifications -->
+    <button class="navbar__icon-btn" aria-label="Notifications">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      </svg>
+      @if (notifCount() > 0) {
+        <span class="navbar__badge">{{ notifCount() }}</span>
+      }
+    </button>
+
+    <!-- Profile -->
+    <div class="navbar__profile" (click)="toggleProfileMenu()">
+      <div class="navbar__avatar" style="background-color: #ff5722;">
+        <!-- Initials like in image 2 -->
+        <span>SA</span>
+      </div>
+      <svg class="navbar__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+
+      @if (showProfileMenu()) {
+        <div class="navbar__profile-menu fade-in" (click)="$event.stopPropagation()">
+          <div class="navbar__profile-header">
+            <div class="navbar__avatar" style="background-color: #ff5722; width: 45px; height: 45px;">SA</div>
+            <div>
+              <p class="navbar__profile-name">{{ user.name }}</p>
+              <p class="navbar__profile-role">{{ user.role }}</p>
+            </div>
+          </div>
+          <hr class="navbar__divider">
+          <a class="navbar__profile-item" routerLink="/etudiant/home">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Mon profil
+          </a>
+          <a class="navbar__profile-item" routerLink="/etudiant/home">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Paramètres
+          </a>
+          <hr class="navbar__divider">
+          <a class="navbar__profile-item navbar__profile-item--red" routerLink="/">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Se déconnecter
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+</nav>
