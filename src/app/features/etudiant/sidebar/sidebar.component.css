@@ -1,13 +1,15 @@
 .sidebar {
-  width: var(--sidebar-width);
-  background: var(--white);
-  height: calc(100vh - var(--navbar-height) - 40px);
-  border-radius: var(--radius-lg);
+  width: var(--sidebar-width, 260px);
+  background: var(--white, #fff);
+  max-height: calc(100vh - var(--navbar-height, 60px) - 40px);
+  height: fit-content;
+  border-radius: var(--radius-lg, 16px);
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  padding: 10px 0;
+  padding: 16px 0;
   overflow-y: auto;
+  position: -webkit-sticky;
   position: sticky;
-  top: calc(var(--navbar-height) + 20px);
+  top: calc(var(--navbar-height, 60px) + 20px);
 }
 
 .sidebar__nav {
@@ -24,7 +26,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
+  padding: 12px 16px;
+  margin: 4px 12px;
+  border-radius: 12px;
   text-decoration: none;
   color: #444;
   transition: all 0.2s ease;
@@ -37,8 +41,8 @@
 
 /* Active Main Item (when opened or selected) */
 .sidebar__item.active {
-  background: #f0f0f0; /* Light gray like in image */
-  color: var(--esprit-red);
+  background: #f0f0f0;
+  color: var(--esprit-red, #dc3545);
 }
 
 .sidebar__item-content {
@@ -54,7 +58,7 @@
 }
 
 .sidebar__item.active .sidebar__icon {
-  color: var(--esprit-red);
+  color: var(--esprit-red, #dc3545);
 }
 
 .sidebar__label {
@@ -102,12 +106,12 @@
 }
 
 .sidebar__sub-item:hover {
-  color: var(--esprit-red);
+  color: var(--esprit-red, #dc3545);
 }
 
 /* Active Sub Item */
 .sidebar__sub-item.active {
-  color: var(--esprit-red);
+  color: var(--esprit-red, #dc3545);
   font-weight: 700;
 }
 
@@ -119,7 +123,7 @@
   transform: translateY(-50%);
   width: 4px;
   height: 24px;
-  background: var(--esprit-red);
+  background: var(--esprit-red, #dc3545);
   border-radius: 2px;
 }
 
@@ -137,6 +141,21 @@
   line-height: 1.4;
 }
 
-/* Hide scrollbar */
-.sidebar::-webkit-scrollbar { display: none; }
-.sidebar { -ms-overflow-style: none; scrollbar-width: none; }
+/* Scrollbar styling */
+.sidebar::-webkit-scrollbar { 
+  width: 6px; 
+}
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+.sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
