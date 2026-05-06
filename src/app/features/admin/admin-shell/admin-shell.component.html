@@ -1,1 +1,11 @@
-<p>admin-shell works!</p>
+<div class="shell">
+  <app-navbar></app-navbar>
+
+  <div class="shell__layout">
+    <app-admin-sidebar class="shell__sidebar"></app-admin-sidebar>
+
+    <main class="shell__main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

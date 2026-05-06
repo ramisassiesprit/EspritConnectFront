@@ -10,7 +10,12 @@ export const routes: Routes = [
   {
     path: 'acceuil',
     component: AcceuilComponent
-  },  {
+  }, 
+  {
+    path: 'register',
+    loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
+  },
+  {
     path: 'etudiant',
     loadComponent: () => import('./features/etudiant/etudiant-shell/etudiant-shell.component').then(m => m.EtudiantShellComponent),
     children: [
@@ -75,6 +80,17 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    loadComponent: () => import('./features/admin/admin-shell/admin-shell.component').then(m => m.AdminShellComponent)
+    loadComponent: () => import('./features/admin/admin-shell/admin-shell.component').then(m => m.AdminShellComponent),
+    children: [
+      {
+        path: '',
+        redirectTo: 'users',
+        pathMatch: 'full'
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/Users/users-list.component').then(m => m.UsersListComponent)
+      }
+    ]
   }
 ];

@@ -78,16 +78,16 @@ export class AuthService {
       case UserRole.ADMIN:
         this.router.navigate(['/admin']);
         break;
-      case UserRole.STUDENT:
+      case UserRole.ETUDIANT:
         this.router.navigate(['/etudiant']);
         break;
       case UserRole.ALUMNI:
         this.router.navigate(['/ancien']);
         break;
-      case UserRole.TEACHER:
+      case UserRole.ENSEIGNANT:
         this.router.navigate(['/enseignant']);
         break;
-      case UserRole.ENTERPRISE:
+      case UserRole.ENTREPRISE:
         this.router.navigate(['/entreprise']);
         break;
       default:

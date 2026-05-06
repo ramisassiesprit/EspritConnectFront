@@ -1,0 +1,22 @@
+<aside class="sidebar">
+  <div class="sidebar__header">
+    <h2 class="sidebar__title">Administration</h2>
+  </div>
+
+  <nav class="sidebar__nav">
+    <ul class="sidebar__list">
+      <li *ngFor="let item of menuItems" class="sidebar__item">
+        <a [routerLink]="item.route" 
+           routerLinkActive="sidebar__link--active" 
+           class="sidebar__link">
+          <i [class]="'bi ' + item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar__footer">
+    <!-- Optional footer content -->
+  </div>
+</aside>

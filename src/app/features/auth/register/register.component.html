@@ -1,0 +1,79 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="logo-container">
+      <img src="LogoEsprit.png" alt="Esprit Logo" class="esprit-logo">
+    </div>
+
+    <div class="register-form-wrapper">
+      <div class="profile-upload">
+        <div class="avatar-preview" [style.background-image]="selectedImage ? 'url(' + selectedImage + ')' : 'none'">
+          <span *ngIf="!selectedImage">Upload an image</span>
+          <div class="upload-icon">
+            <i class="bi bi-camera"></i>
+          </div>
+        </div>
+        <input type="file" (change)="onFileSelected($event)" #fileInput hidden accept="image/*">
+        <button type="button" class="btn-upload" (click)="fileInput.click()">
+          <i class="bi bi-camera-fill"></i>
+        </button>
+      </div>
+
+      <h2 class="form-title">Create a new account</h2>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First name*</label>
+            <input type="text" id="firstName" formControlName="firstName" placeholder="First name">
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last name*</label>
+            <input type="text" id="lastName" formControlName="lastName" placeholder="Last name">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="role">Affiliation*</label>
+            <select id="role" formControlName="role">
+              <option [ngValue]="null" disabled>Select affiliation</option>
+              <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="email">Email*</label>
+            <input type="email" id="email" formControlName="email" placeholder="Email">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Password*</label>
+            <input type="password" id="password" formControlName="password" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm password*</label>
+            <input type="password" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm password">
+          </div>
+        </div>
+
+        <div class="terms-container">
+          <label class="checkbox-wrapper">
+            <input type="checkbox" formControlName="agreeTerms">
+            <span class="checkmark"></span>
+          </label>
+          <p class="terms-text">
+            I agree to the site's <a href="#">Terms of use</a> and <a href="#">Privacy policy</a> 
+            and understand that I will be receiving emails and notifications until I choose otherwise.
+          </p>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-continue" [disabled]="registerForm.invalid">
+            CONTINUE
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
