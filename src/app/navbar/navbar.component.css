@@ -1,0 +1,526 @@
+.navbar {
+  height: var(--navbar-height, 80px); /* Increased height for wider navbar vertically */
+  background: var(--esprit-red, #ffffff); /* Solid color accent */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the container */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: white; /* Contrast text against solid red */
+}
+
+.navbar__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px; /* Reduces width of its content */
+  padding: 0 24px;
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbar__logo-icon {
+  height: 60px; /* Larger logo to match espritconnect.com */
+  width: auto;
+  object-fit: contain;
+}
+
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 25px; /* More space between icons */
+}
+
+.navbar__icon-btn {
+  position: relative;
+  background: none;
+  border: none;
+  color: rgba(0, 0, 0, 0.9); /* Lighter color for solid red navbar background */
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar__icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15); /* Slightly visible hover */
+  color: rgb(255, 0, 0);
+}
+
+.navbar__icon-btn svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.5; /* Thinner strokes for a more premium look */
+}
+
+.navbar__badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgb(212, 211, 211); /* Changed from red to contrast with red background */
+  color: var(--esprit-red, #000000);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px;
+  border-radius: 10px;
+  line-height: 1;
+  min-width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.navbar__profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 30px;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.navbar__profile:hover {
+  background: rgba(255, 255, 255, 0.15); /* Light hover overlay against red */
+}
+
+.navbar__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #ff5722; /* Default orange-ish background if no image */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.navbar__chevron {
+  color: #888;
+  margin-left: 2px;
+}
+
+/* Dropdown Menu */
+.navbar__profile-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 240px;
+  background: white;
+  border-radius: var(--radius-md, 16px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border: 1px solid var(--gray-200, #e9ecef);
+  padding: 10px 0;
+  z-index: 1001;
+  transform-origin: top right;
+  animation: scaleIn 0.2s ease;
+  color: #333; /* Reset inherited text color */
+  overflow: hidden;
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.navbar__profile-header {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar__profile-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gray-900, #212529);
+  margin-bottom: 2px;
+}
+
+.navbar__profile-role {
+  font-size: 12px;
+  color: var(--gray-500, #6c757d);
+}
+
+.navbar__divider {
+  height: 1px;
+  background: #f1f3f4;
+  border: none;
+  margin: 8px 0;
+}
+
+.navbar__profile-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: var(--gray-700, #495057);
+  font-size: 14px;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.navbar__profile-item:hover {
+  background: #f8f9fa;
+  color: var(--esprit-red, #dc3545);
+}
+
+.navbar__profile-item--red {
+  color: var(--esprit-red, #dc3545);
+  font-weight: 600;
+}
+
+.navbar__join-btn {
+  background-color: #f32c32;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(243, 44, 50, 0.2);
+  text-transform: uppercase;
+}
+
+.navbar__join-btn:hover {
+  background-color: #d9262b;
+  transform: translateY(-2px);
+}
+
+.navbar__sign-in {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px;
+  transition: color 0.2s;
+}
+
+.navbar__sign-in:hover {
+  color: #f32c32;
+}
+
+.navbar__lang {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.navbar__lang-chevron {
+  color: #999;
+}
+
+.navbar__join-btn:active {
+  transform: translateY(0);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 380px; /* Further reduced to match image */
+  border-radius: 16px;
+  padding: 25px; /* More compact padding */
+  position: relative;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.modal-close:hover {
+  background: #f5f5f5;
+}
+
+.modal-header h2 {
+  font-size: 17px; /* Matches the smaller title in the image */
+  font-weight: 700;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.modal-header p {
+  font-size: 12px; /* Small, compact text */
+  color: #777;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  padding: 0 15px;
+}
+
+.social-login-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px; /* Thinner buttons like in the image */
+  border-radius: 50px;
+  font-size: 13px; /* Smaller font for buttons */
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.btn-linkedin {
+  background: #0077b5;
+  color: white;
+}
+
+.btn-google {
+  background: white;
+  color: #333;
+  border-color: #ddd;
+}
+
+.btn-apple {
+  background: black;
+  color: white;
+}
+
+.btn-social:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 12px 0;
+  color: #999;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+.btn-email {
+  width: 100%;
+  padding: 10px;
+  background: #f32c32;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 15px;
+}
+
+.btn-email:hover {
+  background: #d9262b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(243, 44, 50, 0.25);
+}
+
+.modal-footer {
+  margin-top: 5px;
+}
+
+.already-member {
+  color: #f32c32;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.already-member:hover {
+  text-decoration: underline;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Login Modal Specific Styles */
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-start; /* Start from top */
+  justify-content: flex-end; /* Align to right */
+  z-index: 2000;
+  padding: 80px 40px 20px 20px; /* Space from top navbar */
+}
+
+.login-modal-content {
+  background: white;
+  width: 100%;
+  max-width: 320px; /* Even more compact than join modal */
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.login-social-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
+
+.login-form {
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+  color: #333;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-bottom-color: #f32c32;
+}
+
+.btn-signin {
+  width: 100%;
+  padding: 12px;
+  background: #f32c32;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.btn-signin:hover {
+  background: #d9262b;
+  transform: translateY(-1px);
+}
+
+.form-footer {
+  text-align: center;
+}
+
+.forgot-password {
+  font-size: 11px;
+  color: #777;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+/* Animation for right side entry */
+.fade-in-right {
+  animation: fadeInRight 0.3s ease-out;
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}

@@ -1,0 +1,188 @@
+<nav class="navbar">
+  <div class="navbar__container">
+    <!-- Logo -->
+    <a class="navbar__brand" routerLink="/">
+      <img src="LogoEsprit.png" alt="ESPRIT" class="navbar__logo-icon">
+    </a>
+
+    <!-- Right Actions -->
+    <div class="navbar__actions">
+      @if (isLoggedIn()) {
+        <!-- Messages -->
+        <button class="navbar__icon-btn" aria-label="Messages">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+          </svg>
+          @if (msgCount() > 0) {
+            <span class="navbar__badge">{{ msgCount() }}</span>
+          }
+        </button>
+
+        <!-- Notifications -->
+        <button class="navbar__icon-btn" aria-label="Notifications">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          @if (notifCount() > 0) {
+            <span class="navbar__badge">{{ notifCount() }}</span>
+          }
+        </button>
+
+        <!-- Profile -->
+        <div class="navbar__profile" (click)="toggleProfileMenu()">
+          <div class="navbar__avatar" style="background-color: #ff5722;">
+            <!-- Initials like in image 2 -->
+            <span>SA</span>
+          </div>
+          <svg class="navbar__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+
+          @if (showProfileMenu()) {
+            <div class="navbar__profile-menu fade-in" (click)="$event.stopPropagation()">
+              <div class="navbar__profile-header">
+                <div class="navbar__avatar" style="background-color: #ff5722; width: 45px; height: 45px;">SA</div>
+                <div>
+                  <p class="navbar__profile-name">{{ user.name }}</p>
+                  <p class="navbar__profile-role">{{ user.role }}</p>
+                </div>
+              </div>
+              <hr class="navbar__divider">
+              <a class="navbar__profile-item" routerLink="/etudiant/home">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Mon profil
+              </a>
+              <a class="navbar__profile-item" routerLink="/etudiant/home">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Paramètres
+              </a>
+              <hr class="navbar__divider">
+              <a class="navbar__profile-item navbar__profile-item--red" routerLink="/" (click)="onLogout()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Se déconnecter
+              </a>
+            </div>
+          }
+        </div>
+      } @else {
+        <button class="navbar__join-btn" (click)="toggleJoinModal()">JOIN NOW</button>
+        
+        <button class="navbar__sign-in" (click)="toggleLoginModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>Sign in</span>
+        </button>
+
+        <button class="navbar__lang">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <svg class="navbar__lang-chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      }
+    </div>
+  </div>
+</nav>
+
+<!-- Join Modal -->
+@if (showJoinModal()) {
+  <div class="modal-overlay" (click)="toggleJoinModal()">
+    <div class="modal-content fade-in" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="toggleJoinModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="modal-header">
+        <h2>Welcome to Esprit</h2>
+        <p>Join the Esprit Connect community and gain professional leads and connections through Esprit's global online community</p>
+      </div>
+
+      <div class="social-login-group">
+        <button class="btn-social btn-linkedin">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          Sign in with LinkedIn
+        </button>
+
+        <button class="btn-social btn-google">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+          Sign in with Google
+        </button>
+
+        <button class="btn-social btn-apple">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.057 12.781c.032 2.588 2.254 3.462 2.287 3.477-.023.074-.351 1.203-1.151 2.366-.689.991-1.405 1.982-2.521 2.003-1.096.021-1.448-.654-2.705-.654-1.255 0-1.649.633-2.703.674-1.077.041-1.894-.928-2.587-1.921-1.414-2.03-2.491-5.734-1.037-8.253.722-1.251 2.01-2.041 3.4-2.062 1.054-.021 2.05.706 2.691.706s1.865-.873 3.125-.747c.528.022 2.01.213 2.964 1.608-.076.047-1.769 1.03-1.752 3.063zm-3.042-8.52c.563-.684.945-1.635.84-2.588-.817.033-1.809.544-2.394 1.229-.526.611-.986 1.583-.861 2.513.91.071 1.838-.456 2.415-1.154z"/></svg>
+          Sign in with Apple
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <button class="btn-email">Register with email</button>
+
+      <div class="modal-footer">
+        <a href="#" class="already-member">Already a member?</a>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Login Modal -->
+@if (showLoginModal()) {
+  <div class="login-modal-overlay" (click)="toggleLoginModal()">
+    <div class="login-modal-content fade-in-right" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="toggleLoginModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="login-social-group">
+        <button class="btn-social btn-linkedin">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          Sign in with LinkedIn
+        </button>
+
+        <button class="btn-social btn-google">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+          Sign in with Google
+        </button>
+
+        <button class="btn-social btn-apple">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.057 12.781c.032 2.588 2.254 3.462 2.287 3.477-.023.074-.351 1.203-1.151 2.366-.689.991-1.405 1.982-2.521 2.003-1.096.021-1.448-.654-2.705-.654-1.255 0-1.649.633-2.703.674-1.077.041-1.894-.928-2.587-1.921-1.414-2.03-2.491-5.734-1.037-8.253.722-1.251 2.01-2.041 3.4-2.062 1.054-.021 2.05.706 2.691.706s1.865-.873 3.125-.747c.528.022 2.01.213 2.964 1.608-.076.047-1.769 1.03-1.752 3.063zm-3.042-8.52c.563-.684.945-1.635.84-2.588-.817.033-1.809.544-2.394 1.229-.526.611-.986 1.583-.861 2.513.91.071 1.838-.456 2.415-1.154z"/></svg>
+          Sign in with Apple
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <form class="login-form" (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label>Email*</label>
+          <input type="email" name="email" [(ngModel)]="loginData.email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label>Password*</label>
+          <input type="password" name="password" [(ngModel)]="loginData.password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn-signin">Sign in</button>
+        <div class="form-footer">
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+      </form>
+    </div>
+  </div>
+}

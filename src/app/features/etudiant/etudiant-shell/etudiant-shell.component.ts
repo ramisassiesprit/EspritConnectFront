@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { NavbarComponent } from '../../../navbar/navbar.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
@@ -10,4 +10,4 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
   templateUrl: './etudiant-shell.component.html',
   styleUrls: ['./etudiant-shell.component.css']
 })
-export class EtudiantShellComponent {}
+export class EtudiantShellComponent { }

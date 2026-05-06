@@ -1,12 +1,16 @@
 import { Routes } from '@angular/router';
+import { AcceuilComponent } from './acceuil/acceuil.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'etudiant',
+    redirectTo: 'acceuil',
     pathMatch: 'full'
   },
   {
+    path: 'acceuil',
+    component: AcceuilComponent
+  },  {
     path: 'etudiant',
     loadComponent: () => import('./features/etudiant/etudiant-shell/etudiant-shell.component').then(m => m.EtudiantShellComponent),
     children: [
@@ -68,5 +72,9 @@ export const routes: Routes = [
   {
     path: 'entreprise',
     loadComponent: () => import('./features/entreprise/entreprise-shell/entreprise-shell.component').then(m => m.EntrepriseShellComponent)
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./features/admin/admin-shell/admin-shell.component').then(m => m.AdminShellComponent)
   }
 ];
