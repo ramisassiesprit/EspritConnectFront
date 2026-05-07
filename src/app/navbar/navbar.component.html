@@ -30,10 +30,10 @@
         </button>
 
         <!-- Profile -->
-        <div class="navbar__profile" (click)="toggleProfileMenu()">
+        <div class="navbar__profile" (click)="toggleProfileMenu()" *ngIf="currentUser()">
           <div class="navbar__avatar" style="background-color: #ff5722;">
-            <!-- Initials like in image 2 -->
-            <span>SA</span>
+            <!-- Initials -->
+            <span>{{ initials }}</span>
           </div>
           <svg class="navbar__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"></polyline>
@@ -42,10 +42,10 @@
           @if (showProfileMenu()) {
             <div class="navbar__profile-menu fade-in" (click)="$event.stopPropagation()">
               <div class="navbar__profile-header">
-                <div class="navbar__avatar" style="background-color: #ff5722; width: 45px; height: 45px;">SA</div>
+                <div class="navbar__avatar" style="background-color: #ff5722; width: 45px; height: 45px;">{{ initials }}</div>
                 <div>
-                  <p class="navbar__profile-name">{{ user.name }}</p>
-                  <p class="navbar__profile-role">{{ user.role }}</p>
+                  <p class="navbar__profile-name">{{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</p>
+                  <p class="navbar__profile-role">{{ currentUser()?.role }}</p>
                 </div>
               </div>
               <hr class="navbar__divider">

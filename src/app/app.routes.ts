@@ -2,6 +2,9 @@ import { inject } from '@angular/core';
 import { Routes, Router } from '@angular/router';
 import { AcceuilComponent } from './acceuil/acceuil.component';
 import { AuthService } from './core/services/auth.service';
+import { UserRole } from './core/models/user-role.enum';
+import { etudiantGuard } from './core/guards/etudiant.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -38,6 +41,7 @@ export const routes: Routes = [
   },
   {
     path: 'etudiant',
+    canActivate: [etudiantGuard],
     loadComponent: () => import('./features/etudiant/etudiant-shell/etudiant-shell.component').then(m => m.EtudiantShellComponent),
     children: [
       {
@@ -105,6 +109,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
+    canActivate: [adminGuard],
     loadComponent: () => import('./features/admin/admin-shell/admin-shell.component').then(m => m.AdminShellComponent),
     children: [
       {
