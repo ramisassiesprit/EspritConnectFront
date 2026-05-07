@@ -1,14 +1,32 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Routes, Router } from '@angular/router';
 import { AcceuilComponent } from './acceuil/acceuil.component';
+import { AuthService } from './core/services/auth.service';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'acceuil',
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [() => {
+      const authService = inject(AuthService);
+      const router = inject(Router);
+      if (authService.isLoggedIn()) {
+        return router.createUrlTree([authService.getHomePath()]);
+      }
+      return router.createUrlTree(['/acceuil']);
+    }],
+    component: AcceuilComponent // Dummy, will be redirected anyway
   },
   {
     path: 'acceuil',
+    canActivate: [() => {
+      const authService = inject(AuthService);
+      const router = inject(Router);
+      if (authService.isLoggedIn()) {
+        return router.createUrlTree([authService.getHomePath()]);
+      }
+      return true;
+    }],
     component: AcceuilComponent
   }, 
   {
@@ -63,6 +81,10 @@ export const routes: Routes = [
       {
         path: 'info-support',
         loadComponent: () => import('./features/etudiant/info-support/info-support.component').then(m => m.InfoSupportComponent)
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./features/etudiant/profile/profile.component').then(m => m.ProfileComponent)
       }
     ]
   },

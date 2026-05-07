@@ -7,6 +7,7 @@ export interface AuthRequest {
 
 export interface AuthResponse {
   accessToken: string;
+  refreshToken: string;
   tokenType: string;
   userId: string;
   role: UserRole;
@@ -15,6 +16,7 @@ export interface AuthResponse {
 
 export interface UserSession {
   token: string;
+  refreshToken: string;
   role: UserRole;
   userId: string;
 }

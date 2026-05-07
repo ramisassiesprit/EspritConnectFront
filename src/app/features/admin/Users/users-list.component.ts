@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminService } from '../../../core/services/Admin/admin.service';
+import { UserService } from '../../../core/services/User.service';
 import { User, UserStatus } from '../../../core/models/user.model';
 import { UserRole } from '../../../core/models/user-role.enum';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './users-list.component.css'
 })
 export class UsersListComponent implements OnInit {
-  private adminService = inject(AdminService);
+  private adminService = inject(UserService);
 
   users: User[] = [];
   selectedRole: UserRole = UserRole.ETUDIANT;

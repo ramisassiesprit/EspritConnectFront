@@ -1,0 +1,145 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ProfileService } from '../../../core/services/profile.service';
+import { UserService } from '../../../core/services/User.service';
+import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../../../core/models/profile.model';
+import { User, UserStatus } from '../../../core/models/user.model';
+import { UserRole } from '../../../core/models/user-role.enum';
+
+@Component({
+  selector: 'app-profile',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.css'
+})
+export class ProfileComponent implements OnInit {
+  private profileService = inject(ProfileService);
+  private userService = inject(UserService);
+
+  user: User = {
+    id: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: UserRole.ETUDIANT,
+    status: UserStatus.ACTIVE
+  };
+
+  espritProfile: EspritProfile = {
+    studentNumber: '',
+    fieldOfStudy: '',
+    degree: '',
+    graduationYear: new Date().getFullYear(),
+    program: '',
+    institution: ''
+  };
+
+  experiences: WorkExperience[] = [];
+  educations: OtherEducation[] = [];
+  skills: Skill[] = [];
+  helps: WillingToHelp[] = [];
+
+  newExperience: WorkExperience = this.resetExperience();
+  newEducation: OtherEducation = this.resetEducation();
+  newSkillName: string = '';
+  newHelp: WillingToHelp = this.resetHelp();
+
+  ngOnInit(): void {
+    this.loadAllData();
+  }
+
+  loadAllData(): void {
+    this.userService.getCurrentUser().subscribe(u => this.user = u);
+    this.profileService.getMyEspritProfile().subscribe(p => this.espritProfile = p);
+    this.profileService.getMyExperiences().subscribe(exps => this.experiences = exps);
+    this.profileService.getMyEducations().subscribe(edus => this.educations = edus);
+    this.profileService.getMySkills().subscribe(skills => this.skills = skills);
+    this.profileService.getMyHelps().subscribe(helps => this.helps = helps);
+  }
+
+  updateProfile(): void {
+    this.userService.updateProfile(this.user).subscribe(u => {
+      this.user = u;
+      alert('Informations personnelles mises à jour !');
+    });
+  }
+
+  updateEspritProfile(): void {
+    this.profileService.updateEspritProfile(this.espritProfile).subscribe(p => {
+      this.espritProfile = p;
+      alert('Profil Esprit mis à jour !');
+    });
+  }
+
+  addExperience(): void {
+    this.profileService.addExperience(this.newExperience).subscribe(exp => {
+      this.experiences.push(exp);
+      this.newExperience = this.resetExperience();
+    });
+  }
+
+  deleteExperience(id: string | undefined): void {
+    if (!id) return;
+    this.profileService.deleteExperience(id).subscribe(() => {
+      this.experiences = this.experiences.filter(e => e.id !== id);
+    });
+  }
+
+  addEducation(): void {
+    this.profileService.addEducation(this.newEducation).subscribe(edu => {
+      this.educations.push(edu);
+      this.newEducation = this.resetEducation();
+    });
+  }
+
+  addSkill(): void {
+    if (!this.newSkillName.trim()) return;
+    this.profileService.addSkill(this.newSkillName).subscribe(() => {
+      this.profileService.getMySkills().subscribe(skills => this.skills = skills);
+      this.newSkillName = '';
+    });
+  }
+
+  addHelp(): void {
+    this.profileService.addHelp(this.newHelp).subscribe(help => {
+      this.helps.push(help);
+      this.newHelp = this.resetHelp();
+    });
+  }
+
+  deleteHelp(id: string | undefined): void {
+    if (!id) return;
+    this.profileService.deleteHelp(id).subscribe(() => {
+      this.helps = this.helps.filter(h => h.id !== id);
+    });
+  }
+
+  private resetExperience(): WorkExperience {
+    return {
+      company: '',
+      jobTitle: '',
+      industry: '',
+      jobFunction: '',
+      startDate: '',
+      isCurrent: false,
+      description: ''
+    };
+  }
+
+  private resetEducation(): OtherEducation {
+    return {
+      institutionName: '',
+      degree: '',
+      graduationYear: new Date().getFullYear()
+    };
+  }
+
+  private resetHelp(): WillingToHelp {
+    return {
+      offering: '',
+      seeking: ''
+    };
+  }
+}

@@ -1,0 +1,65 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../models/profile.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProfileService {
+  private readonly apiUrl = 'http://localhost:8086/EspritConnect/profile';
+  private http = inject(HttpClient);
+
+  // --- Esprit Profile ---
+  getMyEspritProfile(): Observable<EspritProfile> {
+    return this.http.get<EspritProfile>(`${this.apiUrl}/esprit`);
+  }
+
+  updateEspritProfile(profile: EspritProfile): Observable<EspritProfile> {
+    return this.http.put<EspritProfile>(`${this.apiUrl}/esprit`, profile);
+  }
+
+  // --- Work Experience ---
+  getMyExperiences(): Observable<WorkExperience[]> {
+    return this.http.get<WorkExperience[]>(`${this.apiUrl}/experience`);
+  }
+
+  addExperience(experience: WorkExperience): Observable<WorkExperience> {
+    return this.http.post<WorkExperience>(`${this.apiUrl}/experience`, experience);
+  }
+
+  deleteExperience(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/experience/${id}`);
+  }
+
+  // --- Education ---
+  getMyEducations(): Observable<OtherEducation[]> {
+    return this.http.get<OtherEducation[]>(`${this.apiUrl}/education`);
+  }
+
+  addEducation(education: OtherEducation): Observable<OtherEducation> {
+    return this.http.post<OtherEducation>(`${this.apiUrl}/education`, education);
+  }
+
+  // --- Skills ---
+  getMySkills(): Observable<Skill[]> {
+    return this.http.get<Skill[]>(`${this.apiUrl}/skills`);
+  }
+
+  addSkill(name: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/skills`, null, { params: { name } });
+  }
+
+  // --- Willing to Help ---
+  getMyHelps(): Observable<WillingToHelp[]> {
+    return this.http.get<WillingToHelp[]>(`${this.apiUrl}/help`);
+  }
+
+  addHelp(help: WillingToHelp): Observable<WillingToHelp> {
+    return this.http.post<WillingToHelp>(`${this.apiUrl}/help`, help);
+  }
+
+  deleteHelp(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/help/${id}`);
+  }
+}

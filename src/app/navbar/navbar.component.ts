@@ -20,6 +20,10 @@ export class NavbarComponent {
   notifCount = signal(3);
   msgCount = signal(5);
   showProfileMenu = signal(false);
+  
+  get homeLink() {
+    return this.authService.getHomePath();
+  }
 
   loginData = {
     email: '',

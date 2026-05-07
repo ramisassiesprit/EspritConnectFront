@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, catchError, throwError } from 'rxjs';
 import { AuthRequest, AuthResponse, UserSession } from '../models/auth.models';
 import { EncryptionService } from './encryption.service';
 import { UserRole } from '../models/user-role.enum';
@@ -12,7 +12,7 @@ import { UserRole } from '../models/user-role.enum';
 export class AuthService {
   private readonly apiUrl = 'http://localhost:8086/EspritConnect/auth';
   private readonly sessionKey = 'user_session';
-  
+
   private http = inject(HttpClient);
   private router = inject(Router);
   private encryptionService = inject(EncryptionService);
@@ -37,6 +37,7 @@ export class AuthService {
       tap(response => {
         const session: UserSession = {
           token: response.accessToken,
+          refreshToken: response.refreshToken,
           role: response.role,
           userId: response.userId
         };
@@ -51,11 +52,31 @@ export class AuthService {
       tap(response => {
         const session: UserSession = {
           token: response.accessToken,
+          refreshToken: response.refreshToken,
           role: response.role,
           userId: response.userId
         };
         this.saveSession(session);
         this.redirectBasedOnRole(response.role);
+      })
+    );
+  }
+
+  refreshToken(): Observable<AuthResponse> {
+    // Note: on n'utilise pas l'intercepteur pour cette requête car le token actuel est expiré
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, {}, { withCredentials: true }).pipe(
+      tap(response => {
+        const session: UserSession = {
+          token: response.accessToken,
+          refreshToken: response.refreshToken,
+          role: response.role,
+          userId: response.userId
+        };
+        this.saveSession(session);
+      }),
+      catchError(err => {
+        this.logout();
+        return throwError(() => err);
       })
     );
   }
@@ -73,25 +94,21 @@ export class AuthService {
     this.currentUser.set(session);
   }
 
-  private redirectBasedOnRole(role: UserRole) {
-    switch (role) {
-      case UserRole.ADMIN:
-        this.router.navigate(['/admin']);
-        break;
-      case UserRole.ETUDIANT:
-        this.router.navigate(['/etudiant']);
-        break;
-      case UserRole.ALUMNI:
-        this.router.navigate(['/ancien']);
-        break;
-      case UserRole.ENSEIGNANT:
-        this.router.navigate(['/enseignant']);
-        break;
-      case UserRole.ENTREPRISE:
-        this.router.navigate(['/entreprise']);
-        break;
-      default:
-        this.router.navigate(['/acceuil']);
+  getHomePath(): string {
+    const session = this.currentUser();
+    if (!session) return '/acceuil';
+    
+    switch (session.role) {
+      case UserRole.ADMIN: return '/admin';
+      case UserRole.ETUDIANT: return '/etudiant';
+      case UserRole.ALUMNI: return '/ancien';
+      case UserRole.ENSEIGNANT: return '/enseignant';
+      case UserRole.ENTREPRISE: return '/entreprise';
+      default: return '/acceuil';
     }
+  }
+
+  private redirectBasedOnRole(role: UserRole) {
+    this.router.navigate([this.getHomePath()]);
   }
 }

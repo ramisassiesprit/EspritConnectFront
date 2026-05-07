@@ -1,0 +1,146 @@
+<div class="profile-container">
+  <h1>Mon Profil</h1>
+
+  <!-- Personal Info Section -->
+  <section class="profile-section">
+    <h2>Informations Personnelles</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Prénom</label>
+        <input type="text" [(ngModel)]="user.firstName">
+      </div>
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="user.lastName">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Biographie</label>
+      <textarea [(ngModel)]="user.bio" placeholder="Parlez-nous de vous..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ville</label>
+        <input type="text" [(ngModel)]="user.city">
+      </div>
+      <div class="form-group">
+        <label>Pays</label>
+        <input type="text" [(ngModel)]="user.country">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>LinkedIn URL</label>
+      <input type="text" [(ngModel)]="user.linkedinUrl">
+    </div>
+    <div class="form-group">
+      <label>GitHub URL</label>
+      <input type="text" [(ngModel)]="user.githubUrl">
+    </div>
+    <button (click)="updateProfile()">Enregistrer mes informations</button>
+  </section>
+
+  <hr>
+  <section class="profile-section">
+    <h2>Détails Académiques (Esprit)</h2>
+    <div class="form-group">
+      <label>Numéro d'étudiant</label>
+      <input type="text" [(ngModel)]="espritProfile.studentNumber" placeholder="Numéro d'étudiant">
+    </div>
+    <div class="form-group">
+      <label>Domaine d'étude</label>
+      <input type="text" [(ngModel)]="espritProfile.fieldOfStudy" placeholder="Ex: Informatique">
+    </div>
+    <div class="form-group">
+      <label>Diplôme</label>
+      <input type="text" [(ngModel)]="espritProfile.degree" placeholder="Ex: Ingénieur">
+    </div>
+    <div class="form-group">
+      <label>Année de graduation</label>
+      <input type="number" [(ngModel)]="espritProfile.graduationYear">
+    </div>
+    <div class="form-group">
+      <label>Programme</label>
+      <input type="text" [(ngModel)]="espritProfile.program" placeholder="Ex: Alternance">
+    </div>
+    <div class="form-group">
+      <label>Institution</label>
+      <input type="text" [(ngModel)]="espritProfile.institution" placeholder="Ex: Esprit">
+    </div>
+    <button (click)="updateEspritProfile()">Enregistrer Profil Esprit</button>
+  </section>
+
+  <hr>
+
+  <!-- Skills Section -->
+  <section class="profile-section">
+    <h2>Compétences</h2>
+    <div class="skills-list">
+      <span *ngFor="let skill of skills" class="skill-badge">{{ skill.name }}</span>
+    </div>
+    <div class="add-form">
+      <input type="text" [(ngModel)]="newSkillName" placeholder="Nouvelle compétence">
+      <button (click)="addSkill()">Ajouter</button>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Experience Section -->
+  <section class="profile-section">
+    <h2>Expériences Professionnelles</h2>
+    <div class="list-container">
+      <div *ngFor="let exp of experiences" class="list-item">
+        <strong>{{ exp.jobTitle }}</strong> chez {{ exp.company }}
+        <p>{{ exp.startDate }} - {{ exp.isCurrent ? 'Présent' : exp.endDate }}</p>
+        <button (click)="deleteExperience(exp.id)" class="btn-delete">Supprimer</button>
+      </div>
+    </div>
+    <div class="add-form">
+      <h3>Ajouter une expérience</h3>
+      <input type="text" [(ngModel)]="newExperience.company" placeholder="Entreprise">
+      <input type="text" [(ngModel)]="newExperience.jobTitle" placeholder="Poste">
+      <input type="date" [(ngModel)]="newExperience.startDate">
+      <textarea [(ngModel)]="newExperience.description" placeholder="Description"></textarea>
+      <button (click)="addExperience()">Ajouter Expérience</button>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Education Section -->
+  <section class="profile-section">
+    <h2>Autres Formations</h2>
+    <div class="list-container">
+      <div *ngFor="let edu of educations" class="list-item">
+        <strong>{{ edu.degree }}</strong> - {{ edu.institutionName }} ({{ edu.graduationYear }})
+      </div>
+    </div>
+    <div class="add-form">
+      <h3>Ajouter une formation</h3>
+      <input type="text" [(ngModel)]="newEducation.institutionName" placeholder="Institution">
+      <input type="text" [(ngModel)]="newEducation.degree" placeholder="Diplôme">
+      <input type="number" [(ngModel)]="newEducation.graduationYear" placeholder="Année">
+      <button (click)="addEducation()">Ajouter Formation</button>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Help Section -->
+  <section class="profile-section">
+    <h2>Entraide (Willing to Help)</h2>
+    <div class="list-container">
+      <div *ngFor="let help of helps" class="list-item">
+        <p><strong>Offre:</strong> {{ help.offering }}</p>
+        <p><strong>Recherche:</strong> {{ help.seeking }}</p>
+        <button (click)="deleteHelp(help.id)" class="btn-delete">Supprimer</button>
+      </div>
+    </div>
+    <div class="add-form">
+      <h3>Ajouter une annonce d'entraide</h3>
+      <textarea [(ngModel)]="newHelp.offering" placeholder="Ce que je propose..."></textarea>
+      <textarea [(ngModel)]="newHelp.seeking" placeholder="Ce que je recherche..."></textarea>
+      <button (click)="addHelp()">Ajouter</button>
+    </div>
+  </section>
+</div>
