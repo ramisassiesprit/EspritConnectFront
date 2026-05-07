@@ -50,14 +50,18 @@ export class AuthService {
   register(request: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
       tap(response => {
-        const session: UserSession = {
-          token: response.accessToken,
-          refreshToken: response.refreshToken,
-          role: response.role,
-          userId: response.userId
-        };
-        this.saveSession(session);
-        this.redirectBasedOnRole(response.role);
+        if (response && response.accessToken) {
+          const session: UserSession = {
+            token: response.accessToken,
+            refreshToken: response.refreshToken,
+            role: response.role,
+            userId: response.userId
+          };
+          this.saveSession(session);
+          this.redirectBasedOnRole(response.role);
+        } else {
+          this.router.navigate(['/acceuil']); // Route to acceuil to log in
+        }
       })
     );
   }

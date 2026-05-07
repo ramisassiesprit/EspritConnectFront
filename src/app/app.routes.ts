@@ -23,7 +23,10 @@ export const routes: Routes = [
       const authService = inject(AuthService);
       const router = inject(Router);
       if (authService.isLoggedIn()) {
-        return router.createUrlTree([authService.getHomePath()]);
+        const homePath = authService.getHomePath();
+        if (homePath !== '/acceuil') {
+          return router.createUrlTree([homePath]);
+        }
       }
       return true;
     }],
