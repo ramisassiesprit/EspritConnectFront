@@ -20,7 +20,8 @@ export interface User {
   country?: string;
   linkedinUrl?: string;
   githubUrl?: string;
-  portfolioUrl?: string;
+  facebookUrl?: string;
+  numTel?: number;
   isMentor?: boolean;
   mentorAvailable?: boolean;
   lastLoginAt?: string;

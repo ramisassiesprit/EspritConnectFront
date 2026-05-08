@@ -1,4 +1,4 @@
-import { Component, signal, inject, effect } from '@angular/core';
+import { Component, signal, inject, effect, HostListener, ElementRef } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,14 +16,22 @@ import { User } from '../core/models/user.model';
 export class NavbarComponent {
   private authService = inject(AuthService);
   private userService = inject(UserService);
+  private el = inject(ElementRef);
 
   isLoggedIn = this.authService.isLoggedIn;
   showJoinModal = signal(false);
   showLoginModal = signal(false);
-  notifCount = signal(3);
-  msgCount = signal(5);
+  notifCount = signal(0);
+  msgCount = signal(0);
   showProfileMenu = signal(false);
   currentUser = signal<User | null>(null);
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (this.showProfileMenu() && !this.el.nativeElement.contains(event.target)) {
+      this.showProfileMenu.set(false);
+    }
+  }
 
   constructor() {
     effect(() => {
@@ -40,6 +48,10 @@ export class NavbarComponent {
 
   get homeLink() {
     return this.authService.getHomePath();
+  }
+
+  get profileLink() {
+    return `${this.homeLink}/profile`;
   }
 
   get initials() {

@@ -46,8 +46,41 @@ export class ProfileComponent implements OnInit {
   newSkillName: string = '';
   newHelp: WillingToHelp = this.resetHelp();
 
+  isEditingProfile: boolean = false;
+  isEditingEsprit: boolean = false;
+
+  showAddExperience: boolean = false;
+  showAddSkill: boolean = false;
+  showAddEducation: boolean = false;
+
   ngOnInit(): void {
     this.loadAllData();
+  }
+
+  toggleEditProfile(): void {
+    this.isEditingProfile = !this.isEditingProfile;
+    if (!this.isEditingProfile) {
+      this.loadAllData();
+    }
+  }
+
+  toggleEditEsprit(): void {
+    this.isEditingEsprit = !this.isEditingEsprit;
+    if (!this.isEditingEsprit) {
+      this.loadAllData();
+    }
+  }
+
+  toggleAddExperience(): void {
+    this.showAddExperience = !this.showAddExperience;
+  }
+
+  toggleAddSkill(): void {
+    this.showAddSkill = !this.showAddSkill;
+  }
+
+  toggleAddEducation(): void {
+    this.showAddEducation = !this.showAddEducation;
   }
 
   loadAllData(): void {
@@ -62,6 +95,7 @@ export class ProfileComponent implements OnInit {
   updateProfile(): void {
     this.userService.updateProfile(this.user).subscribe(u => {
       this.user = u;
+      this.isEditingProfile = false;
       alert('Informations personnelles mises à jour !');
     });
   }
@@ -69,6 +103,7 @@ export class ProfileComponent implements OnInit {
   updateEspritProfile(): void {
     this.profileService.updateEspritProfile(this.espritProfile).subscribe(p => {
       this.espritProfile = p;
+      this.isEditingEsprit = false;
       alert('Profil Esprit mis à jour !');
     });
   }
@@ -77,6 +112,7 @@ export class ProfileComponent implements OnInit {
     this.profileService.addExperience(this.newExperience).subscribe(exp => {
       this.experiences.push(exp);
       this.newExperience = this.resetExperience();
+      this.showAddExperience = false;
     });
   }
 
@@ -91,6 +127,7 @@ export class ProfileComponent implements OnInit {
     this.profileService.addEducation(this.newEducation).subscribe(edu => {
       this.educations.push(edu);
       this.newEducation = this.resetEducation();
+      this.showAddEducation = false;
     });
   }
 
@@ -99,6 +136,14 @@ export class ProfileComponent implements OnInit {
     this.profileService.addSkill(this.newSkillName).subscribe(() => {
       this.profileService.getMySkills().subscribe(skills => this.skills = skills);
       this.newSkillName = '';
+      this.showAddSkill = false;
+    });
+  }
+
+  deleteSkill(id: string | undefined): void {
+    if (!id) return;
+    this.profileService.deleteSkill(id).subscribe(() => {
+      this.skills = this.skills.filter(s => s.id !== id);
     });
   }
 
@@ -114,6 +159,17 @@ export class ProfileComponent implements OnInit {
     this.profileService.deleteHelp(id).subscribe(() => {
       this.helps = this.helps.filter(h => h.id !== id);
     });
+  }
+  
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.user.avatarUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   private resetExperience(): WorkExperience {
@@ -142,4 +198,11 @@ export class ProfileComponent implements OnInit {
       seeking: ''
     };
   }
+  deleteEducation(id: string | undefined): void {
+  if (!id) return;
+
+  this.profileService.deleteEducation(id).subscribe(() => {
+    this.educations = this.educations.filter(e => e.id !== id);
+  });
+}
 }

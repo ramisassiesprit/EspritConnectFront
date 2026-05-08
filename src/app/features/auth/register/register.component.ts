@@ -57,7 +57,14 @@ export class RegisterComponent {
   onSubmit() {
     if (this.registerForm.valid) {
       const { confirmPassword, agreeTerms, ...registerData } = this.registerForm.value;
-      this.authService.register(registerData).subscribe({
+      
+      // Include the avatar if selected
+      const finalData = {
+        ...registerData,
+        avatarUrl: this.selectedImage
+      };
+
+      this.authService.register(finalData).subscribe({
       
         next: () => {
           console.log('Registration successful',registerData);

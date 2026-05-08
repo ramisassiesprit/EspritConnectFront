@@ -124,6 +124,7 @@
 .navbar__chevron {
   color: #888;
   margin-left: 2px;
+  cursor: pointer;
 }
 
 /* Dropdown Menu */

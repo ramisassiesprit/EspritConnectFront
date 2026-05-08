@@ -5,6 +5,15 @@ export interface AuthRequest {
   password?: string;
 }
 
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string;
+  role: UserRole;
+  avatarUrl?: string | ArrayBuffer | null;
+}
+
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;

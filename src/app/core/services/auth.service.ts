@@ -2,7 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
-import { AuthRequest, AuthResponse, UserSession } from '../models/auth.models';
+import { AuthRequest, AuthResponse, RegisterRequest, UserSession } from '../models/auth.models';
 import { EncryptionService } from './encryption.service';
 import { UserRole } from '../models/user-role.enum';
 
@@ -47,7 +47,7 @@ export class AuthService {
     );
   }
 
-  register(request: any): Observable<AuthResponse> {
+  register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
       tap(response => {
         if (response && response.accessToken) {

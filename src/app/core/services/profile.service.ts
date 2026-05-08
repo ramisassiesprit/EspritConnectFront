@@ -40,6 +40,10 @@ export class ProfileService {
   addEducation(education: OtherEducation): Observable<OtherEducation> {
     return this.http.post<OtherEducation>(`${this.apiUrl}/education`, education);
   }
+    deleteEducation(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/education/${id}`);
+  }
+
 
   // --- Skills ---
   getMySkills(): Observable<Skill[]> {
@@ -48,6 +52,10 @@ export class ProfileService {
 
   addSkill(name: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/skills`, null, { params: { name } });
+  }
+
+  deleteSkill(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/skills/${id}`);
   }
 
   // --- Willing to Help ---
