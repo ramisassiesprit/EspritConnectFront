@@ -22,6 +22,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError((error) => {
       if (error instanceof HttpErrorResponse && error.status === 401 && !req.url.includes('/auth/login')) {
+        // If we don't have a session, don't try to refresh the token
+        if (!session?.token) {
+          authService.logout();
+          return throwError(() => error);
+        }
         return handle401Error(req, next, authService);
       }
       return throwError(() => error);
@@ -47,6 +52,7 @@ function handle401Error(req: HttpRequest<any>, next: HttpHandlerFn, authService:
       }),
       catchError((err) => {
         isRefreshing = false;
+        refreshTokenSubject.error(err); // Ensure pending requests don't hang if refresh fails
         authService.logout();
         return throwError(() => err);
       })

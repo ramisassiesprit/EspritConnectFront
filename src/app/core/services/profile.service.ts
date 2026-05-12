@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../models/profile.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-  private readonly apiUrl = 'http://localhost:8086/EspritConnect/profile';
+  private readonly apiUrl = `${environment.apiUrl}profile`;
   private http = inject(HttpClient);
 
   // --- Esprit Profile ---

@@ -67,19 +67,70 @@
       <div
         class="h-80 bg-gray-50 flex-1 p-4 overflow-y-auto flex flex-col gap-4"
       >
-        <div class="flex items-start gap-2 max-w-[85%]">
-          <div
-            class="w-8 h-8 rounded-full bg-[#ED1C24] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold"
-          >
-            AI
+        @for (msg of messages; track $index) {
+          @if (msg.sender === 'ai') {
+            <div class="flex items-start gap-2 max-w-[85%]">
+              <div
+                class="w-8 h-8 rounded-full bg-[#ED1C24] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold mt-1"
+              >
+                AI
+              </div>
+              <div
+                class="bg-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100 flex flex-col gap-2"
+              >
+                <!-- Main Message Content -->
+                <div class="whitespace-pre-wrap leading-relaxed">{{ msg.text }}</div>
+                
+                <!-- Expandable Reasoning -->
+                @if (msg.reasoning) {
+                  <div class="mt-1 border-t border-gray-100 pt-2 w-full">
+                    <button
+                      (click)="msg.isReasoningExpanded = !msg.isReasoningExpanded"
+                      class="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1.5 transition-colors focus:outline-none"
+                    >
+                      <svg 
+                        [class.rotate-90]="msg.isReasoningExpanded" 
+                        class="w-3.5 h-3.5 transition-transform duration-200" 
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span>{{ msg.isReasoningExpanded ? 'Hide reasoning' : 'Show reasoning' }}</span>
+                    </button>
+                    
+                    @if (msg.isReasoningExpanded) {
+                      <div class="mt-2 p-2.5 bg-gray-50 rounded-lg text-[11px] text-gray-500 whitespace-pre-wrap italic border border-gray-100 leading-relaxed font-mono">
+                        {{ msg.reasoning }}
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="flex items-end justify-end gap-2 w-full">
+              <div
+                class="bg-[#ED1C24] text-white px-4 py-2 rounded-2xl rounded-tr-none shadow-sm text-sm break-words max-w-[85%]"
+              >
+                {{ msg.text }}
+              </div>
+            </div>
+          }
+        }
+        @if (isLoading) {
+          <div class="flex items-start gap-2 max-w-[85%]">
+            <div
+              class="w-8 h-8 rounded-full bg-[#ED1C24] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold"
+            >
+              AI
+            </div>
+            <div
+              class="bg-white px-4 py-2 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100 italic"
+            >
+              Typing...
+            </div>
           </div>
-          <div
-            class="bg-white px-4 py-2 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100"
-          >
-            Hi there! 👋 I'm your Esprit Connect AI assistant. How can I help
-            you navigate the alumni network today?
-          </div>
-        </div>
+        }
       </div>
 
       <!-- Input Area -->
@@ -88,11 +139,15 @@
       >
         <input
           type="text"
+          [(ngModel)]="userInput"
+          (keyup.enter)="sendMessage()"
           placeholder="Type your message..."
           class="flex-1 bg-gray-50 text-sm px-4 py-2.5 rounded-full border border-gray-200 focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400"
         />
         <button
-          class="bg-[#ED1C24] hover:bg-red-700 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+          (click)="sendMessage()"
+          [disabled]="isLoading || !userInput.trim()"
+          class="bg-[#ED1C24] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
