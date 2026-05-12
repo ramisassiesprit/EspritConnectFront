@@ -1,1 +1,172 @@
-<p>ai-chat-bubble works!</p>
+<div class="fixed bottom-8 right-8 z-50 flex flex-col items-end group">
+  @if (isOpen) {
+    <!-- The Chat Window -->
+    <div
+      class="mb-4 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col transform origin-bottom-right transition-all duration-300"
+    >
+      <!-- Header -->
+      <div
+        class="bg-[#ED1C24] text-white px-5 py-4 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"
+          >
+            ✨
+          </div>
+          <div>
+            <h3 class="font-bold text-sm">Esprit AI</h3>
+            <p class="text-xs text-red-100">Online & ready to help</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="expandToPage()"
+            class="text-white hover:text-gray-200 focus:outline-none transition-colors"
+            title="Expand to full page"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+              />
+            </svg>
+          </button>
+          <button
+            (click)="toggleChat()"
+            class="text-white hover:text-gray-200 focus:outline-none transition-colors"
+            title="Close"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages Area -->
+      <div
+        class="h-80 bg-gray-50 flex-1 p-4 overflow-y-auto flex flex-col gap-4"
+      >
+        <div class="flex items-start gap-2 max-w-[85%]">
+          <div
+            class="w-8 h-8 rounded-full bg-[#ED1C24] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold"
+          >
+            AI
+          </div>
+          <div
+            class="bg-white px-4 py-2 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100"
+          >
+            Hi there! 👋 I'm your Esprit Connect AI assistant. How can I help
+            you navigate the alumni network today?
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div
+        class="p-3 bg-white border-t border-gray-100 flex items-center gap-2"
+      >
+        <input
+          type="text"
+          placeholder="Type your message..."
+          class="flex-1 bg-gray-50 text-sm px-4 py-2.5 rounded-full border border-gray-200 focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400"
+        />
+        <button
+          class="bg-[#ED1C24] hover:bg-red-700 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 ml-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  } @else {
+    <!-- Tooltip Message (only when closed) -->
+    <div
+      class="mb-3 mr-2 bg-white text-gray-800 text-sm font-medium py-2 px-4 rounded-xl shadow-lg border border-gray-100 flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0"
+    >
+      <span>Need help? Chat with AI! ✨</span>
+      <div
+        class="absolute -bottom-2 right-4 w-4 h-4 bg-white border-b border-r border-gray-100 transform rotate-45"
+      ></div>
+    </div>
+  }
+
+  <!-- Chat Bubble Button -->
+  <button
+    (click)="toggleChat()"
+    class="w-16 h-16 bg-[#ED1C24] hover:bg-red-700 text-white rounded-full shadow-2xl flex items-center justify-center transform transition-transform duration-300 hover:scale-110 active:scale-95 focus:outline-none relative"
+    aria-label="Toggle AI Chat"
+  >
+    @if (!isOpen) {
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-8 h-8"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+        />
+      </svg>
+      <span class="absolute top-1 right-1 flex h-4 w-4">
+        <span
+          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+        ></span>
+        <span
+          class="relative inline-flex rounded-full h-4 w-4 bg-green-500 border-2 border-white"
+        ></span>
+      </span>
+    } @else {
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-8 h-8"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    }
+  </button>
+</div>
