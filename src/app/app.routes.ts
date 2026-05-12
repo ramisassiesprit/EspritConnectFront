@@ -75,7 +75,17 @@ export const routes: Routes = [
       },
       {
         path: 'groups',
-        loadComponent: () => import('./features/etudiant/groups/groups.component').then(m => m.GroupsComponent)
+        loadComponent: () => import('./features/etudiant/groups/groups.component').then(m => m.GroupsComponent),
+        children: [
+          {
+            path: 'create',
+            loadComponent: () => import('./features/etudiant/groups/group-create/group-create.component').then(m => m.GroupCreateComponent)
+          },
+          {
+            path: ':id/feed',
+            loadComponent: () => import('./features/etudiant/groups/group-feed/group-feed.component').then(m => m.GroupFeedComponent)
+          }
+        ]
       },
       {
         path: 'events',

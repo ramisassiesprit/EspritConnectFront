@@ -1,1 +1,73 @@
-<p>groups works!</p>
+<div class="groups-page">
+  <ng-container *ngIf="!isCreateRoute">
+    <div class="groups-card groups-card--hero">
+      <div class="hero-top">
+        <h1>Groups</h1>
+      </div>
+      <div class="hero-body">
+        <div class="hero-search">
+          <span class="search-icon">🔍</span>
+          <input type="search" placeholder="Search" />
+        </div>
+        <a routerLink="/etudiant/groups/create" class="btn-new-group">
+          <span class="btn-icon">👥</span>
+          New group
+        </a>
+      </div>
+      <div class="hero-labels">
+        <span class="labels-title">Labels:</span>
+        <button class="labels-nav">‹</button>
+        <span class="label-pill label-pill--active">All</span>
+        <span class="label-pill">BUILD YOUR CAREER</span>
+        <button class="labels-nav">›</button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="groups-loading">Loading groups…</div>
+    <div *ngIf="error" class="groups-error">{{ error }}</div>
+
+    <div class="groups-card groups-card--section">
+      <div class="section-heading">
+        <h2>Your Groups</h2>
+      </div>
+      <div *ngIf="!joinedGroups.length && !loading" class="empty-state">
+        You are not a member of any groups yet.
+      </div>
+      <div *ngIf="joinedGroups.length" class="your-groups-grid">
+        <article *ngFor="let group of joinedGroups" class="group-card-large">
+          <div class="group-card-image" [style.backgroundImage]="group.logoUrl ? 'url(' + group.logoUrl + ')' : 'url(https://via.placeholder.com/340x180?text=Group)'">
+          </div>
+          <div class="group-card-body">
+            <span class="group-card-title">{{ group.groupName }}</span>
+            <p>{{ group.description }}</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="groups-card groups-card--section">
+      <div class="section-heading">
+        <h2>More Groups</h2>
+      </div>
+      <div *ngIf="!allGroups.length && !loading" class="empty-state">
+        No groups available.
+      </div>
+      <div *ngIf="allGroups.length" class="more-groups-list">
+        <article *ngFor="let group of allGroups" class="group-list-item">
+          <div class="group-list-avatar">
+            <span class="thumb-icon">👥</span>
+          </div>
+          <div class="group-list-content">
+            <div class="group-list-top">
+              <span class="group-list-title">{{ group.groupName }}</span>
+              <span class="group-list-members">{{ group.membersCount || 0 }} members</span>
+            </div>
+            <p>{{ group.description }}</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </ng-container>
+
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,296 @@
+<div class="group-create-page">
+  <header class="group-create-header">
+    <div class="group-create-title">
+      <span class="page-icon">✏️</span>
+      <div>
+        <p class="page-step-label">Create New Group</p>
+      </div>
+    </div>
+
+    <nav class="group-steps" aria-label="Group creation steps">
+      <button type="button" class="step-button" [class.active]="activeStep === 1" (click)="goToStep(1)">
+        <span class="step-number">1</span>
+        <span class="step-text">Create New Group</span>
+      </button>
+      <button type="button" class="step-button" [class.active]="activeStep === 2" [disabled]="!stepOneValid" (click)="goToStep(2)">
+        <span class="step-number">2</span>
+        <span class="step-text">Edit Settings</span>
+      </button>
+      <button type="button" class="step-button" [class.active]="activeStep === 3" [disabled]="!stepTwoValid" (click)="goToStep(3)">
+        <span class="step-number">3</span>
+        <span class="step-text">Add Members</span>
+      </button>
+    </nav>
+  </header>
+
+  <section class="group-create-card">
+    <div class="page-heading">
+      <h1 *ngIf="activeStep === 1">Create new group</h1>
+      <h1 *ngIf="activeStep === 2">Edit settings</h1>
+      <h1 *ngIf="activeStep === 3">Add members</h1>
+    </div>
+
+    <form [formGroup]="groupForm" (ngSubmit)="submit()">
+      <div *ngIf="activeStep === 1" class="step-panel">
+        <div class="field-row">
+          <label class="field-group">
+            <span class="field-label">Group name <span class="required">*</span></span>
+            <input formControlName="groupName" placeholder="Group name" />
+            <span *ngIf="groupForm.get('groupName')?.invalid && groupForm.get('groupName')?.touched" class="field-error">
+              Group name must be at least 3 characters.
+            </span>
+          </label>
+
+          <label class="field-group">
+            <span class="field-label">Website</span>
+            <input formControlName="website" placeholder="Website" />
+          </label>
+        </div>
+
+        <label class="field-group full-width">
+          <span class="field-label">Description <span class="required">*</span></span>
+          <div class="description-editor">
+            <div class="editor-toolbar">
+              <button type="button">B</button>
+              <button type="button">I</button>
+              <button type="button">U</button>
+              <button type="button">↺</button>
+              <button type="button">↻</button>
+              <button type="button">•</button>
+              <button type="button">1.</button>
+              <button type="button">🔗</button>
+              <button type="button">😊</button>
+            </div>
+            <textarea formControlName="description" rows="8" placeholder="Describe your group"></textarea>
+          </div>
+          <span *ngIf="groupForm.get('description')?.invalid && groupForm.get('description')?.touched" class="field-error">
+            Description must be at least 10 characters.
+          </span>
+        </label>
+
+        <div class="media-grid">
+          <div class="media-card media-card--logo">
+            <span class="media-label">Logo</span>
+            <div class="media-preview" [class.has-preview]="groupForm.get('logoUrl')?.value">
+              <img *ngIf="groupForm.get('logoUrl')?.value" [src]="groupForm.get('logoUrl')?.value" alt="Logo preview" />
+              <span *ngIf="!groupForm.get('logoUrl')?.value" class="media-icon">📷</span>
+            </div>
+            <input class="image-url-input" type="url" formControlName="logoUrl" placeholder="Logo image URL" />
+          </div>
+          <div class="media-card media-card--banner">
+            <span class="media-label">Banner</span>
+            <div class="media-preview" [class.has-preview]="groupForm.get('bannerUrl')?.value">
+              <img *ngIf="groupForm.get('bannerUrl')?.value" [src]="groupForm.get('bannerUrl')?.value" alt="Banner preview" />
+              <span *ngIf="!groupForm.get('bannerUrl')?.value" class="media-icon">📷</span>
+            </div>
+            <input class="image-url-input" type="url" formControlName="bannerUrl" placeholder="Banner image URL" />
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="activeStep === 2" class="step-panel">
+        <div class="section-block">
+          <h2 class="section-title">Privacy</h2>
+          <label class="radio-option">
+            <input type="radio" formControlName="privacy" [value]="'PUBLIC'" />
+            <div class="radio-copy">
+              <span class="radio-title">Open group</span>
+              <span class="radio-description">no approval is required to join / see group posts</span>
+            </div>
+          </label>
+          <label class="radio-option">
+            <input type="radio" formControlName="privacy" [value]="'PRIVATE'" />
+            <div class="radio-copy">
+              <span class="radio-title">Closed group</span>
+              <span class="radio-description">members must be approved first</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="section-block">
+          <h2 class="section-title">Tagging</h2>
+          <label class="radio-option">
+            <input type="radio" formControlName="tagging" [value]="true" />
+            <div class="radio-copy">
+              <span class="radio-title">Allow non-admin group members to tag the entire group</span>
+            </div>
+          </label>
+          <label class="radio-option">
+            <input type="radio" formControlName="tagging" [value]="false" />
+            <div class="radio-copy">
+              <span class="radio-title">Do not allow non-admin group members to tag the entire group (default)</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="section-block section-block--split">
+          <div>
+            <h2 class="section-title">Add Labels</h2>
+            <span class="block-description">Add/create a new label for the group</span>
+          </div>
+          <input class="tag-input" formControlName="labels" placeholder="New Label..." />
+        </div>
+      </div>
+
+      <div *ngIf="activeStep === 3" class="step-panel">
+        <p class="page-description">
+          Select which users should be automatically added to your group. Note: Users need to match all settings in order to qualify.
+        </p>
+
+        <div class="grid-columns">
+          <label class="field-group">
+            <span class="field-label">Location</span>
+            <input formControlName="location" placeholder="Location" />
+          </label>
+          <label class="field-group">
+            <span class="field-label">Affiliation</span>
+            <select formControlName="affiliation">
+              <option value="">Select affiliation</option>
+              <option value="esprit">Esprit</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="section-divider">
+          <span class="divider-icon">🎓</span>
+          <span class="divider-title">Esprit</span>
+        </div>
+
+        <div class="grid-columns">
+          <label class="field-group">
+            <span class="field-label">Field of study</span>
+            <select formControlName="fieldOfStudy">
+              <option value="">Select field</option>
+              <option value="computer-science">Computer Science</option>
+            </select>
+          </label>
+          <label class="field-group">
+            <span class="field-label">Degree</span>
+            <select formControlName="degree">
+              <option value="">Select degree</option>
+              <option value="bachelor">Bachelor</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid-columns">
+          <label class="field-group">
+            <span class="field-label">Graduation year</span>
+            <select formControlName="graduationYear">
+              <option value="">Select year</option>
+              <option value="2026">2026</option>
+            </select>
+          </label>
+          <label class="field-group">
+            <span class="field-label">Institution/Program</span>
+            <select formControlName="institutionProgram">
+              <option value="">Select institution</option>
+              <option value="esprit">Esprit</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="section-divider">
+          <span class="divider-icon">🎓</span>
+          <span class="divider-title">Other Education</span>
+        </div>
+
+        <div class="grid-columns">
+          <label class="field-group">
+            <span class="field-label">Degree</span>
+            <select formControlName="otherDegree">
+              <option value="">Select degree</option>
+            </select>
+          </label>
+          <label class="field-group">
+            <span class="field-label">Graduation year</span>
+            <select formControlName="otherGraduationYear">
+              <option value="">Select year</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="section-divider">
+          <span class="divider-icon">💼</span>
+          <span class="divider-title">Professional information</span>
+        </div>
+
+        <div class="grid-columns">
+          <label class="field-group">
+            <span class="field-label">Company</span>
+            <input formControlName="company" placeholder="Company" />
+          </label>
+          <label class="field-group">
+            <span class="field-label">Industry</span>
+            <select formControlName="industry">
+              <option value="">Select industry</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid-columns grid-columns--single">
+          <label class="field-group">
+            <span class="field-label">Job function</span>
+            <select formControlName="jobFunction">
+              <option value="">Select job function</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="section-divider">
+          <span class="divider-icon">🤝</span>
+          <span class="divider-title">Willing to help</span>
+        </div>
+
+        <div class="grid-columns">
+          <label class="field-group">
+            <span class="field-label">Offering Help</span>
+            <select formControlName="willingOffering">
+              <option value="">Select option</option>
+            </select>
+          </label>
+          <label class="field-group">
+            <span class="field-label">Seeking help</span>
+            <select formControlName="willingSeeking">
+              <option value="">Select option</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="section-divider">
+          <span class="divider-icon">🧑‍🏫</span>
+          <span class="divider-title">Mentoring</span>
+        </div>
+
+        <div class="grid-columns">
+          <label class="field-group">
+            <span class="field-label">Offering Help</span>
+            <select formControlName="mentoringOffering">
+              <option value="">Select option</option>
+            </select>
+          </label>
+          <label class="field-group">
+            <span class="field-label">Seeking help</span>
+            <select formControlName="mentoringSeeking">
+              <option value="">Select option</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="field-group full-width">
+          <span class="field-label">Add individual users to your group</span>
+          <input formControlName="addMembers" placeholder="Add members" />
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="button-secondary" *ngIf="activeStep === 3" (click)="onCancel()">CANCEL</button>
+        <button type="button" class="button-primary" *ngIf="activeStep < 3" (click)="advanceStep()">CONTINUE</button>
+        <button type="submit" class="button-primary" *ngIf="activeStep === 3" [disabled]="creating">{{ creating ? 'CREATING…' : 'CREATE GROUP' }}</button>
+      </div>
+
+      <div *ngIf="error" class="field-error form-error">{{ error }}</div>
+    </form>
+  </section>
+</div>
