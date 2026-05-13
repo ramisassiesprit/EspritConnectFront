@@ -152,12 +152,21 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
-        loadComponent: () =>
-          import('./features/etudiant/profile/profile.component').then(
-            (m) => m.ProfileComponent,
-          ),
+        loadComponent: () => import('./features/etudiant/profile/profile.component').then(m => m.ProfileComponent)
       },
-    ],
+      {
+        path: 'chat/:id',
+        loadComponent: () => import('./features/etudiant/chat/chat.component').then(m => m.ChatComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () => import('./features/etudiant/chat/chat-list.component').then(m => m.ChatListComponent)
+      },
+      {
+        path: 'user/:id',
+        loadComponent: () => import('./features/etudiant/user-details/user-details.component').then(m => m.UserDetailsComponent)
+      }
+    ]
   },
   {
     path: 'ancien',

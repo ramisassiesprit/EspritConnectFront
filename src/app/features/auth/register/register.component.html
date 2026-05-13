@@ -1,4 +1,16 @@
 <div class="register-container">
+  <!-- Scanning Overlay -->
+  <div *ngIf="isScanning" class="scanning-overlay">
+    <div class="scanning-card">
+      <div class="spinner"></div>
+      <h3>Analyse de la carte en cours...</h3>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="scanProgress"></div>
+      </div>
+      <p>{{scanProgress}}%</p>
+    </div>
+  </div>
+
   <div class="register-card">
     <div class="logo-container">
       <img src="LogoEsprit.png" alt="Esprit Logo" class="esprit-logo">
@@ -16,6 +28,15 @@
         <button type="button" class="btn-upload" (click)="fileInput.click()">
           <i class="bi bi-camera-fill"></i>
         </button>
+      </div>
+
+      <div class="card-scan-action mt-4 mb-6">
+        <input type="file" (change)="onCardSelected($event)" #cardInput hidden accept="image/*">
+        <button type="button" class="btn-scan" (click)="cardInput.click()">
+          <i class="bi bi-person-badge-fill me-2"></i>
+          SCAN STUDENT CARD
+        </button>
+        <p class="text-[10px] text-gray-400 mt-1 text-center italic">Scanner votre carte pour remplir automatiquement les champs</p>
       </div>
 
       <h2 class="form-title">Create a new account</h2>
@@ -41,17 +62,24 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="email">Email*</label>
-            <input type="email" id="email" formControlName="email" placeholder="Email">
+            <label for="studentCode">Student ID (Code)</label>
+            <input type="text" id="studentCode" formControlName="studentCode" placeholder="Ex: 253AMT5482">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
+            <label for="email">Email*</label>
+            <input type="email" id="email" formControlName="email" placeholder="Email">
+          </div>
+          <div class="form-group">
             <label for="password">Password*</label>
             <input type="password" id="password" formControlName="password" placeholder="Password">
           </div>
-          <div class="form-group">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group w-full">
             <label for="confirmPassword">Confirm password*</label>
             <input type="password" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm password">
           </div>

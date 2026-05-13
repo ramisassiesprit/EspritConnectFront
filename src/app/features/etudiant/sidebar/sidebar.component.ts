@@ -75,7 +75,7 @@ export class SidebarComponent implements OnInit {
       icon: 'event',
       route: '/etudiant/events',
       hasChevron: true,
-      isOpen: true,
+      isOpen: false,
       subItems: [
         { label: 'Event Board', route: '/etudiant/events/board' },
         { label: 'Post an Event', route: '/etudiant/events/post' }
@@ -133,9 +133,9 @@ export class SidebarComponent implements OnInit {
 
     groupsItem.subItems = this.joinedGroups.length
       ? this.joinedGroups.map(group => ({
-          label: group.groupName,
-          route: `/etudiant/groups/${group.id}/feed`
-        }))
+        label: group.groupName,
+        route: `/etudiant/groups/${group.id}/feed`
+      }))
       : [];
   }
 

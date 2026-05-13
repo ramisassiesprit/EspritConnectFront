@@ -6,6 +6,15 @@ export enum UserStatus {
   REJECTED = 'REJECTED'
 }
 
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  iconUrl?: string;
+  type: string;
+  earnedAt: string;
+}
+
 export interface User {
   id: string;
   firstName: string;
@@ -16,8 +25,11 @@ export interface User {
   avatarUrl?: string;
   bannerUrl?: string;
   bio?: string;
-  city?: string;
-  country?: string;
+  code?:string;
+  companyName?:string;
+  jobTitle?:string;
+  jobFunction?:string;
+  industry?:string;
   linkedinUrl?: string;
   githubUrl?: string;
   facebookUrl?: string;
@@ -27,4 +39,6 @@ export interface User {
   lastLoginAt?: string;
   createdAt?: string;
   updatedAt?: string;
+  isOnline?: boolean;
+  badges?: Badge[];
 }

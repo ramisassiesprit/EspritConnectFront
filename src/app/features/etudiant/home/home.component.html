@@ -3,24 +3,46 @@
     <div class="flex flex-col xl:flex-row items-stretch gap-2.5">
       <!-- Profile Info (Left) -->
       <div class="flex flex-1 items-center gap-3 px-3 py-1">
-        <div class="relative flex h-[62px] w-[62px] shrink-0 items-center justify-center rounded-full bg-white p-[2px]">
-          <!-- Progress Ring Background -->
-          <div class="absolute inset-0 rounded-full border-[2.5px] border-gray-100"></div>
-          <!-- Progress Ring Fill (24%) -->
-          <div class="absolute inset-0 rounded-full border-[2.5px] border-emerald-500 border-b-transparent border-r-transparent -rotate-45"></div>
-          
-          <!-- Avatar Icon Placeholder -->
-          <div class="flex h-full w-full items-end justify-center overflow-hidden rounded-full bg-[#f0f0f2] pb-0">
-            <svg class="h-[46px] w-[46px] translate-y-1.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M12 12a5 5 0 100-10 5 5 0 000 10zm-7 9a7 7 0 0114 0H5z" clip-rule="evenodd" />
+        <div class="relative flex h-[66px] w-[66px] shrink-0 items-center justify-center">
+          <!-- Progress Ring SVG -->
+          <svg viewBox="0 0 66 66" class="absolute inset-0 h-full w-full -rotate-90">
+            <!-- Background track -->
+            <circle
+              cx="33"
+              cy="33"
+              r="30"
+              fill="white"
+              stroke="#e5e7eb"
+              stroke-width="3"
+            />
+            <!-- Progress arc -->
+            <circle
+              cx="33"
+              cy="33"
+              r="30"
+              fill="transparent"
+              stroke="#22c55e"
+              stroke-width="3"
+              stroke-linecap="round"
+              [attr.stroke-dasharray]="188.5"
+              [attr.stroke-dashoffset]="188.5 * (1 - completionPercentage / 100)"
+              class="transition-all duration-700 ease-out"
+            />
+          </svg>
+
+          <!-- Avatar Circle -->
+          <div class="relative z-10 flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full bg-[#e8e8ec]">
+            <img *ngIf="user?.avatarUrl" [src]="user?.avatarUrl" class="h-full w-full object-cover" alt="Avatar">
+            <svg *ngIf="!user?.avatarUrl" class="h-[38px] w-[38px] text-[#b0b0bc]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
             </svg>
           </div>
         </div>
         <div class="flex flex-col gap-0.5">
           <div class="inline-flex w-max items-center rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold tracking-wide text-gray-600 shadow-sm border border-[#ffe1e6]">
-            24% complete
+            {{ completionPercentage }}% complete
           </div>
-          <h2 class="text-lg font-bold text-gray-800">Good Afternoon, brahmi</h2>
+          <h2 class="text-lg font-bold text-gray-800">Good Afternoon, {{ user?.firstName || 'User' }}</h2>
         </div>
       </div>
 
@@ -35,7 +57,7 @@
             </svg>
             <p class="text-[12px] leading-[1.3] text-gray-700">Complete your missing profile information so other members can easily find you</p>
           </div>
-          <a href="#" class="mt-2.5 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#e60028]">
+          <a (click)="navigateToProfile()" class="mt-2.5 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#e60028] cursor-pointer hover:underline">
             Update profile
             <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -50,9 +72,9 @@
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               <path fill="#fff" d="M12 16l-3.5 2 1-4.2-3-2.8 4.2-.3L12 7l1.3 3.7 4.2.3-3 2.8 1 4.2z"/>
             </svg>
-            <p class="text-[12px] leading-[1.3] text-gray-700">1/2 Badges achieved!</p>
+            <p class="text-[12px] leading-[1.3] text-gray-700">{{ user?.badges?.length || 0 }} Badges achieved!</p>
           </div>
-          <a href="#" class="mt-2.5 text-[11px] font-bold uppercase tracking-wider text-[#e60028]">See all</a>
+          <a (click)="openBadgeModal()" class="mt-2.5 text-[11px] font-bold uppercase tracking-wider text-[#e60028] cursor-pointer hover:underline">See all</a>
         </div>
 
         <!-- Share Card -->
@@ -82,4 +104,11 @@
   <div>
     <app-resources-widget></app-resources-widget>
   </div>
+
+  <!-- Badge Modal -->
+  <app-badge-modal 
+    [isOpen]="isBadgeModalOpen" 
+    [badges]="userBadges" 
+    (close)="isBadgeModalOpen = false">
+  </app-badge-modal>
 </div>

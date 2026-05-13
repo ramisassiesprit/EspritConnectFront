@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, tap } from 'rxjs';
 import { Group, GroupCreateRequest } from '../models/group.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupService {
-  private readonly apiUrl = 'http://localhost:8086/EspritConnect/groups';
+  private readonly apiUrl = `${environment.apiUrl}groups`;
   private http = inject(HttpClient);
   
   private membershipChanged = new Subject<void>();

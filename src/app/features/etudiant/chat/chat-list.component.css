@@ -1,0 +1,99 @@
+.chat-list-container {
+  max-width: 600px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.list-header {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+}
+
+.list-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #202124;
+}
+
+.conversation-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-card {
+  display: flex;
+  gap: 15px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.conversation-card:hover {
+  background: #f8f9fa;
+}
+
+.user-avatar {
+  font-size: 40px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+}
+
+.conv-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 600;
+  color: #202124;
+}
+
+.time {
+  font-size: 12px;
+  color: #70757a;
+}
+
+.info-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.last-message {
+  font-size: 13px;
+  color: #5f6368;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+.unread-dot {
+  width: 10px;
+  height: 10px;
+  background: #ED1C24;
+  border-radius: 50%;
+}
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #9aa0a6;
+}

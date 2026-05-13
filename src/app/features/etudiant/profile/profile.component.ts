@@ -40,6 +40,30 @@ export class ProfileComponent implements OnInit {
   educations: OtherEducation[] = [];
   skills: Skill[] = [];
   helps: WillingToHelp[] = [];
+  isEditingHelp: boolean = false;
+
+  helpOptions = [
+    'Introduction to connections',
+    'Answer industry specific questions',
+    'Open doors at workplace',
+    'Meet for coffee'
+  ];
+
+  mentoringOptions = [
+    'Mentor a young professional',
+    'Mentor a student',
+    'Career advice',
+    'Resume review',
+    'Internship'
+  ];
+
+  // Helper object to manage checkbox states
+  helpSelections = {
+    offerHelp: {} as { [key: string]: boolean },
+    seekHelp: {} as { [key: string]: boolean },
+    offerMentoring: {} as { [key: string]: boolean },
+    seekMentoring: {} as { [key: string]: boolean }
+  };
 
   newExperience: WorkExperience = this.resetExperience();
   newEducation: OtherEducation = this.resetEducation();
@@ -56,6 +80,73 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.loadAllData();
   }
+
+  toggleEditHelp(): void {
+    this.isEditingHelp = !this.isEditingHelp;
+    if (this.isEditingHelp) {
+      this.initHelpSelections();
+    }
+  }
+
+  initHelpSelections(): void {
+    const help = this.helps[0] || { 
+      offerHelp: '', 
+      seekHelp: '', 
+      offerMentor: '', 
+      seekMentor: '' 
+    };
+    
+    const offerHelps = (help.offerHelp || '').split(',').map(s => s.trim());
+    const seekHelps = (help.seekHelp || '').split(',').map(s => s.trim());
+    const offerMentors = (help.offerMentor || '').split(',').map(s => s.trim());
+    const seekMentors = (help.seekMentor || '').split(',').map(s => s.trim());
+
+    this.helpSelections.offerHelp = {};
+    this.helpOptions.forEach(opt => this.helpSelections.offerHelp[opt] = offerHelps.includes(opt));
+    
+    this.helpSelections.seekHelp = {};
+    this.helpOptions.forEach(opt => this.helpSelections.seekHelp[opt] = seekHelps.includes(opt));
+
+    this.helpSelections.offerMentoring = {};
+    this.mentoringOptions.forEach(opt => this.helpSelections.offerMentoring[opt] = offerMentors.includes(opt));
+
+    this.helpSelections.seekMentoring = {};
+    this.mentoringOptions.forEach(opt => this.helpSelections.seekMentoring[opt] = seekMentors.includes(opt));
+  }
+
+  saveHelpSelections(): void {
+    const offerHelpArr = Object.keys(this.helpSelections.offerHelp).filter(k => this.helpSelections.offerHelp[k]);
+    const seekHelpArr = Object.keys(this.helpSelections.seekHelp).filter(k => this.helpSelections.seekHelp[k]);
+    
+    const offerMentorArr = Object.keys(this.helpSelections.offerMentoring).filter(k => this.helpSelections.offerMentoring[k]);
+    const seekMentorArr = Object.keys(this.helpSelections.seekMentoring).filter(k => this.helpSelections.seekMentoring[k]);
+
+    const helpObj = this.helps[0] || { 
+      id: undefined, 
+      offerHelp: '', 
+      seekHelp: '', 
+      offerMentor: '', 
+      seekMentor: '' 
+    };
+
+    helpObj.offerHelp = offerHelpArr.join(', ');
+    helpObj.seekHelp = seekHelpArr.join(', ');
+    helpObj.offerMentor = offerMentorArr.join(', ');
+    helpObj.seekMentor = seekMentorArr.join(', ');
+
+    if (helpObj.id) {
+      this.profileService.updateHelp(helpObj.id, helpObj).subscribe(h => {
+        this.helps[0] = h;
+        this.isEditingHelp = false;
+      });
+    } else {
+      this.profileService.addHelp(helpObj).subscribe(h => {
+        this.helps = [h];
+        this.isEditingHelp = false;
+      });
+    }
+  }
+
 
   toggleEditProfile(): void {
     this.isEditingProfile = !this.isEditingProfile;
@@ -194,8 +285,10 @@ export class ProfileComponent implements OnInit {
 
   private resetHelp(): WillingToHelp {
     return {
-      offering: '',
-      seeking: ''
+      offerHelp: '',
+      seekHelp: '',
+      offerMentor: '',
+      seekMentor: ''
     };
   }
   deleteEducation(id: string | undefined): void {
