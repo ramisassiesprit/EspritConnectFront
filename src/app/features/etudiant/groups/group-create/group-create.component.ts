@@ -4,11 +4,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GroupService } from '../../../../core/services/group.service';
 import { GroupCreateRequest, GroupPrivacy } from '../../../../core/models/group.model';
+import { QuillModule } from 'ngx-quill';
 
 @Component({
   selector: 'app-group-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, QuillModule],
   templateUrl: './group-create.component.html',
   styleUrls: ['./group-create.component.css']
 })
@@ -21,12 +22,47 @@ export class GroupCreateComponent {
   creating = false;
   error = '';
 
+  quillModules = {
+    toolbar: {
+      container: [
+        ['bold', 'italic', 'underline'],
+        ['undo', 'redo'],
+        [{ 'align': '' }, { 'align': 'center' }, { 'align': 'right' }, { 'align': 'justify' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'list': 'bullet' }, { 'list': 'ordered' }],
+        ['link'],
+        ['emoji']
+      ],
+      handlers: {
+        'undo': function() {
+          (this as any).quill.history.undo();
+        },
+        'redo': function() {
+          (this as any).quill.history.redo();
+        },
+        'emoji': function() {
+          console.log('Emoji picker clicked');
+          // For now, we can just insert a default emoji or open a picker if we had one
+        }
+      }
+    },
+    history: {
+      delay: 2000,
+      maxStack: 500,
+      userOnly: true
+    }
+  };
+
+  // File upload properties
+  logoFile: File | null = null;
+  bannerFile: File | null = null;
+  logoPreview: string | null = null;
+  bannerPreview: string | null = null;
+
   groupForm = this.fb.group({
     groupName: ['', [Validators.required, Validators.minLength(3)]],
-    description: ['', [Validators.required, Validators.minLength(10)]],
+    description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(4000)]],
     website: [''],
-    logoUrl: [''],
-    bannerUrl: [''],
     privacy: ['PUBLIC', Validators.required],
     tagging: [false, Validators.required],
     labels: [''],
@@ -48,16 +84,17 @@ export class GroupCreateComponent {
     addMembers: ['']
   });
 
-  private normalizeValue(value: string | null | undefined): string | undefined {
-    return value?.trim() || undefined;
+  private normalizeValue(value: any): string | undefined {
+    if (value === null || value === undefined || value === '') return undefined;
+    return String(value).trim() || undefined;
   }
 
   get stepOneValid() {
-    return this.groupForm.get('groupName')?.valid && this.groupForm.get('description')?.valid;
+    return (this.groupForm.get('groupName')?.valid ?? false) && (this.groupForm.get('description')?.valid ?? false);
   }
 
   get stepTwoValid() {
-    return this.groupForm.get('privacy')?.valid && this.groupForm.get('tagging')?.valid;
+    return (this.groupForm.get('privacy')?.valid ?? false) && (this.groupForm.get('tagging')?.valid ?? false);
   }
 
   goToStep(step: number) {
@@ -86,6 +123,47 @@ export class GroupCreateComponent {
     this.router.navigate(['/etudiant/groups']);
   }
 
+  // File upload methods
+  onLogoFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.logoFile = file;
+      this.createPreview(file, 'logo');
+    }
+  }
+
+  onBannerFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.bannerFile = file;
+      this.createPreview(file, 'banner');
+    }
+  }
+
+  private createPreview(file: File, type: 'logo' | 'banner') {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (type === 'logo') {
+        this.logoPreview = e.target?.result as string;
+      } else {
+        this.bannerPreview = e.target?.result as string;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeLogo() {
+    this.logoFile = null;
+    this.logoPreview = null;
+  }
+
+  removeBanner() {
+    this.bannerFile = null;
+    this.bannerPreview = null;
+  }
+
   submit() {
     if (this.activeStep !== 3) {
       this.advanceStep();
@@ -102,9 +180,7 @@ export class GroupCreateComponent {
       groupName: formValue.groupName!,
       description: formValue.description!,
       website: this.normalizeValue(formValue.website),
-      logoUrl: this.normalizeValue(formValue.logoUrl),
-      bannerUrl: this.normalizeValue(formValue.bannerUrl),
-      privacy: this.groupForm.get('privacy')?.value as GroupPrivacy,
+      privacy: formValue.privacy as GroupPrivacy,
       tagging: formValue.tagging ?? false,
       labels: this.normalizeValue(formValue.labels),
       location: this.normalizeValue(formValue.location),
@@ -128,10 +204,12 @@ export class GroupCreateComponent {
     this.creating = true;
     this.error = '';
 
-    this.groupService.createGroup(payload).subscribe({
+    // Always use createGroupWithFiles if files exist, otherwise fallback
+    this.groupService.createGroupWithFiles(payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
       next: () => this.router.navigate(['/etudiant/groups']),
-      error: () => {
-        this.error = 'Unable to create group. Please try again later.';
+      error: (err) => {
+        console.error('Group creation failed:', err);
+        this.error = 'Unable to create group. Please check your inputs and try again.';
         this.creating = false;
       }
     });

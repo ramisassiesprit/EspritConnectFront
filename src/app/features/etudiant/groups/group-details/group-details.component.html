@@ -1,0 +1,44 @@
+<div class="feed-container">
+  <!-- Loading & Error States -->
+  <div *ngIf="groupLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading group details...</p>
+  </div>
+
+  <div *ngIf="group && !groupLoading">
+    <!-- Header Section (Fixed part) -->
+    <div class="group-header-card">
+      <div class="header-banner" [style.backgroundImage]="'url(' + group.bannerUrl + ')'"></div>
+      <div class="header-main">
+        <div class="header-left">
+          <div class="logo-wrapper">
+            <img [src]="group.logoUrl" [alt]="group.groupName" class="main-logo">
+          </div>
+          <div class="title-section">
+            <h1 class="group-title">{{ group.groupName }}</h1>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="membership-status">
+            <span class="status-badge" [class.joined]="isGroupMember" (click)="isGroupMember ? exitGroup() : joinGroup()">
+              <lucide-icon [img]="ChevronDown" size="14" class="badge-arrow"></lucide-icon>
+              {{ isGroupMember ? 'Joined' : 'Join' }}
+            </span>
+            <button class="icon-btn-info">
+              <lucide-icon [img]="Info" size="18"></lucide-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="header-tabs">
+        <a class="tab-item" routerLink="feed" routerLinkActive="active">FEED</a>
+        <a class="tab-item" routerLink="members" routerLinkActive="active">MEMBERS</a>
+        <a class="tab-item" routerLink="photos-albums" routerLinkActive="active">PHOTOS</a>
+        <a class="tab-item" routerLink="events" routerLinkActive="active">EVENTS</a>
+      </div>
+    </div>
+
+    <!-- Subroute content -->
+    <router-outlet></router-outlet>
+  </div>
+</div>

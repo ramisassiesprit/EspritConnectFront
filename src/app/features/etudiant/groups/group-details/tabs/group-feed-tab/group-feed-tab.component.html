@@ -1,0 +1,114 @@
+<div class="content-layout">
+  <!-- Left Column -->
+  <div class="main-column">
+    <!-- My Feed Header -->
+    <div class="section-card feed-header-card">
+      <h2>My Feed</h2>
+      <div class="mini-search">
+        <lucide-icon [img]="Search" size="16"></lucide-icon>
+        <input type="text" placeholder="Search Feed" [(ngModel)]="searchQuery" (input)="searchPosts()">
+      </div>
+    </div>
+
+    <!-- Post Creator -->
+    <div class="section-card creator-card">
+      <img [src]="currentUser()?.avatarUrl || 'assets/default-avatar.png'" class="creator-avatar">
+      <div class="creator-input-wrapper">
+        <input type="text" [placeholder]="'What\'s on your mind, ' + (currentUser()?.firstName || 'User') + '?'" [(ngModel)]="newPostContent" (keyup.enter)="createPost()">
+      </div>
+    </div>
+
+    <!-- Who's Online -->
+    <div class="section-card online-card">
+      <div class="online-header">
+        <div class="online-title">
+          <span class="dot-green"></span>
+          <p>Who's online <span class="subtitle">· See who's been online recently</span></p>
+        </div>
+        <a href="#" class="see-all-link">SEE ALL LIVE MEMBERS ›</a>
+      </div>
+      <div class="online-list">
+        <div *ngFor="let member of onlineMembers | slice:0:9" class="member-thumb">
+          <img [src]="member.avatarUrl" [alt]="member.firstName">
+          <span class="status-dot" [class.online]="member.isOnline" [class.away]="!member.isOnline"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed Posts -->
+    <div class="posts-list">
+      <article *ngFor="let post of posts" class="section-card post-card">
+        <div class="post-header">
+          <div class="post-meta">
+            <img [src]="post.authorAvatar" class="post-author-img">
+            <div class="post-author-details">
+              <div class="name-row">
+                <span class="author-name">{{ post.authorName }}</span>
+                <span class="author-badges">
+                  <span class="badge-p">
+                     <lucide-icon [img]="Users" size="12"></lucide-icon>
+                  </span>
+                  <span class="badge-y">
+                     <lucide-icon [img]="Info" size="12"></lucide-icon>
+                  </span>
+                </span>
+              </div>
+              <p class="author-sub">Software engineer, Mobelite</p>
+              <p class="post-date">{{ post.createdAt }}</p>
+            </div>
+          </div>
+          <button class="btn-more">
+            <lucide-icon [img]="MoreVertical" size="18"></lucide-icon>
+          </button>
+        </div>
+        
+        <div class="post-body">
+          <p class="post-text">{{ post.content }}</p>
+          <a href="#" class="read-more">Read more</a>
+          
+          <!-- GitHub Card Mockup -->
+          <div class="github-card" *ngIf="post.id === '1'">
+            <div class="github-header">
+              <lucide-icon [img]="Github" size="16"></lucide-icon>
+              <span>GitHub</span>
+            </div>
+            <div class="github-body">
+              <div class="repo-preview">
+                <img src="assets/repo-placeholder.png" alt="Repo">
+              </div>
+              <div class="repo-info">
+                <p>Explore my cv 2026 ✨✨ . Contribute to amiraboubaker/myCV development by creating an account on GitHub.</p>
+                <a href="#" class="github-link">Go to our website</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-footer">
+          <div class="post-actions">
+            <button class="action-btn" [class.active]="post.liked" (click)="likePost(post)">
+              <lucide-icon [img]="ThumbsUp" size="16"></lucide-icon>
+              <span>Like</span>
+            </button>
+          </div>
+          <div class="comment-section">
+            <img [src]="currentUser()?.avatarUrl || 'assets/default-avatar.png'" class="comment-avatar">
+            <input type="text" placeholder="Write a comment..." class="comment-input">
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Right Column (Sidebar) -->
+  <div class="side-column">
+    <div class="section-card invite-card">
+      <h3>Invite users to the group</h3>
+      <div class="invite-field">
+        <label>Invite members</label>
+        <input type="text" placeholder="">
+      </div>
+      <button class="btn-invite" disabled>Invite</button>
+    </div>
+  </div>
+</div>
