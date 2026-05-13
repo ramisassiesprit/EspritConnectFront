@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User, UserStatus } from '../models/user.model';
 import { UserRole } from '../models/user-role.enum';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private readonly apiUrl = 'http://localhost:8086/EspritConnect/users';
+  private readonly apiUrl = `${environment.apiUrl}users`;
   private http = inject(HttpClient);
 
   // --- Mon Profil ---

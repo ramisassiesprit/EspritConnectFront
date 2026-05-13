@@ -1,13 +1,23 @@
 <app-navbar />
 
 <!-- Hero Section -->
-<div class="relative h-[800px] flex items-center bg-gray-200 bg-cover bg-center" style="background-image: url('/hero.jpg');">
+<div
+  class="relative h-[800px] flex items-center bg-gray-200 bg-cover bg-center"
+  style="background-image: url(&quot;/hero.jpg&quot;)"
+>
   <!-- Gradient Overlay (Red on left to transparent on right) -->
-  <div class="absolute inset-0 bg-gradient-to-r from-red-600/90 via-red-500/50 to-transparent"></div>
-  
+  <div
+    class="absolute inset-0 bg-gradient-to-r from-red-600/90 via-red-500/50 to-transparent"
+  ></div>
+
   <div class="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12">
-    <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">Welcome to<br>Esprit Connect</h1>
-    <button (click)="onGetStarted()" class="bg-white text-red-600 text-sm font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition shadow uppercase tracking-wide">
+    <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+      Welcome to<br />Esprit Connect
+    </h1>
+    <button
+      (click)="onGetStarted()"
+      class="bg-white text-red-600 text-sm font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition shadow uppercase tracking-wide"
+    >
       Get Started
     </button>
   </div>
@@ -18,24 +28,39 @@
   <div class="flex flex-col md:flex-row items-center gap-12 md:gap-20">
     <!-- Image -->
     <div class="w-full md:w-1/2 flex justify-center md:justify-end">
-      <div class="w-72 h-72 rounded-full overflow-hidden shadow-lg border-4 border-white bg-gray-200">
+      <div
+        class="w-72 h-72 rounded-full overflow-hidden shadow-lg border-4 border-white bg-gray-200"
+      >
         <!-- Placeholder image, you can replace with your actual asset -->
-        <img src="img1.jpg" alt="Students connecting" class="w-full h-full object-cover">
+        <img
+          src="img1.jpg"
+          alt="Students connecting"
+          class="w-full h-full object-cover"
+        />
       </div>
     </div>
     <!-- Texts -->
     <div class="w-full md:w-1/2 flex flex-col gap-6 text-gray-700">
       <div>
         <h3 class="text-sm font-bold text-gray-900 mb-1">Connect</h3>
-        <p class="text-sm leading-relaxed">Find and reminisce with fellow graduates, see what they have been up to and stay in touch.</p>
+        <p class="text-sm leading-relaxed">
+          Find and reminisce with fellow graduates, see what they have been up
+          to and stay in touch.
+        </p>
       </div>
       <div>
         <h3 class="text-sm font-bold text-gray-900 mb-1">Give back</h3>
-        <p class="text-sm leading-relaxed">Introduce, employ and offer to act as a mentor to our graduating students.</p>
+        <p class="text-sm leading-relaxed">
+          Introduce, employ and offer to act as a mentor to our graduating
+          students.
+        </p>
       </div>
       <div>
         <h3 class="text-sm font-bold text-gray-900 mb-1">Expand</h3>
-        <p class="text-sm leading-relaxed">Leverage your professional network to get introduced to people you should know.</p>
+        <p class="text-sm leading-relaxed">
+          Leverage your professional network to get introduced to people you
+          should know.
+        </p>
       </div>
     </div>
   </div>
@@ -47,19 +72,37 @@
     <!-- Texts -->
     <div class="w-full md:w-1/2 flex flex-col gap-6 text-gray-700 md:pl-8">
       <div>
-        <h3 class="text-sm font-bold text-gray-900 mb-1">Re-connect with old classmates</h3>
-        <p class="text-sm leading-relaxed">Esprit Connect allows you to both re-connect with old classmates as well as enabling you to utilise the trusted Esprit environment to expand your professional network.</p>
+        <h3 class="text-sm font-bold text-gray-900 mb-1">
+          Re-connect with old classmates
+        </h3>
+        <p class="text-sm leading-relaxed">
+          Esprit Connect allows you to both re-connect with old classmates as
+          well as enabling you to utilise the trusted Esprit environment to
+          expand your professional network.
+        </p>
       </div>
       <div>
-        <h3 class="text-sm font-bold text-gray-900 mb-1">Your Esprit Community</h3>
-        <p class="text-sm leading-relaxed">By fully integrating with social networks, and cultivating a culture of helping and giving back, you will be amazed how vibrant your Esprit community is!</p>
+        <h3 class="text-sm font-bold text-gray-900 mb-1">
+          Your Esprit Community
+        </h3>
+        <p class="text-sm leading-relaxed">
+          By fully integrating with social networks, and cultivating a culture
+          of helping and giving back, you will be amazed how vibrant your Esprit
+          community is!
+        </p>
       </div>
     </div>
     <!-- Image -->
     <div class="w-full md:w-1/2 flex justify-center md:justify-start">
-      <div class="w-72 h-72 rounded-full overflow-hidden shadow-lg border-4 border-white bg-gray-200">
+      <div
+        class="w-72 h-72 rounded-full overflow-hidden shadow-lg border-4 border-white bg-gray-200"
+      >
         <!-- Placeholder image, you can replace with your actual asset -->
-        <img src="img2.jpg" alt="Alumni group" class="w-full h-full object-cover">
+        <img
+          src="img2.jpg"
+          alt="Alumni group"
+          class="w-full h-full object-cover"
+        />
       </div>
     </div>
   </div>
@@ -67,10 +110,16 @@
 
 <!-- Bottom Get Started Button -->
 <div class="flex justify-center pb-24 pt-8">
-  <button (click)="onGetStarted()" class="bg-[#ED1C24] text-white text-sm font-bold py-3 px-8 rounded-full hover:bg-red-700 transition shadow uppercase tracking-wide">
+  <button
+    (click)="onGetStarted()"
+    class="bg-[#ED1C24] text-white text-sm font-bold py-3 px-8 rounded-full hover:bg-red-700 transition shadow uppercase tracking-wide"
+  >
     Get Started
   </button>
 </div>
 
 <!-- Recent Jobs Section -->
 <app-jobs></app-jobs>
+
+<!-- Floating AI Chat Bubble -->
+<app-ai-chat-bubble></app-ai-chat-bubble>

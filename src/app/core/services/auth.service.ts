@@ -5,12 +5,13 @@ import { Observable, tap, catchError, throwError } from 'rxjs';
 import { AuthRequest, AuthResponse, RegisterRequest, UserSession } from '../models/auth.models';
 import { EncryptionService } from './encryption.service';
 import { UserRole } from '../models/user-role.enum';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8086/EspritConnect/auth';
+  private readonly apiUrl = `${environment.apiUrl}auth`;
   private readonly sessionKey = 'user_session';
 
   private http = inject(HttpClient);
