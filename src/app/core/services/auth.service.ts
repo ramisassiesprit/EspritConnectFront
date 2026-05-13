@@ -39,7 +39,11 @@ export class AuthService {
           token: response.accessToken,
           refreshToken: response.refreshToken,
           role: response.role,
-          userId: response.userId
+          userId: response.userId,
+          firstName: response.firstName,
+          lastName: response.lastName,
+          email: response.email,
+          avatarUrl: response.avatarUrl
         };
         this.saveSession(session);
         this.redirectBasedOnRole(response.role);
@@ -55,7 +59,11 @@ export class AuthService {
             token: response.accessToken,
             refreshToken: response.refreshToken,
             role: response.role,
-            userId: response.userId
+            userId: response.userId,
+            firstName: response.firstName,
+            lastName: response.lastName,
+            email: response.email,
+            avatarUrl: response.avatarUrl
           };
           this.saveSession(session);
           this.redirectBasedOnRole(response.role);
@@ -74,7 +82,11 @@ export class AuthService {
           token: response.accessToken,
           refreshToken: response.refreshToken,
           role: response.role,
-          userId: response.userId
+          userId: response.userId,
+          firstName: response.firstName,
+          lastName: response.lastName,
+          email: response.email,
+          avatarUrl: response.avatarUrl
         };
         this.saveSession(session);
       }),

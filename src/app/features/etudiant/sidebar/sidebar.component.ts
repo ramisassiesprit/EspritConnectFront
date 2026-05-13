@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, effect } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { GroupService } from '../../../core/services/group.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Group } from '../../../core/models/group.model';
@@ -32,6 +33,7 @@ export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
 
   joinedGroups: Group[] = [];
+  private membershipSub?: Subscription;
 
   navItems: NavItem[] = [
     { label: 'Home', icon: 'home', route: '/etudiant/home' },
@@ -105,7 +107,18 @@ export class SidebarComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.membershipSub = this.groupService.membershipChanged$.subscribe(() => {
+      const session = this.authService.currentUser();
+      if (session?.userId) {
+        this.loadJoinedGroups(session.userId);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.membershipSub?.unsubscribe();
+  }
 
   private loadJoinedGroups(userId: string) {
     this.groupService.getUserGroups(userId).subscribe(groups => {

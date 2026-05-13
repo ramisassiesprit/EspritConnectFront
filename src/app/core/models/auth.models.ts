@@ -21,6 +21,11 @@ export interface AuthResponse {
   userId: string;
   role: UserRole;
   expiresIn: number;
+
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  avatarUrl?: string;
 }
 
 export interface UserSession {
@@ -28,4 +33,9 @@ export interface UserSession {
   refreshToken: string;
   role: UserRole;
   userId: string;
+  
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  avatarUrl?: string;
 }

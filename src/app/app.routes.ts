@@ -117,8 +117,15 @@ export const routes: Routes = [
             loadComponent: () => import('./features/etudiant/groups/group-create/group-create.component').then(m => m.GroupCreateComponent)
           },
           {
-            path: ':id/feed',
-            loadComponent: () => import('./features/etudiant/groups/group-feed/group-feed.component').then(m => m.GroupFeedComponent)
+            path: ':id',
+            loadComponent: () => import('./features/etudiant/groups/group-details/group-details.component').then(m => m.GroupDetailsComponent),
+            children: [
+              { path: '', redirectTo: 'feed', pathMatch: 'full' },
+              { path: 'feed', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-feed-tab/group-feed-tab.component').then(m => m.GroupFeedTabComponent) },
+              { path: 'members', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-members-tab/group-members-tab.component').then(m => m.GroupMembersTabComponent) },
+              { path: 'photos-albums', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-photos-tab/group-photos-tab.component').then(m => m.GroupPhotosTabComponent) },
+              { path: 'events', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-events-tab/group-events-tab.component').then(m => m.GroupEventsTabComponent) },
+            ]
           }
         ]
       },
