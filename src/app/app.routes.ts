@@ -92,6 +92,14 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () => import('./features/etudiant/profile/profile.component').then(m => m.ProfileComponent)
+      },
+      {
+        path: 'chat/:id',
+        loadComponent: () => import('./features/etudiant/chat/chat.component').then(m => m.ChatComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () => import('./features/etudiant/chat/chat-list.component').then(m => m.ChatListComponent)
       }
     ]
   },

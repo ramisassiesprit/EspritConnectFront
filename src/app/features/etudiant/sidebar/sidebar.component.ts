@@ -57,7 +57,7 @@ export class SidebarComponent {
       icon: 'event', 
       route: '/etudiant/events', 
       hasChevron: true,
-      isOpen: true, // Opened in the image
+      isOpen: false, 
       subItems: [
         { label: 'Event Board', route: '/etudiant/events/board' },
         { label: 'Post an Event', route: '/etudiant/events/post' }

@@ -67,6 +67,10 @@ export class ProfileService {
     return this.http.post<WillingToHelp>(`${this.apiUrl}/help`, help);
   }
 
+  updateHelp(id: string, help: WillingToHelp): Observable<WillingToHelp> {
+    return this.http.put<WillingToHelp>(`${this.apiUrl}/help/${id}`, help);
+  }
+
   deleteHelp(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/help/${id}`);
   }

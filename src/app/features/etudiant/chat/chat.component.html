@@ -1,0 +1,23 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <h3>Chat with {{ receiverId }}</h3>
+  </div>
+  
+  <div class="message-list" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+    <div *ngFor="let msg of messages" 
+         [ngClass]="{'sent': msg.senderId === currentUser?.id, 'received': msg.senderId !== currentUser?.id}"
+         class="message-item">
+      <div class="message-bubble">
+        <p class="content">{{ msg.content }}</p>
+        <span class="time">{{ msg.sentAt | date:'shortTime' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type a message...">
+    <button (click)="sendMessage()">
+      <i class="bi bi-send"></i>
+    </button>
+  </div>
+</div>
