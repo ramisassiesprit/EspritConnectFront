@@ -1,1 +1,312 @@
-<p> feed works !</p>
+<div class="feed-layout">
+    
+    <!-- MAIN CONTENT (Left) -->
+    <div class="feed-main">
+        
+        <!-- SEARCH SECTION -->
+        <div class="search-section">
+            <div class="gw-feed-block gw-search-card">
+                <div class="search-container">
+                    <h1 class="no-margin">My Feed</h1>
+                    <div class="search-wrapper">
+                        <lucide-icon [name]="Search" class="h-5 w-5 text-gray-400"></lucide-icon>
+                        <input type="text" placeholder="Search Feed" maxlength="100" autocomplete="off" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CREATE POST CARD -->
+        <div class="create-post-card">
+            <div class="create-post-content">
+                <div class="profile-image">
+                    <img src="https://i.pravatar.cc/150?img=12" alt="">
+                </div>
+                <div class="post-input-wrapper" (click)="openPostModal()">
+                    <input type="text" placeholder="What's on your mind, youssef?" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHO'S ONLINE SECTION -->
+        <div class="online-section">
+            <div class="online-card">
+                <div class="online-header">
+                    <div class="online-title">
+                        <span class="online-dot"></span>
+                        <span class="title-main">Who's online</span>
+                        <span class="title-sep">•</span>
+                        <span class="title-sub">See who's been online recently</span>
+                    </div>
+                    <a href="#" class="see-all">SEE ALL LIVE MEMBERS <lucide-icon [name]="ChevronRight" class="h-4 w-4"></lucide-icon></a>
+                </div>
+
+                <div class="online-members-list">
+                    <div *ngFor="let member of onlineMembers" class="member-item">
+                        <div class="member-avatar">
+                            <img [src]="member.avatar" [alt]="member.name">
+                            <span class="status-indicator" [class.online]="member.status === 'online'" [class.away]="member.status === 'away'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POSTS LIST -->
+        <div class="posts-container">
+            <div *ngFor="let post of posts; let i = index" class="post-card">
+                <!-- Post Header -->
+                <div class="post-header">
+                    <div class="post-user-info">
+                        <div class="post-avatar">
+                            <img [src]="post.avatar" [alt]="post.author">
+                        </div>
+                        <div class="post-meta">
+                            <div class="post-author-row">
+                                <span class="post-author-name">{{ post.author }}</span>
+                                <span class="meta-dot">•</span>
+                                <div class="badge-icons">
+                                    <span class="badge-item purple">👥</span>
+                                    <span class="badge-item yellow">🚩</span>
+                                </div>
+                            </div>
+                            <p class="post-school">{{ post.school }}</p>
+                            <p class="post-date">{{ post.date }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="post-options-wrapper">
+                        <button class="post-more-btn" (click)="togglePostMenu(i, $event)">
+                            <lucide-icon [name]="MoreVertical" class="h-5 w-5"></lucide-icon>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="post-menu-dropdown" *ngIf="activePostMenuId() === i" (click)="$event.stopPropagation()">
+                            <button class="menu-item">Report content as inappropriate</button>
+                            <button class="menu-item">Copy Link</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post Content -->
+                <div class="post-content">
+                    <div class="content-text-wrapper">
+                        <div class="content-accent-line"></div>
+                        <div class="content-text">
+                            {{ post.content }}
+                            <a href="#" class="read-more">Read more</a>
+                        </div>
+                    </div>
+
+                    <!-- Attachment -->
+                    <div *ngIf="post.attachment" class="post-attachment">
+                        <div class="attachment-icon">
+                            <lucide-icon [name]="FileText" class="h-8 w-8 text-gray-400"></lucide-icon>
+                        </div>
+                        <div class="attachment-info">
+                            <p class="file-name">{{ post.attachment.name }}</p>
+                            <p class="file-type">{{ post.attachment.type }}</p>
+                        </div>
+                        <button class="download-btn">
+                            <lucide-icon [name]="Download" class="h-6 w-6"></lucide-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Post Actions -->
+                <div class="post-footer-actions">
+                    <div class="post-action-wrapper" (mouseenter)="showReactions(i)" (mouseleave)="hideReactions()">
+                        <!-- DEFAULT LIKE OR SELECTED REACTION -->
+                        <button class="post-action-btn" [style.color]="post.selectedReaction?.color || '#4b4b4b'">
+                            <span *ngIf="!post.selectedReaction">
+                                <lucide-icon [name]="ThumbsUp" class="h-5 w-5"></lucide-icon>
+                            </span>
+                            <span *ngIf="post.selectedReaction" class="selected-icon">
+                                {{ post.selectedReaction.icon }}
+                            </span>
+                            <span>{{ post.selectedReaction?.label || 'Like' }}</span>
+                        </button>
+                        
+                        <!-- Reaction Bar -->
+                        <div class="reaction-bar" *ngIf="activeReactionPostId() === i">
+                            <div *ngFor="let reaction of reactions" 
+                                 class="reaction-item" 
+                                 (click)="onReaction(i, reaction)"
+                                 [title]="reaction.label">
+                                <span class="reaction-icon">{{ reaction.icon }}</span>
+                                <span class="reaction-label">{{ reaction.label }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post Comment Box -->
+                <div class="post-comment-section">
+                    
+                    <!-- SIMPLE VIEW (Default) -->
+                    <div class="comment-simple-view" *ngIf="activeCommentPostId() !== i" (click)="setActiveComment(i)">
+                        <div class="comment-avatar-small">
+                            <img src="https://i.pravatar.cc/150?img=12" alt="User">
+                        </div>
+                        <div class="comment-simple-input">
+                            <span>Write a comment...</span>
+                        </div>
+                    </div>
+
+                    <!-- EXPANDED VIEW (On Focus) -->
+                    <div class="comment-expanded-view" *ngIf="activeCommentPostId() === i">
+                        <div class="comment-input-row">
+                            <div class="comment-avatar">
+                                <img src="https://i.pravatar.cc/150?img=12" alt="User">
+                            </div>
+                            <div class="comment-input-container">
+                                <label class="comment-label">Write a comment...*</label>
+                                <div class="comment-input-field-wrapper">
+                                    <input type="text" maxlength="4000" placeholder="" #commentInput autofocus>
+                                    <div class="comment-actions-inline">
+                                        <button class="comment-icon-btn red">
+                                            <lucide-icon [name]="Smile" class="h-6 w-6"></lucide-icon>
+                                        </button>
+                                        <button class="comment-icon-btn dark" (click)="clearActiveComment()">
+                                            <lucide-icon [name]="XIcon" class="h-6 w-6"></lucide-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="comment-footer">
+                                    <span class="comment-counter"><span class="red-text">{{ commentInput.value.length }}</span> / 4000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SIDEBAR (Right) -->
+    <div class="feed-sidebar">
+        
+        <!-- RECENT JOBS SECTION -->
+        <div class="jobs-section">
+            <div class="jobs-card">
+                <div class="jobs-header">
+                    <div class="new-badge grey">
+                        <span class="badge-count">34</span>
+                        <span class="badge-text">NEW</span>
+                    </div>
+                    <h3 class="jobs-title">Recent jobs</h3>
+                </div>
+
+                <div class="jobs-list">
+                    <div *ngFor="let job of recentJobs" class="job-item">
+                        <div class="company-logo">
+                            <img [src]="job.logo" [alt]="job.company">
+                        </div>
+                        <div class="job-info">
+                            <h4 class="job-item-title">{{ job.title }}</h4>
+                            <p class="company-name">{{ job.company }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="jobs-footer">
+                    <a routerLink="/etudiant/jobs" class="view-jobs-link">VIEW JOBS</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT MEMBERS SECTION -->
+        <div class="members-section">
+            <div class="members-card">
+                <div class="members-header">
+                    <div class="new-badge grey">
+                        <span class="badge-count">676</span>
+                        <span class="badge-text">NEW</span>
+                    </div>
+                    <h3 class="members-title">Recent members</h3>
+                </div>
+
+                <div class="members-grid">
+                    <div *ngFor="let member of recentMembers" class="member-grid-item">
+                        <img [src]="member.avatar" alt="Member">
+                    </div>
+                </div>
+
+                <div class="members-footer">
+                    <a href="#" class="view-members-link">VIEW MEMBERS</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL (Outside layout for fixed positioning) -->
+<div class="post-modal-overlay" [class.active]="isPostModalOpen()" (click)="closePostModal()">
+    <div class="post-modal" (click)="$event.stopPropagation()">
+        <!-- CLOSE -->
+        <button class="close-modal" (click)="closePostModal()">
+            &times;
+        </button>
+
+        <!-- HEADER -->
+        <div class="post-modal-header">
+            <div class="modal-profile">
+                <img src="https://i.pravatar.cc/150?img=12" alt="">
+            </div>
+            <input type="text" placeholder="What's on your mind, youssef?">
+        </div>
+
+        <!-- EDITOR -->
+        <div class="editor-container">
+            <div class="editor-toolbar">
+                <button><b>B</b></button>
+                <button><i>I</i></button>
+                <button><u>U</u></button>
+                <div class="toolbar-divider"></div>
+                <button>↶</button>
+                <button>↷</button>
+                <div class="toolbar-divider"></div>
+                <button>☰</button>
+                <button class="active">☰</button>
+                <button>☰</button>
+                <button>☰</button>
+                <div class="toolbar-divider"></div>
+                <button>≣</button>
+                <button>≣</button>
+                <div class="toolbar-divider"></div>
+                <button>•</button>
+                <button>1.</button>
+                <div class="toolbar-divider"></div>
+                <button>🔗</button>
+                <button>☺</button>
+            </div>
+            <textarea maxlength="4000"></textarea>
+            <div class="text-counter">
+                <span>0</span> / 4000
+            </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="post-actions">
+            <button class="action-btn">
+                <span>🏷</span> Tag
+            </button>
+            <div class="action-line"></div>
+            <button class="action-btn">
+                <span>🖼</span> Upload media
+            </button>
+            <div class="action-line"></div>
+            <button class="action-btn">
+                <span>📎</span> Attach files
+            </button>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="post-footer">
+            <button class="post-btn">POST</button>
+        </div>
+    </div>
+</div>

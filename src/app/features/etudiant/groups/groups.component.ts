@@ -21,9 +21,7 @@ import { LucideAngularModule, Search, Users, Plus, ChevronLeft, ChevronRight, Lo
   styleUrls: ['./groups.component.css']
 })
 export class GroupsComponent implements OnInit {
-scrollLabels(arg0: string) {
-throw new Error('Method not implemented.');
-}
+
   private groupService = inject(GroupService);
   private authService = inject(AuthService);
   private router = inject(Router);
