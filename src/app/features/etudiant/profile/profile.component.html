@@ -292,67 +292,9 @@
 </div>
 
 <!-- Help & Mentoring Edit Card (shown separately) -->
-<div *ngIf="isEditingHelp" class="card help-edit-card mt-6">
-  <div class="help-grid">
-    <!-- Help Section -->
-    <div class="help-col">
-      <div class="help-sub-title">
-        <i class="bi bi-life-preserver icon-red"></i>
-        <span>Offer Help</span>
-      </div>
-      <div class="checkbox-group">
-        <label *ngFor="let opt of helpOptions" class="checkbox-item">
-          <input type="checkbox" [(ngModel)]="helpSelections.offerHelp[opt]">
-          {{ opt }}
-        </label>
-      </div>
-    </div>
-
-    <div class="help-col">
-      <div class="help-sub-title">
-        <span>Seek Help</span>
-      </div>
-      <div class="checkbox-group">
-        <label *ngFor="let opt of helpOptions" class="checkbox-item">
-          <input type="checkbox" [(ngModel)]="helpSelections.seekHelp[opt]">
-          {{ opt }}
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <div class="help-divider-horiz"></div>
-
-  <div class="help-grid">
-    <!-- Mentoring Section -->
-    <div class="help-col">
-      <div class="help-sub-title">
-        <i class="bi bi-person-video3 icon-gray"></i>
-        <span>Offer Mentoring</span>
-      </div>
-      <div class="checkbox-group">
-        <label *ngFor="let opt of mentoringOptions" class="checkbox-item">
-          <input type="checkbox" [(ngModel)]="helpSelections.offerMentoring[opt]">
-          {{ opt }}
-        </label>
-      </div>
-    </div>
-
-    <div class="help-col">
-      <div class="help-sub-title">
-        <span>Seek Mentoring</span>
-      </div>
-      <div class="checkbox-group">
-        <label *ngFor="let opt of mentoringOptions" class="checkbox-item">
-          <input type="checkbox" [(ngModel)]="helpSelections.seekMentoring[opt]">
-          {{ opt }}
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <div class="help-edit-actions">
-    <button (click)="saveHelpSelections()" class="btn-save">SAVE SELECTIONS</button>
-    <button (click)="toggleEditHelp()" class="btn-cancel">CANCEL</button>
-  </div>
-</div>
+<app-help-mentoring-form
+  *ngIf="isEditingHelp"
+  [initialHelp]="helps[0]"
+  (save)="onHelpSaved($event)"
+  (cancel)="toggleEditHelp()">
+</app-help-mentoring-form>

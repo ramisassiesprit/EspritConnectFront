@@ -93,6 +93,34 @@ export const routes: Routes = [
           import('./features/etudiant/mentoring/mentoring.component').then(
             (m) => m.MentoringComponent,
           ),
+        children: [
+          {
+            path: '',
+            redirectTo: 'find',
+            pathMatch: 'full',
+          },
+          {
+            path: 'find',
+            loadComponent: () =>
+              import(
+                './features/etudiant/mentoring/find-mentor/find-mentor.component'
+              ).then((m) => m.FindMentorComponent),
+          },
+          {
+            path: 'settings',
+            loadComponent: () =>
+              import(
+                './features/etudiant/mentoring/MentorSettings/mentoringSettings.component'
+              ).then((m) => m.MentoringSettingsComponent),
+          },
+          {
+            path: 'profile/:id',
+            loadComponent: () =>
+              import(
+                './features/etudiant/mentoring/mentor-profile/mentor-profile.component'
+              ).then((m) => m.MentorProfileComponent),
+          },
+        ],
       },
       {
         path: 'jobs',
