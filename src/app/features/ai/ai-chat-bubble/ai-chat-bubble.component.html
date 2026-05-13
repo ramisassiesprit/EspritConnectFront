@@ -1,8 +1,8 @@
-<div class="fixed bottom-8 right-8 z-50 flex flex-col items-end group">
+<div class="fixed bottom-8 right-8 z-[9999] flex flex-col items-end group">
   @if (isOpen) {
     <!-- The Chat Window -->
     <div
-      class="mb-4 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col transform origin-bottom-right transition-all duration-300"
+      class="mb-4 w-80 sm:w-96 max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col transform origin-bottom-right transition-all duration-300"
     >
       <!-- Header -->
       <div
@@ -65,21 +65,21 @@
 
       <!-- Messages Area -->
       <div
-        class="h-80 bg-gray-50 flex-1 p-4 overflow-y-auto flex flex-col gap-4"
+        class="h-96 md:h-[500px] bg-gray-50 flex-1 p-4 overflow-y-auto flex flex-col gap-4"
       >
         @for (msg of messages; track $index) {
           @if (msg.sender === 'ai') {
-            <div class="flex items-start gap-2 max-w-[85%]">
+            <div class="flex items-start gap-2 max-w-[90%]">
               <div
                 class="w-8 h-8 rounded-full bg-[#ED1C24] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold mt-1"
               >
                 AI
               </div>
               <div
-                class="bg-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100 flex flex-col gap-2"
+                class="bg-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100 flex flex-col gap-2 w-full overflow-hidden"
               >
                 <!-- Main Message Content -->
-                <div class="whitespace-pre-wrap leading-relaxed">{{ msg.text }}</div>
+                <div class="whitespace-pre-wrap leading-relaxed prose prose-sm prose-red max-w-full" [innerHTML]="formatMessage(msg.text)"></div>
                 
                 <!-- Expandable Reasoning -->
                 @if (msg.reasoning) {
@@ -99,7 +99,7 @@
                     </button>
                     
                     @if (msg.isReasoningExpanded) {
-                      <div class="mt-2 p-2.5 bg-gray-50 rounded-lg text-[11px] text-gray-500 whitespace-pre-wrap italic border border-gray-100 leading-relaxed font-mono">
+                      <div class="mt-2 p-2.5 bg-gray-50 rounded-lg text-[11px] text-gray-500 whitespace-pre-wrap italic border border-gray-100 leading-relaxed font-mono max-h-48 overflow-y-auto">
                         {{ msg.reasoning }}
                       </div>
                     }
