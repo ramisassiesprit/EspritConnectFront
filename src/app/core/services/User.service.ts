@@ -21,6 +21,10 @@ export class UserService {
     return this.http.put<User>(`${this.apiUrl}/profile`, user);
   }
 
+  getUserById(userId: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${userId}`);
+  }
+
   // --- Gestion Admin ---
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);
@@ -38,5 +42,13 @@ export class UserService {
 
   deleteUser(userId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${userId}`);
+  }
+
+  getOnlineUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/online`);
+  }
+
+  getDirectoryUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/directory`);
   }
 }

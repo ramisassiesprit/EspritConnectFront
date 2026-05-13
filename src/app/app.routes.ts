@@ -154,6 +154,10 @@ export const routes: Routes = [
       {
         path: 'messages',
         loadComponent: () => import('./features/etudiant/chat/chat-list.component').then(m => m.ChatListComponent)
+      },
+      {
+        path: 'user/:id',
+        loadComponent: () => import('./features/etudiant/user-details/user-details.component').then(m => m.UserDetailsComponent)
       }
     ]
   },

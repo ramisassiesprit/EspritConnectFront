@@ -1,0 +1,67 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" (click)="onClose()"></div>
+
+  <!-- Modal Content -->
+  <div class="relative w-full max-w-lg transform overflow-hidden rounded-[24px] bg-white shadow-2xl transition-all animate-in fade-in zoom-in duration-300">
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#fde8ec] text-[#e50043]">
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path fill="#fff" d="M12 16l-3.5 2 1-4.2-3-2.8 4.2-.3L12 7l1.3 3.7 4.2.3-3 2.8 1 4.2z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-gray-800">My Achievements</h3>
+          <p class="text-xs text-gray-500">{{ badges.length }} Badges earned</p>
+        </div>
+      </div>
+      <button (click)="onClose()" class="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="max-h-[60vh] overflow-y-auto px-6 py-6 no-scrollbar">
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div *ngFor="let badge of badges" class="group flex flex-col items-center gap-3 rounded-2xl border border-gray-50 p-4 transition-all hover:border-[#ffe1e6] hover:bg-[#fff9fa]">
+          <div class="relative flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm transition-transform group-hover:scale-110">
+            <img *ngIf="badge.iconUrl" [src]="badge.iconUrl" class="h-10 w-10 object-contain" [alt]="badge.name">
+            <div *ngIf="!badge.iconUrl" class="text-[#e50043]">
+              <svg class="h-10 w-10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path fill="#fff" d="M12 16l-3.5 2 1-4.2-3-2.8 4.2-.3L12 7l1.3 3.7 4.2.3-3 2.8 1 4.2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-center">
+            <p class="text-sm font-bold text-gray-800">{{ badge.name }}</p>
+            <p class="mt-1 text-[10px] leading-tight text-gray-500">{{ badge.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="badges.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
+        <div class="mb-4 rounded-full bg-gray-50 p-4 text-gray-300">
+          <svg class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <p class="text-sm font-medium text-gray-500">No badges earned yet</p>
+        <p class="mt-1 text-xs text-gray-400">Keep participating to unlock achievements!</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t border-gray-100 bg-gray-50/50 px-6 py-4">
+      <button (click)="onClose()" class="w-full rounded-xl bg-[#e50043] py-2.5 text-sm font-bold text-white shadow-md shadow-[#e50043]/20 transition-all hover:bg-[#c4003a] hover:shadow-lg active:scale-[0.98]">
+        Got it!
+      </button>
+    </div>
+  </div>
+</div>

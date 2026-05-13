@@ -20,6 +20,10 @@ export class ChatService {
     const socket = new SockJS(`${this.baseUrl}/ws-chat`);
     this.stompClient = Stomp.over(socket);
 
+    this.stompClient.connectHeaders = {
+      userId: userId
+    };
+
     this.stompClient.onConnect = (frame: string) => {
       console.log('Connected: ' + frame);
       this.stompClient?.subscribe(`/user/${userId}/queue/messages`, (message: { body: string; }) => {

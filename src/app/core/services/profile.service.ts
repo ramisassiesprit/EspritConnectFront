@@ -75,4 +75,25 @@ export class ProfileService {
   deleteHelp(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/help/${id}`);
   }
+
+  // --- Public profile by userId ---
+  getEspritProfileByUserId(userId: string): Observable<EspritProfile> {
+    return this.http.get<EspritProfile>(`${this.apiUrl}/users/${userId}/esprit`);
+  }
+
+  getWorkExperiencesByUserId(userId: string): Observable<WorkExperience[]> {
+    return this.http.get<WorkExperience[]>(`${this.apiUrl}/users/${userId}/experience`);
+  }
+
+  getEducationsByUserId(userId: string): Observable<OtherEducation[]> {
+    return this.http.get<OtherEducation[]>(`${this.apiUrl}/users/${userId}/education`);
+  }
+
+  getSkillsByUserId(userId: string): Observable<Skill[]> {
+    return this.http.get<Skill[]>(`${this.apiUrl}/users/${userId}/skills`);
+  }
+
+  getWillingToHelpsByUserId(userId: string): Observable<WillingToHelp[]> {
+    return this.http.get<WillingToHelp[]>(`${this.apiUrl}/users/${userId}/help`);
+  }
 }

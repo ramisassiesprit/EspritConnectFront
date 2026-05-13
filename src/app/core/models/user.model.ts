@@ -39,5 +39,6 @@ export interface User {
   lastLoginAt?: string;
   createdAt?: string;
   updatedAt?: string;
+  isOnline?: boolean;
   badges?: Badge[];
 }
