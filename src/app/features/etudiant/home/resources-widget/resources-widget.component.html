@@ -1,56 +1,29 @@
 <div class="rounded-[24px] bg-white p-6 shadow-sm border border-[#ececec]">
   <h3 class="text-[18px] font-bold text-gray-800 mb-6">Resources</h3>
-  
+
   <div class="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-6">
-    <!-- Left List -->
     <div class="flex flex-col gap-5">
-      <!-- Item 1 -->
-      <div class="flex items-center gap-4 group cursor-pointer">
-        <div class="h-14 w-[84px] shrink-0 rounded-xl bg-[#6fc4fb] relative overflow-hidden shadow-inner border-b-2 border-[#3ba9f0] flex items-center justify-center">
-           <div class="w-10 h-8 bg-white rounded-sm absolute right-2 bottom-1.5 rotate-[-6deg] border-l-[3px] border-gray-100 shadow-sm"></div>
-           <div class="w-10 h-8 bg-white rounded-sm absolute right-2 bottom-2.5 rotate-[-2deg] border-l-[3px] border-gray-100 shadow-sm"></div>
-           <div class="w-3 h-10 bg-[#fbbf24] absolute left-3 bottom-1.5 rotate-[15deg] rounded-sm border-r-[2px] border-[#d97706]"></div>
-        </div>
-        <h4 class="text-[14px] font-bold text-[#e50043] leading-snug group-hover:underline">PFE book-Tunisie<br>Télécom</h4>
-      </div>
+      <div *ngIf="loading" class="text-[13px] text-gray-500">Loading resources...</div>
 
-      <!-- Item 2 -->
-      <div class="flex items-center gap-4 group cursor-pointer">
+      <button
+        type="button"
+        *ngFor="let file of filesPreview"
+        (click)="downloadFile(file)"
+        class="flex items-center gap-4 group cursor-pointer text-left"
+      >
         <div class="h-14 w-[84px] shrink-0 rounded-xl bg-[#6fc4fb] relative overflow-hidden shadow-inner border-b-2 border-[#3ba9f0] flex items-center justify-center">
-           <div class="w-10 h-8 bg-white rounded-sm absolute right-2 bottom-1.5 rotate-[-6deg] border-l-[3px] border-gray-100 shadow-sm"></div>
-           <div class="w-3 h-10 bg-[#fbbf24] absolute left-3 bottom-1.5 rotate-[15deg] rounded-sm border-r-[2px] border-[#d97706]"></div>
+          <div class="w-10 h-8 bg-white rounded-sm absolute right-2 bottom-1.5 rotate-[-6deg] border-l-[3px] border-gray-100 shadow-sm"></div>
+          <div class="w-10 h-8 bg-white rounded-sm absolute right-2 bottom-2.5 rotate-[-2deg] border-l-[3px] border-gray-100 shadow-sm"></div>
+          <div class="w-3 h-10 bg-[#fbbf24] absolute left-3 bottom-1.5 rotate-[15deg] rounded-sm border-r-[2px] border-[#d97706]"></div>
         </div>
-        <h4 class="text-[14px] font-bold text-[#e50043] leading-snug group-hover:underline">Catalogue de PFE-<br>Aiventu</h4>
-      </div>
+        <h4 class="text-[14px] font-bold text-[#e50043] leading-snug group-hover:underline">{{ file.name }}</h4>
+      </button>
 
-      <!-- Item 3 -->
-      <div class="flex items-center gap-4 group cursor-pointer">
-        <div class="h-14 w-[84px] shrink-0 rounded-xl bg-white border border-gray-100 flex items-center justify-center shadow-sm p-1">
-           <span class="text-[#002f56] font-bold text-[13px] tracking-tight">inetum<span class="text-[#84cc16]">.</span></span>
-        </div>
-        <h4 class="text-[14px] font-bold text-[#e50043] leading-snug group-hover:underline">Catalogue de PFE-<br>Inetum</h4>
-      </div>
-
-      <!-- Item 4 -->
-      <div class="flex items-center gap-4 group cursor-pointer">
-        <div class="h-14 w-[84px] shrink-0 rounded-xl bg-[#6fc4fb] relative overflow-hidden shadow-inner border-b-2 border-[#3ba9f0] flex items-center justify-center">
-           <div class="w-10 h-8 bg-white rounded-sm absolute right-2 bottom-1.5 rotate-[-6deg] border-l-[3px] border-gray-100 shadow-sm"></div>
-           <div class="w-3 h-10 bg-[#fbbf24] absolute left-3 bottom-1.5 rotate-[15deg] rounded-sm border-r-[2px] border-[#d97706]"></div>
-        </div>
-        <h4 class="text-[14px] font-bold text-[#e50043] leading-snug group-hover:underline">Tritux pfe book-23-<br>24</h4>
-      </div>
-
-      <!-- Item 5 -->
-      <div class="flex items-center gap-4 group cursor-pointer">
-        <div class="h-14 w-[84px] shrink-0 rounded-xl bg-[#6fc4fb] relative overflow-hidden shadow-inner border-b-2 border-[#3ba9f0] flex items-center justify-center">
-           <div class="w-10 h-8 bg-white rounded-sm absolute right-2 bottom-1.5 rotate-[-6deg] border-l-[3px] border-gray-100 shadow-sm"></div>
-           <div class="w-3 h-10 bg-[#fbbf24] absolute left-3 bottom-1.5 rotate-[15deg] rounded-sm border-r-[2px] border-[#d97706]"></div>
-        </div>
-        <h4 class="text-[14px] font-bold text-[#e50043] leading-snug group-hover:underline">SAFRAN-PFE BOOK<br>23-24</h4>
+      <div *ngIf="!loading && filesPreview.length === 0" class="text-[13px] text-gray-500">
+        No resources available yet.
       </div>
     </div>
 
-    <!-- Right Feature -->
     <div class="bg-[#f8f9fa] rounded-[32px] p-8 flex flex-col items-center text-center">
       <div class="relative w-full aspect-square max-w-[140px] mb-6 flex items-center justify-center">
          <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +37,13 @@
       </div>
       <h4 class="text-[16px] font-bold text-gray-700 mb-2">Explore More Resources</h4>
       <p class="text-[11px] text-gray-500 mb-8 leading-relaxed max-w-[180px]">See more resources to learn, and find helpful tools and information</p>
-      <a href="#" class="text-[12px] font-bold text-[#e50043] hover:underline uppercase tracking-widest active:scale-95 transition-transform">Go to resources</a>
+      <a
+        [routerLink]="['/etudiant/resources']"
+        [queryParams]="{ viewMode: 'GRID_VIEW' }"
+        class="text-[12px] font-bold text-[#e50043] hover:underline uppercase tracking-widest active:scale-95 transition-transform"
+      >
+        Go to resources
+      </a>
     </div>
   </div>
 </div>
