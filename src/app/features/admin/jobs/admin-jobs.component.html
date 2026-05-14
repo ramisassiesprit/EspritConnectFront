@@ -1,0 +1,125 @@
+<div class="admin-jobs">
+  <header class="admin-jobs__header">
+    <div>
+      <h1>Jobs Management</h1>
+      <p>Create and manage job offers, then review applications.</p>
+    </div>
+    <button class="btn btn--primary" (click)="startCreate()">+ New Job</button>
+  </header>
+
+  <p class="alert alert--ok" *ngIf="message">{{ message }}</p>
+  <p class="alert alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="panel" *ngIf="showCreateForm">
+    <h2>{{ editingJobId ? 'Edit Job Offer' : 'Create Job Offer' }}</h2>
+
+    <div class="form-grid">
+      <label>
+        Title
+        <input [(ngModel)]="form.title" type="text" placeholder="Job title" />
+      </label>
+
+      <label>
+        Company
+        <input [(ngModel)]="form.company" type="text" placeholder="Company name" />
+      </label>
+
+      <label>
+        Industry
+        <input [(ngModel)]="form.industry" type="text" placeholder="Industry" />
+      </label>
+
+      <label>
+        Location
+        <input [(ngModel)]="form.location" type="text" placeholder="Location" />
+      </label>
+
+      <label>
+        Contract type
+        <select [(ngModel)]="form.contractType">
+          <option *ngFor="let type of contractTypes" [value]="type">{{ type }}</option>
+        </select>
+      </label>
+
+      <label>
+        Status
+        <select [(ngModel)]="form.status">
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </label>
+
+      <label>
+        Experience level
+        <input [(ngModel)]="form.experienceLevel" type="text" placeholder="Junior, Mid, Senior..." />
+      </label>
+
+      <label>
+        Deadline
+        <input [(ngModel)]="form.deadline" type="date" />
+      </label>
+    </div>
+
+    <label class="full">
+      Description
+      <textarea [(ngModel)]="form.description" rows="5" placeholder="Job description"></textarea>
+    </label>
+
+    <div class="actions">
+      <button class="btn btn--primary" (click)="saveJob()" [disabled]="saving">{{ saving ? 'Saving...' : 'Save' }}</button>
+      <button class="btn btn--ghost" (click)="cancelForm()">Cancel</button>
+    </div>
+  </section>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="panel__top">
+        <h2>All Jobs</h2>
+        <input [(ngModel)]="search" type="text" placeholder="Search by title, company, location" />
+      </div>
+
+      <p *ngIf="loading">Loading jobs...</p>
+      <p *ngIf="!loading && filteredJobs.length === 0">No jobs found.</p>
+
+      <div class="job-list" *ngIf="!loading && filteredJobs.length > 0">
+        <article class="job-item" *ngFor="let job of filteredJobs" [class.active]="selectedJobId === job.id">
+          <div class="job-item__main" (click)="selectJob(job)">
+            <h3>{{ job.title }}</h3>
+            <p>{{ job.company || 'N/A' }} · {{ job.location || 'N/A' }}</p>
+            <small>{{ job.contractType || 'N/A' }} · {{ job.status }}</small>
+          </div>
+          <div class="job-item__actions">
+            <button class="btn btn--small btn--ghost" (click)="startEdit(job)">Edit</button>
+            <button class="btn btn--small btn--danger" (click)="deleteJob(job)">Delete</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Applications</h2>
+      <p *ngIf="!selectedJob">Select a job to view applications.</p>
+      <p *ngIf="selectedJob && applications.length === 0">No applications for this job yet.</p>
+
+      <div class="apps" *ngIf="selectedJob && applications.length > 0">
+        <article class="app-item" *ngFor="let app of applications">
+          <div>
+            <h4>Applicant: {{ app.applicantId || 'Unknown' }}</h4>
+            <p>Applied: {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p>CV: {{ app.cvUrl || 'N/A' }}</p>
+            <p>Cover letter: {{ app.coverLetterUrl || 'N/A' }}</p>
+          </div>
+
+          <label>
+            Status
+            <select
+              [ngModel]="app.status || 'PENDING'"
+              (ngModelChange)="updateApplicationStatus(app, $event)"
+            >
+              <option *ngFor="let status of applicationStatuses" [value]="status">{{ status }}</option>
+            </select>
+          </label>
+        </article>
+      </div>
+    </section>
+  </div>
+</div>
