@@ -1,1 +1,97 @@
-<p>resources works!</p>
+<div class="resources-page">
+  <section class="resources-card intro">
+    <h1>Resources</h1>
+    <p>The space to organize all of your knowledge resources in a simple and intuitive way.</p>
+  </section>
+
+  <section class="resources-card" *ngIf="!selectedFolder">
+    <div class="toolbar">
+      <div class="left">
+        <h2>Explore Folders</h2>
+        <div class="sort">
+          <span>Sort:</span>
+          <button [class.active]="sortType === 'LAST_UPDATED'" (click)="setSortType('LAST_UPDATED')">Last updated</button>
+          <button [class.active]="sortType === 'A_TO_Z'" (click)="setSortType('A_TO_Z')">A-Z</button>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="search-wrap">
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Search for a folder, file, link, etc." />
+        </div>
+        <div class="view-switch">
+          <button [class.active]="viewMode === 'GRID'" (click)="setViewMode('GRID')">Grid</button>
+          <button [class.active]="viewMode === 'LIST'" (click)="setViewMode('LIST')">List</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="state" *ngIf="loading">Loading resources...</div>
+    <div class="state error" *ngIf="!loading && error">{{ error }}</div>
+
+    <div class="folders-grid" *ngIf="!loading && !error && viewMode === 'GRID'">
+      <article class="folder-tile" *ngFor="let folder of filteredFolders" (click)="openFolder(folder.id)">
+        <img [src]="folder.coverImageUrl || '/assets/folder-default.jpg'" alt="folder cover" />
+        <span class="items-pill">{{ folder.itemsCount }} {{ folder.itemsCount > 1 ? 'Items' : 'Item' }}</span>
+        <div class="overlay">
+          <h3>{{ folder.name }}</h3>
+        </div>
+      </article>
+    </div>
+
+    <div class="folders-list" *ngIf="!loading && !error && viewMode === 'LIST'">
+      <article class="folder-row" *ngFor="let folder of filteredFolders" (click)="openFolder(folder.id)">
+        <img [src]="folder.coverImageUrl || '/assets/folder-default.jpg'" alt="folder cover" />
+        <div class="meta">
+          <h3>{{ folder.name }}</h3>
+          <p>Created by <strong>{{ folder.creatorName }}</strong> on {{ formatDate(folder.createdAt) }}</p>
+        </div>
+        <span class="items-pill">{{ folder.itemsCount }} {{ folder.itemsCount > 1 ? 'Items' : 'Item' }}</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="resources-card" *ngIf="selectedFolder">
+    <button class="back-btn" (click)="backToAllResources()">Back to all resources</button>
+
+    <div class="folder-header">
+      <img [src]="selectedFolder.coverImageUrl || '/assets/folder-default.jpg'" alt="folder cover" />
+      <div>
+        <h2>{{ selectedFolder.name }}</h2>
+        <p>
+          Created by <strong>{{ selectedFolder.creatorName }}</strong>
+          · Last updated {{ selectedFolder.updatedAtLabel }}
+        </p>
+      </div>
+    </div>
+
+    <div class="toolbar details-toolbar">
+      <div class="left">
+        <div class="sort">
+          <span>Sort:</span>
+          <button [class.active]="sortType === 'LAST_UPDATED'" (click)="setSortType('LAST_UPDATED')">Last updated</button>
+          <button [class.active]="sortType === 'A_TO_Z'" (click)="setSortType('A_TO_Z')">A-Z</button>
+        </div>
+      </div>
+      <div class="right">
+        <div class="search-wrap">
+          <input type="text" [(ngModel)]="folderSearchTerm" placeholder="Search within the folder" />
+        </div>
+      </div>
+    </div>
+
+    <div class="state" *ngIf="loading">Loading files...</div>
+    <div class="state error" *ngIf="!loading && error">{{ error }}</div>
+
+    <div class="files-list" *ngIf="!loading && !error">
+      <article class="file-row" *ngFor="let file of filteredFiles">
+        <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=300&auto=format&fit=crop" alt="file" />
+        <div class="meta">
+          <h3>{{ file.name }}</h3>
+          <p>{{ file.mimeType || 'File' }} · Created: {{ formatDate(file.createdAt) }} · Last updated: {{ formatDate(file.updatedAt) }}</p>
+        </div>
+        <button class="download" (click)="downloadFile(file)">Download</button>
+      </article>
+    </div>
+  </section>
+</div>

@@ -172,6 +172,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'resources/:id',
+        loadComponent: () =>
+          import('./features/etudiant/resources/resources.component').then(
+            (m) => m.ResourcesComponent,
+          ),
+      },
+      {
         path: 'info-support',
         loadComponent: () =>
           import('./features/etudiant/info-support/info-support.component').then(
@@ -237,6 +244,15 @@ export const routes: Routes = [
             (m) => m.UsersListComponent,
           ),
       },
+      {
+        path: 'resources',
+        loadComponent: () =>
+          import('./features/admin/resources/admin-resources.component').then(
+            (m) => m.AdminResourcesComponent,
+          ),
+      },
     ],
   },
 ];
+
+

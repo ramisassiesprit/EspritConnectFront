@@ -1,0 +1,97 @@
+<div class="admin-resources">
+  <header class="admin-resources__header">
+    <div>
+      <h1>Resources Management</h1>
+      <p>Create folders, upload files, and manage learning resources.</p>
+    </div>
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search folders/files..." />
+  </header>
+
+  <div class="alerts">
+    <p class="message" *ngIf="message">{{ message }}</p>
+    <p class="error" *ngIf="error">{{ error }}</p>
+  </div>
+
+  <section class="card">
+    <h2>Create New Folder</h2>
+    <div class="grid-2">
+      <input type="text" [(ngModel)]="folderName" placeholder="Folder name" />
+      <input type="text" [(ngModel)]="coverImageUrl" placeholder="Cover image URL (optional)" />
+    </div>
+    <button class="btn-primary" (click)="createFolder()">Create folder</button>
+  </section>
+
+  <section class="card" *ngIf="selectedFolderDetails">
+    <h2>Edit Folder</h2>
+    <div class="grid-2">
+      <input type="text" [(ngModel)]="editFolderName" placeholder="Folder name" />
+      <input type="text" [(ngModel)]="editCoverImageUrl" placeholder="Cover image URL" />
+    </div>
+    <button class="btn-secondary" (click)="updateFolder()">Save changes</button>
+  </section>
+
+  <section class="card">
+    <h2>Upload File</h2>
+    <div class="grid-2">
+      <select [(ngModel)]="selectedFolderId" (change)="loadFolderDetails(selectedFolderId)">
+        <option value="">Select folder</option>
+        <option *ngFor="let folder of folders" [value]="folder.id">{{ folder.name }}</option>
+      </select>
+      <input type="file" (change)="onFileSelected($event)" />
+    </div>
+    <button class="btn-primary" (click)="submitUpload()">Upload file</button>
+  </section>
+
+  <section class="card">
+    <div class="section-title">
+      <h2>Folders</h2>
+      <button class="btn-secondary" (click)="loadFolders()">Refresh</button>
+    </div>
+
+    <p *ngIf="loading">Loading folders...</p>
+
+    <div class="folder-list" *ngIf="!loading">
+      <article class="folder-row" *ngFor="let folder of pagedFolders">
+        <div class="folder-info" (click)="loadFolderDetails(folder.id)">
+          <h3>{{ folder.name }}</h3>
+          <p>{{ folder.itemsCount }} item(s) · Updated {{ folder.updatedAt | date:'mediumDate' }}</p>
+        </div>
+        <button class="btn-danger" (click)="deleteFolder(folder.id)">Delete</button>
+      </article>
+    </div>
+
+    <div class="pager" *ngIf="folderTotalPages > 1">
+      <button class="btn-secondary" (click)="prevFolderPage()" [disabled]="folderPage === 1">Prev</button>
+      <span>Page {{ folderPage }} / {{ folderTotalPages }}</span>
+      <button class="btn-secondary" (click)="nextFolderPage()" [disabled]="folderPage === folderTotalPages">Next</button>
+    </div>
+  </section>
+
+  <section class="card" *ngIf="selectedFolderDetails">
+    <h2>Files in "{{ selectedFolderDetails.name }}"</h2>
+
+    <div class="file-list" *ngIf="selectedFolderDetails.files.length > 0; else emptyFiles">
+      <article class="file-row" *ngFor="let file of pagedFiles">
+        <div>
+          <h3>{{ file.name }}</h3>
+          <p>{{ file.updatedAt | date:'medium' }}</p>
+        </div>
+        <div class="actions">
+          <button class="btn-secondary" (click)="previewFile(file)">Preview</button>
+          <button class="btn-primary" (click)="downloadFile(file)">Download</button>
+          <button class="btn-danger" (click)="deleteFile(file.id)">Delete</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="pager" *ngIf="fileTotalPages > 1">
+      <button class="btn-secondary" (click)="prevFilePage()" [disabled]="filePage === 1">Prev</button>
+      <span>Page {{ filePage }} / {{ fileTotalPages }}</span>
+      <button class="btn-secondary" (click)="nextFilePage()" [disabled]="filePage === fileTotalPages">Next</button>
+    </div>
+
+    <ng-template #emptyFiles>
+      <p>No files in this folder.</p>
+    </ng-template>
+  </section>
+</div>
