@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../../../../core/services/auth.service';
-import { LucideAngularModule, Search, Users, Info, MoreVertical, Github, ThumbsUp } from 'lucide-angular';
+import { LucideAngularModule, Search, Users, Info, MoreVertical, Github, ThumbsUp, User } from 'lucide-angular';
 
 interface GroupPost {
   id: string;
@@ -50,6 +50,7 @@ export class GroupFeedTabComponent implements OnInit {
   readonly MoreVertical = MoreVertical;
   readonly Github = Github;
   readonly ThumbsUp = ThumbsUp;
+  readonly User = User;
 
   mockPosts: GroupPost[] = [
     {

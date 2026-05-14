@@ -6,7 +6,7 @@ import { GroupService } from '../../../core/services/group.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Group } from '../../../core/models/group.model';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Search, Users, Plus, ChevronLeft, ChevronRight, LogOut, Info, UserPlus } from 'lucide-angular';
+import { LucideAngularModule, Search, Users, Plus, ChevronLeft, ChevronRight, LogOut, Info, UserPlus, Trash, Edit } from 'lucide-angular';
 
 @Component({
   selector: 'app-groups',
@@ -34,6 +34,7 @@ export class GroupsComponent implements OnInit {
   loading = false;
   error = '';
   isCreateRoute = false;
+  isEditRoute = false;
   isFeedRoute = false;
   private membershipSub?: Subscription;
 
@@ -45,6 +46,8 @@ export class GroupsComponent implements OnInit {
   readonly LogOut = LogOut;
   readonly Info = Info;
   readonly UserPlus = UserPlus;
+  readonly Trash = Trash;
+  readonly Edit = Edit;
 
   ngOnInit() {
     this.updateRouteMode(this.router.url);
@@ -126,8 +129,8 @@ export class GroupsComponent implements OnInit {
 
   get filteredAllGroups(): Group[] {
     // Exclude joined groups from "More Groups"
-    const joinedIds = new Set(this.joinedGroups.map(g => g.id));
-    let filtered = this.allGroups.filter(g => !joinedIds.has(g.id));
+    const joinedIds = new Set(this.joinedGroups.map(g => String(g.id)));
+    let filtered = this.allGroups.filter(g => !joinedIds.has(String(g.id)));
     
     if (this.selectedLabel) {
       filtered = filtered.filter(g => 
@@ -170,6 +173,7 @@ export class GroupsComponent implements OnInit {
 
   private updateRouteMode(url: string) {
     this.isCreateRoute = url.endsWith('/create');
+    this.isEditRoute = url.includes('/edit/');
     // Check if we are in any of the group detail tabs
     this.isFeedRoute = url.includes('/feed') || 
                        url.includes('/members') || 
@@ -181,6 +185,32 @@ export class GroupsComponent implements OnInit {
     if (groupId) {
       this.router.navigate(['/etudiant/groups', groupId, 'feed']);
     }
+  }
+
+  isOwner(group: Group): boolean {
+    const userId = this.authService.currentUser()?.userId;
+    return !!userId && group.creatorId === userId;
+  }
+
+  editGroup(event: Event, group: Group) {
+    event.stopPropagation();
+    this.router.navigate(['/etudiant/groups/edit', group.id]);
+  }
+
+  deleteGroup(event: Event, group: Group) {
+    event.stopPropagation();
+    if (!confirm(`Are you sure you want to delete "${group.groupName}"? This action cannot be undone.`)) return;
+
+    this.groupService.deleteGroup(group.id).subscribe({
+      next: () => {
+        const userId = this.authService.currentUser()?.userId;
+        if (userId) this.loadGroups(userId);
+      },
+      error: (err) => {
+        console.error('Failed to delete group', err);
+        alert('Failed to delete group. Please try again.');
+      }
+    });
   }
 
   joinGroup(event: Event, groupId: string | number | undefined) {
