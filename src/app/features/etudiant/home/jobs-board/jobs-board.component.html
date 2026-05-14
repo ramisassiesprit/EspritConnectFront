@@ -1,85 +1,38 @@
 <div class="rounded-[24px] bg-white p-6 shadow-sm border border-[#ececec]">
   <div class="flex items-center justify-between mb-5 px-1">
     <h3 class="text-[18px] font-bold text-gray-800">Jobs board</h3>
-    <a href="#" class="text-[11px] font-bold uppercase tracking-wider text-[#e50043] hover:underline">More Jobs</a>
+    <a routerLink="/etudiant/jobs" class="text-[11px] font-bold uppercase tracking-wider text-[#e50043] hover:underline">More Jobs</a>
   </div>
-  
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-    <!-- Job 1 -->
-    <div class="bg-[#f8f9fa] rounded-2xl p-4 flex gap-3.5 border border-transparent hover:border-gray-200 transition-all cursor-pointer group">
+
+  <div *ngIf="loading" class="text-[13px] text-gray-500 px-1">Loading jobs...</div>
+  <div *ngIf="!loading && error" class="text-[13px] text-red-500 px-1">{{ error }}</div>
+  <div *ngIf="!loading && !error && jobs.length === 0" class="text-[13px] text-gray-500 px-1">
+    No open jobs available yet.
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" *ngIf="!loading && !error && jobs.length > 0">
+    <div
+      class="bg-[#f8f9fa] rounded-2xl p-4 flex gap-3.5 border border-transparent hover:border-gray-200 transition-all cursor-pointer group"
+      *ngFor="let job of jobs"
+      (click)="openJob(job.id)"
+    >
       <div class="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-2 shrink-0 shadow-sm overflow-hidden">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_L0W3eGf6q7p0M5J8hQxU_q8p8O7g5p_q-w&s" alt="Dada" class="max-w-full max-h-full object-contain">
+        <span class="text-[#e50043] font-bold text-base">
+          {{ job.company ? (job.company.charAt(0) | uppercase) : 'J' }}
+        </span>
       </div>
+
       <div class="flex flex-col min-w-0 justify-center">
-        <h4 class="text-[13px] font-bold text-[#e50043] leading-snug group-hover:underline">Offres de stage PFE ré...</h4>
-        <p class="text-[11px] text-gray-600 font-medium mt-0.5">Dada Rent a Car</p>
+        <h4 class="text-[13px] font-bold text-[#e50043] leading-snug group-hover:underline truncate">
+          {{ job.title }}
+        </h4>
+        <p class="text-[11px] text-gray-600 font-medium mt-0.5 truncate">{{ job.company || 'Company N/A' }}</p>
         <div class="flex items-center gap-1 text-[10px] text-gray-500 mt-1.5">
-          <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
-          <span class="truncate">El Aouina, Tunis, Tunisia</span>
+          <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+          </svg>
+          <span class="truncate">{{ job.location || 'Location N/A' }}</span>
         </div>
-      </div>
-    </div>
-
-    <!-- Job 2 -->
-    <div class="bg-[#f8f9fa] rounded-2xl p-4 flex gap-3.5 border border-transparent hover:border-gray-200 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-2 shrink-0 shadow-sm overflow-hidden">
-        <div class="text-[10px] font-bold text-gray-400">KPS GROUPE</div>
-      </div>
-      <div class="flex flex-col min-w-0 justify-center">
-        <h4 class="text-[13px] font-bold text-[#e50043] leading-snug group-hover:underline">Offre de stage - - Stage...</h4>
-        <p class="text-[11px] text-gray-600 font-medium mt-0.5">KPS Groupe</p>
-        <div class="flex items-center gap-1 text-[10px] text-gray-500 mt-1.5">
-          <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
-          <span class="truncate">Tunis, Tunisia</span>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Job 3 -->
-    <div class="bg-[#f8f9fa] rounded-2xl p-4 flex gap-3.5 border border-transparent hover:border-gray-200 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-2 shrink-0 shadow-sm overflow-hidden">
-        <span class="text-[#e50043] font-bold text-lg italic">M</span>
-      </div>
-      <div class="flex flex-col min-w-0 justify-center">
-        <h4 class="text-[13px] font-bold text-[#e50043] leading-snug group-hover:underline">Offre d'emploi</h4>
-        <p class="text-[11px] text-gray-600 font-medium mt-0.5">Murex</p>
-      </div>
-    </div>
-
-    <!-- Job 4 -->
-    <div class="bg-[#f8f9fa] rounded-2xl p-4 flex gap-3.5 border border-transparent hover:border-gray-200 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-2 shrink-0 shadow-sm overflow-hidden">
-        <div class="text-[10px] font-bold text-gray-400">KPS GROUPE</div>
-      </div>
-      <div class="flex flex-col min-w-0 justify-center">
-        <h4 class="text-[13px] font-bold text-[#e50043] leading-snug group-hover:underline">STAGIAIRE PFE / Busin...</h4>
-        <p class="text-[11px] text-gray-600 font-medium mt-0.5">KPS Groupe</p>
-        <div class="flex items-center gap-1 text-[10px] text-gray-500 mt-1.5">
-          <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
-          <span class="truncate">Tunis, Tunisia</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Job 5 -->
-    <div class="bg-[#f8f9fa] rounded-2xl p-4 flex gap-3.5 border border-transparent hover:border-gray-200 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-2 shrink-0 shadow-sm overflow-hidden">
-        <img src="https://static.thenounproject.com/png/4381014-200.png" alt="Nagarro" class="max-w-[70%] object-contain">
-      </div>
-      <div class="flex flex-col min-w-0 justify-center">
-        <h4 class="text-[13px] font-bold text-[#e50043] leading-snug group-hover:underline">Offres d'emploi</h4>
-        <p class="text-[11px] text-gray-600 font-medium mt-0.5">Nagarro</p>
-      </div>
-    </div>
-
-    <!-- Job 6 -->
-    <div class="bg-[#f8f9fa] rounded-2xl p-4 flex gap-3.5 border border-transparent hover:border-gray-200 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-2 shrink-0 shadow-sm overflow-hidden">
-        <span class="text-blue-500 font-bold text-[10px]">SOASY</span>
-      </div>
-      <div class="flex flex-col min-w-0 justify-center">
-        <h4 class="text-[13px] font-bold text-[#e50043] leading-snug group-hover:underline">Stage Ingénieur : Fine-t...</h4>
-        <p class="text-[11px] text-gray-600 font-medium mt-0.5">Soasy</p>
       </div>
     </div>
   </div>

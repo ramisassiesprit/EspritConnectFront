@@ -130,6 +130,18 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'jobs/board',
+        redirectTo: 'jobs',
+        pathMatch: 'full',
+      },
+      {
+        path: 'jobs/:id',
+        loadComponent: () =>
+          import('./features/etudiant/jobs/jobs.component').then(
+            (m) => m.JobsComponent,
+          ),
+      },
+      {
         path: 'photos',
         loadComponent: () =>
           import('./features/etudiant/photos/photos.component').then(
@@ -253,6 +265,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/resources/admin-resources.component').then(
             (m) => m.AdminResourcesComponent,
+          ),
+      },
+      {
+        path: 'jobs',
+        loadComponent: () =>
+          import('./features/admin/jobs/admin-jobs.component').then(
+            (m) => m.AdminJobsComponent,
           ),
       },
     ],
