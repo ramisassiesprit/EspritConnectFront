@@ -3,45 +3,46 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupService } from '../../../../core/services/group.service';
-import { UserService } from '../../../../core/services/User.service';
-import { GroupCreateRequest, GroupPrivacy } from '../../../../core/models/group.model';
-import { User } from '../../../../core/models/user.model';
+import { Group, GroupPrivacy } from '../../../../core/models/group.model';
 import { QuillModule } from 'ngx-quill';
 
 @Component({
-  selector: 'app-group-create',
+  selector: 'app-group-update',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule, QuillModule],
-  templateUrl: './group-create.component.html',
-  styleUrls: ['./group-create.component.css']
+  templateUrl: './group-update.component.html',
+  styleUrls: ['./group-update.component.css']
 })
-export class GroupCreateComponent implements OnInit {
+export class GroupUpdateComponent implements OnInit {
   private fb = inject(FormBuilder);
   private groupService = inject(GroupService);
-  private userService = inject(UserService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  activeStep = 1;
-  creating = false;
+  updating = false;
   error = '';
-  isEditMode = false;
-  editGroupId: string | null = null;
+  groupId: string | null = null;
+  currentGroup: Group | null = null;
 
   // Dropdown options
   affiliationOptions = ['student', 'Alumni', 'company', 'teacher/staff'];
   espritPrograms = ['ESE - Esprit School of Engineering', 'ESB - Esprit School of Business', 'ESM - Esprim Monastir', 'Evening Classes', 'Dual Studies'];
   helpOptions = ['introduction to connections', 'answer industry specific questions', 'open doors at Workplace', 'meet for coffee'];
   mentoringOptions = ['Mentor a young professional', 'Mentor a student', 'Career advice', 'Resume review', 'Internship'];
-  
+  fieldOfStudyOptions = ['Computer Science', 'Engineering', 'Business', 'Finance', 'Marketing', 'Other'];
+  degreeOptions = ['Bachelor', 'Master', 'PhD', 'Diploma'];
+  graduationYearOptions = Array.from({ length: 20 }, (_, i) => String(new Date().getFullYear() - 10 + i));
+  industryOptions = ['Technology', 'Finance', 'Healthcare', 'Education', 'Manufacturing', 'Retail', 'Other'];
+  jobFunctionOptions = ['Engineering', 'Sales', 'Marketing', 'Operations', 'HR', 'Finance', 'Other'];
+
   // Selection states
   locations: string[] = [];
   newLocation = '';
-  
+
   labels: string[] = [];
   newLabel = '';
 
-  // Dropdown open/close states (closed initially)
+  // Dropdown open/close states
   dropdownStates: { [key: string]: boolean } = {
     affiliation: false,
     fieldOfStudy: false,
@@ -74,6 +75,7 @@ export class GroupCreateComponent implements OnInit {
     mentoringOffering: '',
     mentoringSeeking: ''
   };
+
   selectedOptions: { [key: string]: string[] } = {
     affiliation: [],
     fieldOfStudy: [],
@@ -89,12 +91,6 @@ export class GroupCreateComponent implements OnInit {
     mentoringOffering: [],
     mentoringSeeking: []
   };
-
-  // User search
-  userSearchTerm = '';
-  foundUsers: User[] = [];
-  addedMembers: User[] = [];
-  isSearchingUsers = false;
 
   quillModules = {
     toolbar: {
@@ -127,8 +123,7 @@ export class GroupCreateComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.isEditMode = true;
-        this.editGroupId = id;
+        this.groupId = id;
         this.loadGroupData(id);
       }
     });
@@ -137,6 +132,7 @@ export class GroupCreateComponent implements OnInit {
   private loadGroupData(id: string) {
     this.groupService.getGroupById(id).subscribe({
       next: (group) => {
+        this.currentGroup = group;
         this.groupForm.patchValue({
           groupName: group.groupName,
           description: group.description,
@@ -147,10 +143,15 @@ export class GroupCreateComponent implements OnInit {
         });
 
         if (group.logoUrl) {
-          this.logoPreview = group.logoUrl.startsWith('http') ? group.logoUrl : `http://localhost:8086/EspritConnect/${group.logoUrl}`;
+          this.logoPreview = group.logoUrl.startsWith('http') 
+            ? group.logoUrl 
+            : `${this.getBaseUrl()}${group.logoUrl}`;
         }
+
         if (group.bannerUrl) {
-          this.bannerPreview = group.bannerUrl.startsWith('http') ? group.bannerUrl : `http://localhost:8086/EspritConnect/${group.bannerUrl}`;
+          this.bannerPreview = group.bannerUrl.startsWith('http') 
+            ? group.bannerUrl 
+            : `${this.getBaseUrl()}${group.bannerUrl}`;
         }
 
         this.labels = group.labels ? group.labels.split(',').map(l => l.trim()).filter(Boolean) : [];
@@ -183,39 +184,14 @@ export class GroupCreateComponent implements OnInit {
     });
   }
 
-  // --- Step Management ---
-  get stepOneValid() {
-    return (this.groupForm.get('groupName')?.valid ?? false) && (this.groupForm.get('description')?.valid ?? false);
+  private getBaseUrl(): string {
+    return 'http://localhost:8086/EspritConnect/';
   }
 
-  get stepTwoValid() {
-    return (this.groupForm.get('privacy')?.valid ?? false);
-  }
 
-  goToStep(step: number) {
-    if (step === 2 && !this.stepOneValid) {
-      this.groupForm.get('groupName')?.markAsTouched();
-      this.groupForm.get('description')?.markAsTouched();
-      return;
-    }
-    if (step === 3 && !this.stepTwoValid) {
-      return;
-    }
-    this.activeStep = step;
-  }
-
-  advanceStep() {
-    if (this.activeStep === 1) {
-      this.goToStep(2);
-    } else if (this.activeStep === 2) {
-      this.addLabel();
-      this.goToStep(3);
-    }
-  }
 
   // --- Dropdown Logic ---
   toggleDropdown(field: string) {
-    // Close others first for better UX?
     Object.keys(this.dropdownStates).forEach(key => {
       if (key !== field) this.dropdownStates[key] = false;
     });
@@ -252,34 +228,18 @@ export class GroupCreateComponent implements OnInit {
     }
   }
 
-  addLocation() {}
-
   removeLocation(loc: string) {
     this.locations = this.locations.filter(l => l !== loc);
   }
 
   addLabelFromInput(input: HTMLInputElement) {
     const value = input.value;
-    console.log('addLabelFromInput called with:', value);
     if (value && value.trim()) {
       const label = value.trim();
       if (!this.labels.includes(label)) {
         this.labels.push(label);
-        console.log('Label added. Current labels:', this.labels);
       }
       input.value = '';
-    }
-  }
-
-  addLabel() {
-    console.log('addLabel called with:', this.newLabel);
-    if (this.newLabel && this.newLabel.trim()) {
-      const label = this.newLabel.trim();
-      if (!this.labels.includes(label)) {
-        this.labels.push(label);
-        console.log('Label added. Current labels:', this.labels);
-      }
-      this.newLabel = '';
     }
   }
 
@@ -287,156 +247,82 @@ export class GroupCreateComponent implements OnInit {
     this.labels = this.labels.filter(l => l !== label);
   }
 
-  // --- User Search ---
-  searchUsers() {
-    if (this.userSearchTerm.length < 2) {
-      this.foundUsers = [];
-      return;
-    }
-
-    this.isSearchingUsers = true;
-    this.userService.getDirectoryUsers().subscribe({
-      next: (users) => {
-        const term = this.userSearchTerm.toLowerCase();
-        this.foundUsers = users.filter(u => 
-          u.firstName.toLowerCase().includes(term) || 
-          u.lastName.toLowerCase().includes(term)
-        ).slice(0, 5);
-        this.isSearchingUsers = false;
-      },
-      error: () => {
-        this.isSearchingUsers = false;
-      }
-    });
-  }
-
-  addMember(user: User) {
-    if (!this.addedMembers.find(m => m.id === user.id)) {
-      this.addedMembers.push(user);
-    }
-    this.userSearchTerm = '';
-    this.foundUsers = [];
-  }
-
-  removeMember(userId: string) {
-    this.addedMembers = this.addedMembers.filter(m => m.id !== userId);
-  }
-
   // --- File Upload ---
   onLogoFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files?.[0]) {
+    if (input.files && input.files.length > 0) {
       this.logoFile = input.files[0];
-      this.createPreview(this.logoFile, 'logo');
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.logoPreview = e.target?.result as string;
+      };
+      reader.readAsDataURL(this.logoFile);
     }
   }
 
   onBannerFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files?.[0]) {
+    if (input.files && input.files.length > 0) {
       this.bannerFile = input.files[0];
-      this.createPreview(this.bannerFile, 'banner');
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.bannerPreview = e.target?.result as string;
+      };
+      reader.readAsDataURL(this.bannerFile);
     }
   }
 
-  private createPreview(file: File, type: 'logo' | 'banner') {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (type === 'logo') this.logoPreview = e.target?.result as string;
-      else this.bannerPreview = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  removeLogo() { this.logoFile = null; this.logoPreview = null; }
-  removeBanner() { this.bannerFile = null; this.bannerPreview = null; }
-
-  onCancel() {
-    this.router.navigate(['/etudiant/groups']);
-  }
-
-  submit() {
-    if (this.activeStep !== 3) {
-      this.advanceStep();
-      return;
-    }
-    
-    this.addLocation();
-
-    if (this.groupForm.invalid) {
-      this.groupForm.markAllAsTouched();
+  // --- Submit ---
+  submitUpdate() {
+    if (!this.groupForm.valid || !this.groupId) {
       return;
     }
 
-    const formValue = this.groupForm.value;
-    const payload: GroupCreateRequest = {
-      groupName: formValue.groupName!,
-      description: formValue.description!,
-      website: formValue.website || undefined,
-      privacy: formValue.privacy as GroupPrivacy,
-      tagging: formValue.tagging ?? false,
-      labels: this.labels.join(','),
-      location: this.locations.join(','),
-      affiliation: this.selectedOptions['affiliation'].join(','),
-      fieldOfStudy: this.selectedOptions['fieldOfStudy'].join(','),
-      degree: this.selectedOptions['degree'].join(','),
-      graduationYear: this.selectedOptions['graduationYear'].join(','),
-      institutionProgram: this.selectedOptions['institutionProgram'].join(','),
-      otherDegree: this.selectedOptions['otherDegree'].join(','),
-      otherGraduationYear: this.selectedOptions['otherGraduationYear'].join(','),
-      company: formValue.company || undefined,
-      industry: this.selectedOptions['industry'].join(','),
-      jobFunction: this.selectedOptions['jobFunction'].join(','),
-      willingOffering: this.selectedOptions['offeringHelp'].join(','),
-      willingSeeking: this.selectedOptions['seekingHelp'].join(','),
-      mentoringOffering: this.selectedOptions['mentoringOffering'].join(','),
-      mentoringSeeking: this.selectedOptions['mentoringSeeking'].join(','),
-      addMembers: this.addedMembers.map(m => m.id).join(',')
-    };
-    console.log('Sending group labels:', payload.labels);
-    this.creating = true;
-    this.error = '';
-
-    if (this.isEditMode && this.editGroupId) {
-      this.groupService.updateGroup(this.editGroupId, payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
-        next: () => {
-          alert('Group updated successfully!');
-          this.router.navigate(['/etudiant/groups']);
-        },
-        error: (err) => {
-          console.error('Group update failed:', err);
-          this.error = 'Unable to update group. Please check your inputs and try again.';
-          this.creating = false;
-        }
-      });
-    } else {
-      this.groupService.createGroupWithFiles(payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
-        next: () => {
-          alert('Group created successfully! Your group is pending admin approval.');
-          this.router.navigate(['/etudiant/groups']);
-        },
-        error: (err) => {
-          console.error('Group creation failed:', err);
-          this.error = 'Unable to create group. Please check your inputs and try again.';
-          this.creating = false;
-        }
-      });
-    }
-  }
-
-  deleteGroup() {
-    if (!this.editGroupId) return;
-    if (!confirm('Are you sure you want to delete this group? This action cannot be undone.')) return;
+    this.updating = true;
+    const formValue = this.groupForm.getRawValue();
     
-    this.groupService.deleteGroup(this.editGroupId).subscribe({
-      next: () => {
-        alert('Group deleted successfully.');
-        this.router.navigate(['/etudiant/groups']);
+    const payload: any = {
+      groupName: formValue.groupName || '',
+      description: formValue.description || '',
+      website: formValue.website || '',
+      privacy: formValue.privacy || 'PUBLIC',
+      tagging: formValue.tagging || false,
+      company: formValue.company || '',
+      location: this.locations.join(', '),
+      labels: this.labels.join(', '),
+      affiliation: this.selectedOptions['affiliation'].join(', '),
+      fieldOfStudy: this.selectedOptions['fieldOfStudy'].join(', '),
+      degree: this.selectedOptions['degree'].join(', '),
+      graduationYear: this.selectedOptions['graduationYear'].join(', '),
+      institutionProgram: this.selectedOptions['institutionProgram'].join(', '),
+      otherDegree: this.selectedOptions['otherDegree'].join(', '),
+      otherGraduationYear: this.selectedOptions['otherGraduationYear'].join(', '),
+      industry: this.selectedOptions['industry'].join(', '),
+      jobFunction: this.selectedOptions['jobFunction'].join(', '),
+      willingOffering: this.selectedOptions['offeringHelp'].join(', '),
+      willingSeeking: this.selectedOptions['seekingHelp'].join(', '),
+      mentoringOffering: this.selectedOptions['mentoringOffering'].join(', '),
+      mentoringSeeking: this.selectedOptions['mentoringSeeking'].join(', ')
+    };
+
+    this.groupService.updateGroup(this.groupId, payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
+      next: (updatedGroup) => {
+        this.updating = false;
+        this.router.navigate(['/etudiant/groups', this.groupId]);
       },
       error: (err) => {
-        console.error('Failed to delete group', err);
-        this.error = 'Failed to delete group. Please try again.';
+        this.updating = false;
+        this.error = 'Failed to update group. Please try again.';
+        console.error('Update error:', err);
       }
     });
+  }
+
+  cancel() {
+    if (this.groupId) {
+      this.router.navigate(['/etudiant/groups', this.groupId]);
+    } else {
+      this.router.navigate(['/etudiant/groups']);
+    }
   }
 }

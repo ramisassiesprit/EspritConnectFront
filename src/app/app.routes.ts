@@ -157,6 +157,10 @@ export const routes: Routes = [
             loadComponent: () => import('./features/etudiant/groups/group-create/group-create.component').then(m => m.GroupCreateComponent)
           },
           {
+            path: 'edit/:id',
+            loadComponent: () => import('./features/etudiant/groups/group-update/group-update.component').then(m => m.GroupUpdateComponent)
+          },
+          {
             path: ':id',
             loadComponent: () => import('./features/etudiant/groups/group-details/group-details.component').then(m => m.GroupDetailsComponent),
             children: [

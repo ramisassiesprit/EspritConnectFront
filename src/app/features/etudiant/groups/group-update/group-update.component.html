@@ -1,0 +1,315 @@
+<div class="group-update-container">
+  <!-- Top Action Bar -->
+  <div class="top-action-bar">
+    <div class="bar-title">
+      <i class="fas fa-edit"></i>
+      <h2>Update Group</h2>
+    </div>
+    <div class="bar-actions">
+      <button class="btn-text-cancel" (click)="cancel()">Cancel</button>
+      <button class="btn-pill-action btn-pill-red" [disabled]="updating" (click)="submitUpdate()">
+        {{ updating ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div class="update-content" [formGroup]="groupForm">
+    <!-- Header/Banner Card -->
+    <div class="header-card">
+      <div class="banner-section" (click)="bannerInput.click()">
+        <img *ngIf="bannerPreview" [src]="bannerPreview" class="banner-img">
+        <div class="banner-overlay">
+          <i class="fas fa-camera"></i> Change Cover Photo
+        </div>
+        <input #bannerInput type="file" (change)="onBannerFileSelected($event)" accept="image/*" hidden>
+      </div>
+      <div class="logo-section" (click)="logoInput.click()">
+        <img *ngIf="logoPreview" [src]="logoPreview" class="logo-img">
+        <div class="logo-overlay">
+          <i class="fas fa-camera"></i>
+        </div>
+        <input #logoInput type="file" (change)="onLogoFileSelected($event)" accept="image/*" hidden>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="layout-grid">
+      <!-- Left Column -->
+      <div class="col-main">
+        <div class="section-card">
+          <h3 class="section-title">Basic Information</h3>
+
+          <div class="form-group"
+            [class.required]="groupForm.get('groupName')?.invalid && groupForm.get('groupName')?.touched">
+            <label>Group name *</label>
+            <input type="text" formControlName="groupName" class="underline-input" placeholder="Enter group name">
+          </div>
+
+          <div class="form-group">
+            <label>Website</label>
+            <input type="text" formControlName="website" class="underline-input" placeholder="Enter website URL">
+          </div>
+
+          <div class="form-group"
+            [class.required]="groupForm.get('description')?.invalid && groupForm.get('description')?.touched">
+            <label>Description *</label>
+            <div class="quill-wrapper">
+              <quill-editor formControlName="description" [modules]="quillModules" placeholder="Describe your group...">
+              </quill-editor>
+              <div class="char-counter">
+                {{ groupForm.get('description')?.value?.length || 0 }} / 4000
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Membership Criteria</h3>
+
+          <div class="form-group">
+            <label>Location</label>
+            <div style="position: relative;">
+              <input #locInput type="text" class="underline-input" placeholder="Location"
+                (keydown.enter)="$event.preventDefault(); addLocationFromInput(locInput)">
+              <i class="fas fa-map-marker-alt" style="position: absolute; right: 0; bottom: 10px; color: #64748b;"></i>
+            </div>
+            <div class="tags-display" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+              <div *ngFor="let loc of locations" class="tag-pill">
+                {{ loc }}
+                <i class="fas fa-times" (click)="removeLocation(loc)"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="criteria-grid">
+            <div class="form-group">
+              <label>Affiliation</label>
+              <div class="dropdown-field" (click)="toggleDropdown('affiliation')">
+                {{ selectedOptions['affiliation'].length ? selectedOptions['affiliation'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['affiliation']" (click)="$event.stopPropagation()">
+                  <div class="search-box"><input type="text" placeholder="Search..."
+                      [(ngModel)]="searchTerms['affiliation']" [ngModelOptions]="{standalone: true}"></div>
+                  <div class="checkbox-item" *ngFor="let opt of getFilteredOptions('affiliation', affiliationOptions)"
+                    (click)="toggleOption('affiliation', opt)">
+                    <input type="checkbox" [checked]="isSelected('affiliation', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Field of study</label>
+              <div class="dropdown-field" (click)="toggleDropdown('fieldOfStudy')">
+                {{ selectedOptions['fieldOfStudy'].length ? selectedOptions['fieldOfStudy'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['fieldOfStudy']" (click)="$event.stopPropagation()">
+                  <div class="search-box"><input type="text" placeholder="Search..."
+                      [(ngModel)]="searchTerms['fieldOfStudy']" [ngModelOptions]="{standalone: true}"></div>
+                  <div class="checkbox-item" *ngFor="let opt of getFilteredOptions('fieldOfStudy', fieldOfStudyOptions)"
+                    (click)="toggleOption('fieldOfStudy', opt)">
+                    <input type="checkbox" [checked]="isSelected('fieldOfStudy', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Degree</label>
+              <div class="dropdown-field" (click)="toggleDropdown('degree')">
+                {{ selectedOptions['degree'].length ? selectedOptions['degree'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['degree']" (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let opt of degreeOptions" (click)="toggleOption('degree', opt)">
+                    <input type="checkbox" [checked]="isSelected('degree', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Graduation year</label>
+              <div class="dropdown-field" (click)="toggleDropdown('graduationYear')">
+                {{ selectedOptions['graduationYear'].length ? selectedOptions['graduationYear'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['graduationYear']" (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let year of graduationYearOptions"
+                    (click)="toggleOption('graduationYear', year)">
+                    <input type="checkbox" [checked]="isSelected('graduationYear', year)">
+                    <span>{{ year }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Professional Information</h3>
+
+          <div class="form-group">
+            <label>Company</label>
+            <input type="text" formControlName="company" class="underline-input" placeholder="Company">
+          </div>
+
+          <div class="criteria-grid">
+            <div class="form-group">
+              <label>Industry</label>
+              <div class="dropdown-field" (click)="toggleDropdown('industry')">
+                {{ selectedOptions['industry'].length ? selectedOptions['industry'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['industry']" (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let opt of industryOptions"
+                    (click)="toggleOption('industry', opt)">
+                    <input type="checkbox" [checked]="isSelected('industry', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Job function</label>
+              <div class="dropdown-field" (click)="toggleDropdown('jobFunction')">
+                {{ selectedOptions['jobFunction'].length ? selectedOptions['jobFunction'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['jobFunction']" (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let opt of jobFunctionOptions"
+                    (click)="toggleOption('jobFunction', opt)">
+                    <input type="checkbox" [checked]="isSelected('jobFunction', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-sidebar">
+        <div class="section-card">
+          <h3 class="section-title">Settings</h3>
+
+          <div class="form-group">
+            <label>Privacy</label>
+            <div class="radio-group">
+              <div class="radio-option" [class.active]="groupForm.get('privacy')?.value === 'PUBLIC'"
+                (click)="groupForm.get('privacy')?.setValue('PUBLIC')">
+                <div class="radio-circle">
+                  <div class="radio-inner"></div>
+                </div>
+                <span>Open (No approval required)</span>
+              </div>
+              <div class="radio-option" [class.active]="groupForm.get('privacy')?.value === 'PRIVATE'"
+                (click)="groupForm.get('privacy')?.setValue('PRIVATE')">
+                <div class="radio-circle">
+                  <div class="radio-inner"></div>
+                </div>
+                <span>Closed (Approval required)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 24px;">
+            <label>Tagging</label>
+            <div class="radio-group">
+              <div class="radio-option" [class.active]="groupForm.get('tagging')?.value === true"
+                (click)="groupForm.get('tagging')?.setValue(true)">
+                <div class="radio-circle">
+                  <div class="radio-inner"></div>
+                </div>
+                <span>Allow members to tag group</span>
+              </div>
+              <div class="radio-option" [class.active]="groupForm.get('tagging')?.value === false"
+                (click)="groupForm.get('tagging')?.setValue(false)">
+                <div class="radio-circle">
+                  <div class="radio-inner"></div>
+                </div>
+                <span>Don't allow member tags</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Labels</h3>
+          <p class="section-desc">Add descriptive tags for easy searching.</p>
+          <div class="label-input-wrapper">
+            <input #labelInput type="text" class="rounded-pill-input" placeholder="New Label..."
+              (keydown.enter)="$event.preventDefault(); addLabelFromInput(labelInput)">
+            <i class="fas fa-plus" (click)="addLabelFromInput(labelInput)"></i>
+          </div>
+          <div class="tags-display" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+            <div *ngFor="let label of labels" class="tag-pill tag-pill-red">
+              {{ label }}
+              <i class="fas fa-times" (click)="removeLabel(label)"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Mentoring & Help</h3>
+
+          <div class="form-group">
+            <label>Offering Help</label>
+            <div class="dropdown-field" (click)="toggleDropdown('offeringHelp')">
+              {{ selectedOptions['offeringHelp'].length ? selectedOptions['offeringHelp'].join(', ') : 'Select' }}
+              <div class="dropdown-menu" *ngIf="dropdownStates['offeringHelp']" (click)="$event.stopPropagation()">
+                <div class="checkbox-item" *ngFor="let opt of helpOptions" (click)="toggleOption('offeringHelp', opt)">
+                  <input type="checkbox" [checked]="isSelected('offeringHelp', opt)">
+                  <span>{{ opt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Seeking Help</label>
+            <div class="dropdown-field" (click)="toggleDropdown('seekingHelp')">
+              {{ selectedOptions['seekingHelp'].length ? selectedOptions['seekingHelp'].join(', ') : 'Select' }}
+              <div class="dropdown-menu" *ngIf="dropdownStates['seekingHelp']" (click)="$event.stopPropagation()">
+                <div class="checkbox-item" *ngFor="let opt of helpOptions" (click)="toggleOption('seekingHelp', opt)">
+                  <input type="checkbox" [checked]="isSelected('seekingHelp', opt)">
+                  <span>{{ opt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Mentoring Offering</label>
+            <div class="dropdown-field" (click)="toggleDropdown('mentoringOffering')">
+              {{ selectedOptions['mentoringOffering'].length ? selectedOptions['mentoringOffering'].join(', ') :
+              'Select' }}
+              <div class="dropdown-menu" *ngIf="dropdownStates['mentoringOffering']" (click)="$event.stopPropagation()">
+                <div class="checkbox-item" *ngFor="let opt of mentoringOptions"
+                  (click)="toggleOption('mentoringOffering', opt)">
+                  <input type="checkbox" [checked]="isSelected('mentoringOffering', opt)">
+                  <span>{{ opt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Mentoring Seeking</label>
+            <div class="dropdown-field" (click)="toggleDropdown('mentoringSeeking')">
+              {{ selectedOptions['mentoringSeeking'].length ? selectedOptions['mentoringSeeking'].join(', ') : 'Select'
+              }}
+              <div class="dropdown-menu" *ngIf="dropdownStates['mentoringSeeking']" (click)="$event.stopPropagation()">
+                <div class="checkbox-item" *ngFor="let opt of mentoringOptions"
+                  (click)="toggleOption('mentoringSeeking', opt)">
+                  <input type="checkbox" [checked]="isSelected('mentoringSeeking', opt)">
+                  <span>{{ opt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

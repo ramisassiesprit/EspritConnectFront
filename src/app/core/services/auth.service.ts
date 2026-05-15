@@ -27,9 +27,13 @@ export class AuthService {
 
   private loadSession() {
     const session = this.encryptionService.getItem(this.sessionKey) as UserSession;
+    console.log('Loading session:', session);
     if (session) {
       this.isLoggedIn.set(true);
       this.currentUser.set(session);
+      console.log('User is logged in with role:', session.role);
+    } else {
+      console.log('No session found');
     }
   }
 

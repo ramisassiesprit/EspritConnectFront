@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { LucideAngularModule, Search, Users, Info, ChevronRight, Filter, Building, Briefcase, ChevronDown } from 'lucide-angular';
+import { LucideAngularModule, Search, Users, Info, ChevronRight, Filter, Building, Briefcase, ChevronDown, User } from 'lucide-angular';
 
 interface GroupMember {
   id: string;
@@ -34,6 +34,7 @@ export class GroupMembersTabComponent implements OnInit {
   readonly Building = Building;
   readonly Briefcase = Briefcase;
   readonly ChevronDown = ChevronDown;
+  readonly User = User;
 
   mockOnlineMembers: GroupMember[] = [
     { id: '1', firstName: 'Hichem', lastName: 'Abbassi', avatarUrl: 'https://via.placeholder.com/80', isOnline: true, role: 'STUDENT' },

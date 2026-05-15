@@ -1,5 +1,5 @@
-<div class="groups-page" [class.groups-page--subroute]="isCreateRoute || isFeedRoute">
-  <ng-container *ngIf="!isCreateRoute && !isFeedRoute">
+<div class="groups-page" [class.groups-page--subroute]="isCreateRoute || isFeedRoute || isEditRoute">
+  <ng-container *ngIf="!isCreateRoute && !isFeedRoute && !isEditRoute">
     <!-- Header Card -->
     <header class="groups-section-card">
       <div class="header-top">
@@ -58,21 +58,31 @@
       </div>
 
       <div class="your-groups-grid" *ngIf="filteredJoinedGroups.length">
-        <article *ngFor="let group of filteredJoinedGroups" class="your-group-card" (click)="navigateToGroupFeed(group.id)">
-          <img [src]="group.logoUrl" [alt]="group.groupName" class="your-group-img">
-          <div class="your-group-info">
-            <span class="your-group-name">{{ group.groupName }}</span>
-          </div>
-        </article>
+          <article *ngFor="let group of filteredJoinedGroups" class="your-group-card" (click)="navigateToGroupFeed(group.id)">
+            <img [src]="group.logoUrl" [alt]="group.groupName" class="your-group-img">
+            <div class="your-group-info">
+              <span class="your-group-name">{{ group.groupName }}</span>
+            </div>
+            
+            <!-- Management Buttons for Owners -->
+            <div class="group-management-overlay" *ngIf="isOwner(group)">
+              <button class="mgmt-btn edit" (click)="editGroup($event, group)" title="Edit">
+                <lucide-icon [img]="Edit" size="14"></lucide-icon>
+              </button>
+              <button class="mgmt-btn delete" (click)="deleteGroup($event, group)" title="Delete">
+                <lucide-icon [img]="Trash" size="14"></lucide-icon>
+              </button>
+            </div>
+          </article>
       </div>
     </section>
 
-    <!-- More Groups Section -->
+    <!-- Suggested Groups Section -->
     <section class="groups-section-card" *ngIf="!loading && !error">
-      <h2 class="section-title">More Groups</h2>
+      <h2 class="section-title">Suggested for you</h2>
 
       <div *ngIf="!filteredAllGroups.length" class="empty-state">
-        <p>{{ selectedLabel || searchQuery ? 'No more groups match your search.' : 'No more groups available.' }}</p>
+        <p>{{ selectedLabel || searchQuery ? 'No groups match your search.' : 'No more suggested groups available.' }}</p>
       </div>
 
       <div class="more-groups-list" *ngIf="filteredAllGroups.length">
@@ -94,6 +104,22 @@
             <div class="group-list-labels" *ngIf="group.labels">
               <span *ngFor="let label of group.labels.split(',')" class="list-label-tag">{{ label.trim() }}</span>
             </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="group-list-actions">
+            <!-- Management Buttons for Owners -->
+            <ng-container *ngIf="isOwner(group)">
+              <button class="mgmt-btn edit" (click)="editGroup($event, group)" title="Edit">
+                <lucide-icon [img]="Edit" size="16"></lucide-icon>
+              </button>
+              <button class="mgmt-btn delete" (click)="deleteGroup($event, group)" title="Delete">
+                <lucide-icon [img]="Trash" size="16"></lucide-icon>
+              </button>
+            </ng-container>
+            <button class="btn-join" (click)="joinGroup($event, group.id)" title="Join Group">
+              Join
+            </button>
           </div>
         </article>
       </div>

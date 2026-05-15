@@ -6,16 +6,17 @@ export interface Group {
   logoUrl?: string;
   bannerUrl?: string;
   privacy?: GroupPrivacy;
+  status?: GroupStatus;
   tagging?: boolean;
   labels?: string;
   location?: string;
   affiliation?: string;
   fieldOfStudy?: string;
   degree?: string;
-  graduationYear?: number;
+  graduationYear?: string;
   institutionProgram?: string;
   otherDegree?: string;
-  otherGraduationYear?: number;
+  otherGraduationYear?: string;
   company?: string;
   industry?: string;
   jobFunction?: string;
@@ -43,10 +44,10 @@ export interface GroupCreateRequest {
   affiliation?: string;
   fieldOfStudy?: string;
   degree?: string;
-  graduationYear?: number;
+  graduationYear?: string;
   institutionProgram?: string;
   otherDegree?: string;
-  otherGraduationYear?: number;
+  otherGraduationYear?: string;
   company?: string;
   industry?: string;
   jobFunction?: string;
@@ -61,4 +62,10 @@ export enum GroupPrivacy {
   PUBLIC = 'PUBLIC',
   PRIVATE = 'PRIVATE',
   SECRET = 'SECRET'
+}
+
+export enum GroupStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
 }
