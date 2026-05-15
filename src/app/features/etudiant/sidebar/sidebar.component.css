@@ -4,7 +4,7 @@
   max-height: calc(100vh - var(--navbar-height, 60px) - 40px);
   height: fit-content;
   border-radius: var(--radius-lg, 16px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   padding: 16px 0;
   overflow-y: auto;
   position: -webkit-sticky;
@@ -80,7 +80,8 @@
 /* Sub Navigation */
 .sidebar__sub-nav {
   display: flex;
-  padding-left: 33px; /* Align with the icon center */
+  padding-left: 33px;
+  /* Align with the icon center */
   margin-bottom: 5px;
 }
 
@@ -118,7 +119,8 @@
 .sidebar__sub-item.active::before {
   content: '';
   position: absolute;
-  left: -21px; /* Align with the vertical line */
+  left: -21px;
+  /* Align with the vertical line */
   top: 50%;
   transform: translateY(-50%);
   width: 4px;
@@ -142,19 +144,23 @@
 }
 
 /* Scrollbar styling */
-.sidebar::-webkit-scrollbar { 
-  width: 6px; 
+.sidebar::-webkit-scrollbar {
+  width: 6px;
 }
+
 .sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .sidebar::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 10px;
 }
+
 .sidebar::-webkit-scrollbar-thumb:hover {
   background: #aaa;
 }
+
 .sidebar {
   scrollbar-width: thin;
   scrollbar-color: #ccc transparent;

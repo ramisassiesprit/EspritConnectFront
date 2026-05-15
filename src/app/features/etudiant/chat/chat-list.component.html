@@ -1,0 +1,29 @@
+<div class="chat-list-container">
+  <div class="list-header">
+    <h2>Mes Conversations</h2>
+  </div>
+
+  <div class="conversation-items">
+    <div *ngFor="let conv of conversations" 
+         [routerLink]="['/etudiant/chat', conv.receiverId]"
+         class="conversation-card">
+      <div class="user-avatar">
+        <i class="bi bi-person-circle"></i>
+      </div>
+      <div class="conv-info">
+        <div class="info-top">
+          <span class="username">{{ conv.senderName }}</span>
+          <span class="time">{{ conv.sentAt | date:'shortDate' }}</span>
+        </div>
+        <div class="info-bottom">
+          <p class="last-message">{{ conv.content }}</p>
+          <span *ngIf="!conv.isRead && conv.receiverId === currentUser?.id" class="unread-dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="conversations.length === 0" class="empty-state">
+      <p>Aucune conversation pour le moment.</p>
+    </div>
+  </div>
+</div>

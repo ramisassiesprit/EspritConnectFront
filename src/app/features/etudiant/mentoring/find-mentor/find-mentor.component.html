@@ -1,0 +1,198 @@
+<div class="mentoring-container">
+  
+  @if (!selectedCategory) {
+    <!-- Categories List View -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-6 py-5 border-b border-gray-100">
+        <h2 class="text-gray-500 font-medium text-[15px]">Find Mentors By Job Function / Field</h2>
+      </div>
+      
+      @if (isLoading) {
+        <div class="p-8 text-center text-gray-400">Loading mentors...</div>
+      } @else if (categories.length === 0) {
+        <div class="p-8 text-center text-gray-400">No mentors available right now.</div>
+      } @else {
+        <div class="flex flex-col">
+          @for (cat of categories; track $index) {
+            <div (click)="selectCategory(cat)" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer border-b border-transparent hover:border-gray-50 group">
+              <div class="flex items-center gap-6">
+                <div class="w-10 h-10 rounded-full bg-[#ED1C24] text-white flex items-center justify-center font-medium text-lg leading-none shadow-sm shadow-red-200">
+                  {{ $index + 1 }}
+                </div>
+                <span class="text-[#ED1C24] text-[15px] hover:underline">{{ cat.name }}</span>
+              </div>
+              <div class="text-gray-500 text-[14px]">
+                {{ cat.count }} Available Mentor{{ cat.count !== 1 ? "s" : "" }}
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Mentors Directory View -->
+    <div class="flex flex-col gap-6">
+      <!-- Search Bar & Tabs -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col pt-4">
+        <div class="px-6 mb-4 flex items-center">
+          <button (click)="backToCategories()" class="mr-4 text-gray-400 hover:text-[#ED1C24]">
+            <i class="bi bi-arrow-left text-xl"></i>
+          </button>
+          <div class="relative flex-1">
+            <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search in {{ selectedCategory.name }}..." 
+                   class="w-full bg-gray-50 border border-gray-200 rounded-full py-2 pl-12 pr-4 text-sm focus:outline-none focus:border-[#ED1C24] focus:ring-1 focus:ring-[#ED1C24]/20 transition-all">
+          </div>
+        </div>
+        <div class="flex border-b border-gray-100 px-6">
+          <button class="px-6 py-3 text-gray-500 font-medium text-sm hover:text-[#ED1C24] transition-colors">All</button>
+          <button class="px-6 py-3 text-[#ED1C24] font-medium text-sm border-b-2 border-[#ED1C24]">Mentors</button>
+        </div>
+      </div>
+
+      <div class="flex gap-6 items-start">
+        
+        <!-- Users List -->
+        <div class="flex-1 flex flex-col gap-4">
+          <div class="flex justify-between items-center px-1">
+            <span class="text-gray-500 text-sm">{{ filteredUsers.length }} Registered Users in {{ selectedCategory.name }}</span>
+            <div class="text-gray-500 text-sm flex items-center gap-1 cursor-pointer">
+              Sort: <span class="text-[#ED1C24]">Alphabetically</span>
+              <i class="bi bi-caret-down-fill text-[10px] text-gray-400"></i>
+            </div>
+          </div>
+
+          @for (mentor of filteredUsers; track mentor.user.id) {
+            <div [routerLink]="['../profile', mentor.user.id]" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 pl-8 flex items-center gap-6 relative group hover:shadow-md transition-shadow cursor-pointer">
+              
+              <!-- Willing to help Ribbon -->
+              <div class="absolute -left-2 top-4 bg-gray-500 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider rounded-r-md before:content-['] before:absolute before:-bottom-1.5 before:left-0 before:border-t-[6px] before:border-t-gray-700 before:border-l-[6px] before:border-l-transparent">
+                Willing to help
+              </div>
+
+              <!-- Avatar -->
+              <div class="relative w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex-shrink-0 flex items-center justify-center text-gray-300">
+                @if (mentor.user.avatarUrl) {
+                  <img [src]="mentor.user.avatarUrl" class="w-full h-full rounded-full object-cover">
+                } @else {
+                  <i class="bi bi-person-fill text-3xl"></i>
+                }
+                <!-- Online indicator -->
+                <div class="absolute bottom-0 right-0 w-4 h-4 bg-gray-300 border-2 border-white rounded-full" [ngClass]="{'bg-green-400': mentor.user.isOnline}"></div>
+              </div>
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="text-[#ED1C24] font-bold text-[15px] truncate">{{ mentor.user.firstName }} {{ mentor.user.lastName }}</h3>
+                </div>
+                <div class="inline-block bg-gray-100 text-gray-500 text-[11px] px-2 py-0.5 rounded-sm mb-2">Student</div>
+                
+                <div class="text-[#ED1C24] text-[13px] truncate">
+                  {{ mentor.user.firstName | uppercase }} {{ mentor.user.lastName | uppercase }} ESPRIT
+                </div>
+                <!-- Profile Study -->
+                @if (mentor.profile) {
+                  <div class="text-[#ED1C24] text-[11px] opacity-80 truncate">
+                    {{ mentor.profile.fieldOfStudy }}, {{ mentor.profile.degree }} - {{ mentor.profile.institution }}
+                  </div>
+                }
+              </div>
+
+              <!-- Arrow -->
+              <div class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 group-hover:border-[#ED1C24] group-hover:text-[#ED1C24] transition-colors shrink-0">
+                <i class="bi bi-chevron-right text-xs"></i>
+              </div>
+
+            </div>
+          }
+          
+          @if (filteredUsers.length === 0) {
+            <div class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
+              No mentors found matching your filters in this category.
+            </div>
+          }
+        </div>
+
+        <!-- Right Filter Sidebar -->
+        <div class="w-72 shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h3 class="text-gray-700 font-medium mb-6 flex items-center gap-2">
+            <i class="bi bi-funnel text-[#ED1C24]"></i> Filter by
+          </h3>
+
+          <div class="space-y-5">
+            <div>
+              <label class="text-gray-400 text-xs mb-1 block">First name</label>
+              <input type="text" [(ngModel)]="filterFirstName" (input)="applyFilters()" class="w-full border-b border-gray-300 py-1 text-sm focus:outline-none focus:border-[#ED1C24] text-gray-700">
+            </div>
+            
+            <div>
+              <label class="text-gray-400 text-xs mb-1 block">Last name</label>
+              <input type="text" [(ngModel)]="filterLastName" (input)="applyFilters()" class="w-full border-b border-gray-300 py-1 text-sm focus:outline-none focus:border-[#ED1C24] text-gray-700">
+            </div>
+
+            <div>
+              <label class="text-gray-400 text-xs mb-1 block">Affiliation</label>
+              <div class="relative">
+                <select [(ngModel)]="filterAffiliation" (change)="applyFilters()" class="w-full border-b border-gray-300 py-1 text-sm text-gray-700 bg-transparent focus:outline-none focus:border-[#ED1C24] appearance-none cursor-pointer">
+                  <option value="">Any</option>
+                  <option value="Student">Student</option>
+                  <option value="Alumni">Alumni</option>
+                  <option value="Teacher">Teacher</option>
+                </select>
+                <i class="bi bi-caret-down-fill text-[10px] text-gray-400 absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              </div>
+            </div>
+
+            <!-- Accordions (Visual only for now) -->
+            <div class="pt-2 border-t border-gray-100">
+              <div class="flex items-center justify-between py-2 cursor-pointer group">
+                <div class="flex items-center gap-2 text-gray-600 font-medium text-sm group-hover:text-[#ED1C24]">
+                  <i class="bi bi-life-preserver text-[#ED1C24]"></i> Get Involved
+                </div>
+                <i class="bi bi-chevron-down text-xs text-gray-400 group-hover:text-[#ED1C24]"></i>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100">
+              <div class="flex items-center justify-between py-2 cursor-pointer group">
+                <div class="flex items-center gap-2 text-gray-800 font-medium text-sm group-hover:text-[#ED1C24]">
+                  <i class="bi bi-person-workspace text-[#ED1C24]"></i> Mentoring
+                </div>
+                <i class="bi bi-chevron-up text-xs text-gray-400 group-hover:text-[#ED1C24]"></i>
+              </div>
+              <div class="pl-6 pr-2 pb-2 space-y-4">
+                <div>
+                  <label class="text-gray-400 text-[10px] uppercase tracking-wider mb-1 block">Offering mentoring</label>
+                  <select class="w-full border-b border-gray-300 py-1 text-xs text-gray-700 bg-transparent focus:outline-none appearance-none cursor-pointer">
+                    <option>Any option</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-gray-400 text-[10px] uppercase tracking-wider mb-1 block">Seeking mentoring</label>
+                  <select class="w-full border-b border-gray-300 py-1 text-xs text-gray-700 bg-transparent focus:outline-none appearance-none cursor-pointer">
+                    <option></option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100">
+              <div class="flex items-center justify-between py-2 cursor-pointer group">
+                <div class="flex items-center gap-2 text-gray-600 font-medium text-sm group-hover:text-[#ED1C24]">
+                  <i class="bi bi-building text-[#ED1C24]"></i> Esprit
+                </div>
+                <i class="bi bi-chevron-down text-xs text-gray-400 group-hover:text-[#ED1C24]"></i>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100 pb-4">
+              <button (click)="backToCategories()" class="text-[#ED1C24] text-sm font-medium hover:underline">Reset</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

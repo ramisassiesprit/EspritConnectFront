@@ -17,11 +17,23 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         Authorization: `Bearer ${session.token}`
       }
     });
+    console.log('Adding Authorization header for request:', req.url);
+  } else {
+    console.log('No session or token found for request:', req.url);
   }
 
   return next(authReq).pipe(
     catchError((error) => {
       if (error instanceof HttpErrorResponse && error.status === 401 && !req.url.includes('/auth/login')) {
+        console.error('Unauthorized error caught by interceptor for URL:', req.url);
+        console.error('Current session:', session);
+        
+        // If we don't have a session, don't try to refresh the token
+        if (!session?.token) {
+          console.warn('No session token found, logging out...');
+          authService.logout();
+          return throwError(() => error);
+        }
         return handle401Error(req, next, authService);
       }
       return throwError(() => error);
@@ -47,6 +59,7 @@ function handle401Error(req: HttpRequest<any>, next: HttpHandlerFn, authService:
       }),
       catchError((err) => {
         isRefreshing = false;
+        refreshTokenSubject.error(err); // Ensure pending requests don't hang if refresh fails
         authService.logout();
         return throwError(() => err);
       })

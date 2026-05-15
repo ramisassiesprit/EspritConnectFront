@@ -34,6 +34,8 @@ export interface Skill {
 
 export interface WillingToHelp {
   id?: string;
-  offering: string;
-  seeking: string;
+  offerHelp: string;
+  seekHelp: string;
+  offerMentor: string
+  seekMentor: string;
 }

@@ -2,11 +2,9 @@
   <div class="sidebar__nav">
     @for (item of navItems; track item.label) {
       <div class="sidebar__group">
-        <a [routerLink]="item.subItems ? null : item.route" 
-           routerLinkActive="active" 
-           [class.active]="item.isOpen && item.subItems"
-           class="sidebar__item" 
-           (click)="toggleItem(item)">
+        <a [routerLink]="item.route"
+           routerLinkActive="active"
+           class="sidebar__item">
           <div class="sidebar__item-content">
             @if (item.label === 'Home') {
               <svg class="sidebar__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -32,16 +30,18 @@
             <span class="sidebar__label">{{ item.label }}</span>
           </div>
           @if (item.hasChevron) {
-            <svg class="sidebar__chevron" [class.open]="item.isOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <button type="button" class="sidebar__chevron-button" (click)="toggleItem(item); $event.preventDefault(); $event.stopPropagation();">
+              <svg class="sidebar__chevron" [class.open]="item.isOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
           }
         </a>
 
-        @if (item.subItems && item.isOpen) {
+        @if (item.subItems?.length && item.isOpen) {
           <div class="sidebar__sub-nav">
             <div class="sidebar__sub-line"></div>
             <div class="sidebar__sub-items">
               @for (sub of item.subItems; track sub.label) {
-                <a [routerLink]="sub.route" routerLinkActive="active" class="sidebar__sub-item">
+                <a [routerLink]="sub.route" [queryParams]="sub.queryParams" routerLinkActive="active" class="sidebar__sub-item">
                   {{ sub.label }}
                 </a>
               }

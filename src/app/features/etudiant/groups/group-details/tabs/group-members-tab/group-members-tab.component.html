@@ -1,0 +1,123 @@
+<div class="content-layout">
+  <!-- Left Column: Member List -->
+  <div class="main-column">
+    <!-- Search & Sorting -->
+    <div class="section-card members-search-card">
+      <div class="search-box">
+        <lucide-icon [img]="Search" size="18" class="search-icon"></lucide-icon>
+        <input type="text" placeholder="Search people">
+      </div>
+      <div class="sorting-row">
+        <span class="results-count">15286 results</span>
+        <div class="sort-options">
+          <label class="radio-option">
+            <input type="radio" name="sort" checked>
+            <span class="radio-mark"></span>
+            Alphabetically
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="sort">
+            <span class="radio-mark"></span>
+            Recently joined
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="sort">
+            <span class="radio-mark"></span>
+            Recently online
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members List -->
+    <div class="members-list">
+      <div *ngFor="let member of onlineMembers" class="section-card member-item-card">
+        <div class="member-info-wrapper">
+          <div class="member-avatar-container">
+            <div class="willing-badge" *ngIf="member.id === '2' || member.id === '6'">Willing to help</div>
+            <div class="member-large-avatar" style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #6b7280;">
+              <lucide-icon [img]="User" size="40"></lucide-icon>
+            </div>
+            <span class="status-indicator" [class.online]="member.isOnline"></span>
+          </div>
+          <div class="member-details">
+            <div class="member-name-row">
+              <h4 class="member-name">{{ member.firstName }} {{ member.lastName }}</h4>
+              <span class="member-badges" *ngIf="member.id === '2' || member.id === '6'">
+                <span class="badge-p"><lucide-icon [img]="Users" size="10"></lucide-icon></span>
+                <span class="badge-y"><lucide-icon [img]="Info" size="10"></lucide-icon></span>
+              </span>
+            </div>
+            <span class="role-badge">{{ member.role === 'ALUMNI' ? 'Alumni' : 'Student' }}</span>
+            <p class="member-affiliation">Computing, ESE - Esprit School of Engineering</p>
+          </div>
+        </div>
+        <button class="member-arrow">
+          <lucide-icon [img]="ChevronRight" size="20"></lucide-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Filters -->
+  <div class="side-column">
+    <div class="section-card filters-card">
+      <div class="filter-header">
+        <lucide-icon [img]="Filter" size="16"></lucide-icon>
+        <h3>Filter by</h3>
+      </div>
+      
+      <div class="filter-group">
+        <label>First name</label>
+        <input type="text" class="filter-input">
+      </div>
+      
+      <div class="filter-group">
+        <label>Last name</label>
+        <input type="text" class="filter-input">
+      </div>
+      
+      <div class="filter-group">
+        <label>Affiliation</label>
+        <div class="select-wrapper">
+          <select>
+            <option value="">Affiliation</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="accordion-list">
+        <div class="accordion-item">
+          <div class="accordion-header">
+            <lucide-icon [img]="Users" size="16" class="acc-icon"></lucide-icon>
+            <span>Get Involved</span>
+            <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header">
+            <lucide-icon [img]="Users" size="16" class="acc-icon"></lucide-icon>
+            <span>Mentoring</span>
+            <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header">
+            <lucide-icon [img]="Building" size="16" class="acc-icon"></lucide-icon>
+            <span>Esprit</span>
+            <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header">
+            <lucide-icon [img]="Briefcase" size="16" class="acc-icon"></lucide-icon>
+            <span>Work Experience</span>
+            <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-reset">Reset</button>
+    </div>
+  </div>
+</div>

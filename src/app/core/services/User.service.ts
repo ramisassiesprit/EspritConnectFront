@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User, UserStatus } from '../models/user.model';
 import { UserRole } from '../models/user-role.enum';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private readonly apiUrl = 'http://localhost:8086/EspritConnect/users';
+  private readonly apiUrl = `${environment.apiUrl}users`;
   private http = inject(HttpClient);
 
   // --- Mon Profil ---
@@ -18,6 +19,10 @@ export class UserService {
 
   updateProfile(user: User): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/profile`, user);
+  }
+
+  getUserById(userId: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${userId}`);
   }
 
   // --- Gestion Admin ---
@@ -37,5 +42,13 @@ export class UserService {
 
   deleteUser(userId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${userId}`);
+  }
+
+  getOnlineUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/online`);
+  }
+
+  getDirectoryUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/directory`);
   }
 }

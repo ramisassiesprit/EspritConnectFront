@@ -6,11 +6,12 @@ import { UserService } from '../../../core/services/User.service';
 import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../../../core/models/profile.model';
 import { User, UserStatus } from '../../../core/models/user.model';
 import { UserRole } from '../../../core/models/user-role.enum';
+import { HelpMentoringFormComponent } from '../../../shared/components/help-mentoring-form/help-mentoring-form.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HelpMentoringFormComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -40,6 +41,7 @@ export class ProfileComponent implements OnInit {
   educations: OtherEducation[] = [];
   skills: Skill[] = [];
   helps: WillingToHelp[] = [];
+  isEditingHelp: boolean = false;
 
   newExperience: WorkExperience = this.resetExperience();
   newEducation: OtherEducation = this.resetEducation();
@@ -56,6 +58,25 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.loadAllData();
   }
+
+  toggleEditHelp(): void {
+    this.isEditingHelp = !this.isEditingHelp;
+  }
+
+  onHelpSaved(updatedHelp: WillingToHelp): void {
+    if (updatedHelp.id) {
+      this.profileService.updateHelp(updatedHelp.id, updatedHelp).subscribe(h => {
+        this.helps[0] = h;
+        this.isEditingHelp = false;
+      });
+    } else {
+      this.profileService.addHelp(updatedHelp).subscribe(h => {
+        this.helps = [h];
+        this.isEditingHelp = false;
+      });
+    }
+  }
+
 
   toggleEditProfile(): void {
     this.isEditingProfile = !this.isEditingProfile;
@@ -194,8 +215,10 @@ export class ProfileComponent implements OnInit {
 
   private resetHelp(): WillingToHelp {
     return {
-      offering: '',
-      seeking: ''
+      offerHelp: '',
+      seekHelp: '',
+      offerMentor: '',
+      seekMentor: ''
     };
   }
   deleteEducation(id: string | undefined): void {

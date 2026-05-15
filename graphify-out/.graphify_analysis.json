@@ -1,0 +1,421 @@
+{
+  "communities": {
+    "0": [
+      "app_app_component_appcomponent",
+      "app_app_component_appcomponent_constructor",
+      "app_app_config_appconfig",
+      "app_app_routes_routes",
+      "guards_admin_guard_adminguard",
+      "guards_etudiant_guard_etudiantguard",
+      "interceptors_auth_interceptor_authinterceptor",
+      "interceptors_auth_interceptor_handle401error",
+      "interceptors_auth_interceptor_refreshtokensubject",
+      "models_auth_models_authrequest",
+      "models_auth_models_authresponse",
+      "models_auth_models_registerrequest",
+      "models_auth_models_usersession",
+      "models_user_role_enum_userrole",
+      "services_auth_service_authservice",
+      "services_auth_service_authservice_constructor",
+      "services_auth_service_authservice_gethomepath",
+      "services_auth_service_authservice_loadsession",
+      "services_auth_service_authservice_login",
+      "services_auth_service_authservice_logout",
+      "services_auth_service_authservice_redirectbasedonrole",
+      "services_auth_service_authservice_refreshtoken",
+      "services_auth_service_authservice_register",
+      "services_auth_service_authservice_savesession",
+      "src_app_app_component_ts",
+      "src_app_app_config_ts",
+      "src_app_app_routes_ts",
+      "src_app_core_guards_admin_guard_ts",
+      "src_app_core_guards_etudiant_guard_ts",
+      "src_app_core_interceptors_auth_interceptor_ts",
+      "src_app_core_models_auth_models_ts",
+      "src_app_core_models_user_role_enum_ts",
+      "src_app_core_services_auth_service_ts",
+      "src_app_features_auth_register_register_component_ts",
+      "src_main_ts"
+    ],
+    "1": [
+      "chat_chat_list_component_chatlistcomponent",
+      "chat_chat_list_component_chatlistcomponent_loadconversations",
+      "chat_chat_list_component_chatlistcomponent_ngoninit",
+      "find_mentor_find_mentor_component_findmentorcomponent",
+      "find_mentor_find_mentor_component_findmentorcomponent_ngoninit",
+      "models_message_model_message",
+      "models_user_model_user",
+      "models_user_model_userstatus",
+      "services_user_service_userservice",
+      "services_user_service_userservice_deleteuser",
+      "services_user_service_userservice_getallusers",
+      "services_user_service_userservice_getcurrentuser",
+      "services_user_service_userservice_getdirectoryusers",
+      "services_user_service_userservice_getonlineusers",
+      "services_user_service_userservice_getuserbyid",
+      "services_user_service_userservice_getusersbyrole",
+      "services_user_service_userservice_updateprofile",
+      "services_user_service_userservice_updateuserstatus",
+      "src_app_core_models_message_model_ts",
+      "src_app_core_models_user_model_ts",
+      "src_app_core_services_chat_service_ts",
+      "src_app_core_services_user_service_ts",
+      "src_app_features_admin_users_users_list_component_ts",
+      "src_app_features_etudiant_chat_chat_component_ts",
+      "src_app_features_etudiant_chat_chat_list_component_ts",
+      "src_app_features_etudiant_directory_directory_component_ts",
+      "src_app_features_etudiant_home_my_community_my_community_component_ts",
+      "src_app_features_etudiant_mentoring_find_mentor_find_mentor_component_ts",
+      "src_app_navbar_navbar_component_ts"
+    ],
+    "2": [
+      "group_create_group_create_component_groupcreatecomponent",
+      "group_create_group_create_component_groupcreatecomponent_advancestep",
+      "group_create_group_create_component_groupcreatecomponent_gotostep",
+      "group_create_group_create_component_groupcreatecomponent_normalizevalue",
+      "group_create_group_create_component_groupcreatecomponent_oncancel",
+      "group_create_group_create_component_groupcreatecomponent_steponevalid",
+      "group_create_group_create_component_groupcreatecomponent_steptwovalid",
+      "group_create_group_create_component_groupcreatecomponent_submit",
+      "groups_groups_component_groupscomponent",
+      "groups_groups_component_groupscomponent_ngoninit",
+      "groups_groups_component_groupscomponent_updateroutemode",
+      "models_group_model_group",
+      "models_group_model_groupcreaterequest",
+      "models_group_model_groupprivacy",
+      "services_group_service_groupservice",
+      "services_group_service_groupservice_creategroup",
+      "services_group_service_groupservice_getallgroups",
+      "services_group_service_groupservice_getusergroups",
+      "sidebar_sidebar_component_navitem",
+      "sidebar_sidebar_component_subitem",
+      "src_app_core_models_group_model_ts",
+      "src_app_core_services_group_service_ts",
+      "src_app_features_etudiant_groups_group_create_group_create_component_spec_ts",
+      "src_app_features_etudiant_groups_group_create_group_create_component_ts",
+      "src_app_features_etudiant_groups_groups_component_ts",
+      "src_app_features_etudiant_sidebar_sidebar_component_ts"
+    ],
+    "3": [
+      "admin_shell_admin_shell_component_adminshellcomponent",
+      "etudiant_shell_etudiant_shell_component_etudiantshellcomponent",
+      "etudiant_shell_etudiant_shell_component_etudiantshellcomponent_constructor",
+      "navbar_navbar_component_navbarcomponent",
+      "navbar_navbar_component_navbarcomponent_constructor",
+      "navbar_navbar_component_navbarcomponent_homelink",
+      "navbar_navbar_component_navbarcomponent_initials",
+      "navbar_navbar_component_navbarcomponent_onclickoutside",
+      "navbar_navbar_component_navbarcomponent_onlogin",
+      "navbar_navbar_component_navbarcomponent_onlogout",
+      "navbar_navbar_component_navbarcomponent_profilelink",
+      "navbar_navbar_component_navbarcomponent_togglejoinmodal",
+      "navbar_navbar_component_navbarcomponent_toggleloginmodal",
+      "navbar_navbar_component_navbarcomponent_toggleprofilemenu",
+      "sidebar_admin_sidebar_component_adminsidebarcomponent",
+      "sidebar_admin_sidebar_component_navitem",
+      "sidebar_sidebar_component_sidebarcomponent",
+      "sidebar_sidebar_component_sidebarcomponent_constructor",
+      "sidebar_sidebar_component_sidebarcomponent_loadjoinedgroups",
+      "sidebar_sidebar_component_sidebarcomponent_ngoninit",
+      "sidebar_sidebar_component_sidebarcomponent_syncgroupsubitems",
+      "sidebar_sidebar_component_sidebarcomponent_toggleitem",
+      "src_app_features_admin_admin_shell_admin_shell_component_ts",
+      "src_app_features_admin_admin_shell_sidebar_admin_sidebar_component_ts",
+      "src_app_features_etudiant_etudiant_shell_etudiant_shell_component_ts"
+    ],
+    "4": [
+      "badge_modal_badge_modal_component_badgemodalcomponent",
+      "badge_modal_badge_modal_component_badgemodalcomponent_onclose",
+      "environments_environment_environment",
+      "facebook_widget_facebook_widget_component_facebookwidgetcomponent",
+      "geminiapiservice_gem_ai_service_service_aichatresponse",
+      "jobs_board_jobs_board_component_jobsboardcomponent",
+      "models_user_model_badge",
+      "my_community_my_community_component_mycommunitycomponent",
+      "my_community_my_community_component_mycommunitycomponent_loadonlineusers",
+      "my_community_my_community_component_mycommunitycomponent_ngondestroy",
+      "my_community_my_community_component_mycommunitycomponent_ngoninit",
+      "recent_feed_posts_recent_feed_posts_component_recentfeedpostscomponent",
+      "resources_widget_resources_widget_component_resourceswidgetcomponent",
+      "services_badge_service_badgeservice",
+      "services_badge_service_badgeservice_getuserbadges",
+      "src_app_core_services_badge_service_ts",
+      "src_app_core_services_geminiapiservice_gem_ai_service_service_ts",
+      "src_app_features_etudiant_home_badge_modal_badge_modal_component_ts",
+      "src_app_features_etudiant_home_facebook_widget_facebook_widget_component_ts",
+      "src_app_features_etudiant_home_home_component_ts",
+      "src_app_features_etudiant_home_jobs_board_jobs_board_component_ts",
+      "src_app_features_etudiant_home_recent_feed_posts_recent_feed_posts_component_ts",
+      "src_app_features_etudiant_home_resources_widget_resources_widget_component_ts",
+      "src_environments_environment_ts"
+    ],
+    "5": [
+      "profile_profile_component_profilecomponent",
+      "profile_profile_component_profilecomponent_addeducation",
+      "profile_profile_component_profilecomponent_addexperience",
+      "profile_profile_component_profilecomponent_addhelp",
+      "profile_profile_component_profilecomponent_addskill",
+      "profile_profile_component_profilecomponent_deleteeducation",
+      "profile_profile_component_profilecomponent_deleteexperience",
+      "profile_profile_component_profilecomponent_deletehelp",
+      "profile_profile_component_profilecomponent_deleteskill",
+      "profile_profile_component_profilecomponent_loadalldata",
+      "profile_profile_component_profilecomponent_ngoninit",
+      "profile_profile_component_profilecomponent_onfileselected",
+      "profile_profile_component_profilecomponent_onhelpsaved",
+      "profile_profile_component_profilecomponent_reseteducation",
+      "profile_profile_component_profilecomponent_resetexperience",
+      "profile_profile_component_profilecomponent_resethelp",
+      "profile_profile_component_profilecomponent_toggleaddeducation",
+      "profile_profile_component_profilecomponent_toggleaddexperience",
+      "profile_profile_component_profilecomponent_toggleaddskill",
+      "profile_profile_component_profilecomponent_toggleeditesprit",
+      "profile_profile_component_profilecomponent_toggleedithelp",
+      "profile_profile_component_profilecomponent_toggleeditprofile",
+      "profile_profile_component_profilecomponent_updateespritprofile",
+      "profile_profile_component_profilecomponent_updateprofile"
+    ],
+    "6": [
+      "help_mentoring_form_help_mentoring_form_component_helpmentoringformcomponent",
+      "help_mentoring_form_help_mentoring_form_component_helpmentoringformcomponent_inithelpselections",
+      "help_mentoring_form_help_mentoring_form_component_helpmentoringformcomponent_ngoninit",
+      "help_mentoring_form_help_mentoring_form_component_helpmentoringformcomponent_oncancel",
+      "help_mentoring_form_help_mentoring_form_component_helpmentoringformcomponent_onsave",
+      "models_profile_model_espritprofile",
+      "models_profile_model_othereducation",
+      "models_profile_model_skill",
+      "models_profile_model_willingtohelp",
+      "models_profile_model_workexperience",
+      "src_app_core_models_profile_model_ts",
+      "src_app_core_services_profile_service_ts",
+      "src_app_features_etudiant_mentoring_mentorsettings_mentoringsettings_component_ts",
+      "src_app_features_etudiant_profile_profile_component_ts",
+      "src_app_features_etudiant_user_details_user_details_component_spec_ts",
+      "src_app_features_etudiant_user_details_user_details_component_ts",
+      "src_app_shared_components_help_mentoring_form_help_mentoring_form_component_ts",
+      "user_details_user_details_component_userdetailscomponent",
+      "user_details_user_details_component_userdetailscomponent_formatdate",
+      "user_details_user_details_component_userdetailscomponent_getoffermentoringitems",
+      "user_details_user_details_component_userdetailscomponent_getseekmentoringitems",
+      "user_details_user_details_component_userdetailscomponent_ngoninit"
+    ],
+    "7": [
+      "services_profile_service_profileservice",
+      "services_profile_service_profileservice_addeducation",
+      "services_profile_service_profileservice_addexperience",
+      "services_profile_service_profileservice_addhelp",
+      "services_profile_service_profileservice_addskill",
+      "services_profile_service_profileservice_deleteeducation",
+      "services_profile_service_profileservice_deleteexperience",
+      "services_profile_service_profileservice_deletehelp",
+      "services_profile_service_profileservice_deleteskill",
+      "services_profile_service_profileservice_geteducationsbyuserid",
+      "services_profile_service_profileservice_getespritprofilebyuserid",
+      "services_profile_service_profileservice_getmyeducations",
+      "services_profile_service_profileservice_getmyespritprofile",
+      "services_profile_service_profileservice_getmyexperiences",
+      "services_profile_service_profileservice_getmyhelps",
+      "services_profile_service_profileservice_getmyskills",
+      "services_profile_service_profileservice_getskillsbyuserid",
+      "services_profile_service_profileservice_getwillingtohelpsbyuserid",
+      "services_profile_service_profileservice_getworkexperiencesbyuserid",
+      "services_profile_service_profileservice_updateespritprofile",
+      "services_profile_service_profileservice_updatehelp"
+    ],
+    "8": [
+      "acceuil_acceuil_component_acceuilcomponent",
+      "acceuil_acceuil_component_acceuilcomponent_ongetstarted",
+      "ai_chat_bubble_ai_chat_bubble_component_aichatbubblecomponent",
+      "ai_chat_bubble_ai_chat_bubble_component_aichatbubblecomponent_expandtopage",
+      "ai_chat_bubble_ai_chat_bubble_component_aichatbubblecomponent_formatmessage",
+      "ai_chat_bubble_ai_chat_bubble_component_aichatbubblecomponent_sendmessage",
+      "ai_chat_bubble_ai_chat_bubble_component_aichatbubblecomponent_togglechat",
+      "ai_chat_bubble_ai_chat_bubble_component_chatmessage",
+      "geminiapiservice_gem_ai_service_service_gemaiserviceservice",
+      "geminiapiservice_gem_ai_service_service_gemaiserviceservice_constructor",
+      "geminiapiservice_gem_ai_service_service_gemaiserviceservice_sendmessage",
+      "jobs_jobs_component_jobscomponent",
+      "src_app_acceuil_acceuil_component_ts",
+      "src_app_acceuil_jobs_jobs_component_ts",
+      "src_app_features_ai_ai_chat_bubble_ai_chat_bubble_component_ts",
+      "src_app_features_etudiant_jobs_jobs_component_ts"
+    ],
+    "9": [
+      "services_chat_service_chatservice",
+      "services_chat_service_chatservice_connect",
+      "services_chat_service_chatservice_constructor",
+      "services_chat_service_chatservice_disconnect",
+      "services_chat_service_chatservice_getchathistory",
+      "services_chat_service_chatservice_getconversations",
+      "services_chat_service_chatservice_getmessages",
+      "services_chat_service_chatservice_getunreadmessages",
+      "services_chat_service_chatservice_markasread",
+      "services_chat_service_chatservice_sendmessage"
+    ],
+    "10": [
+      "services_encryption_service_encryptionservice",
+      "services_encryption_service_encryptionservice_clear",
+      "services_encryption_service_encryptionservice_decrypt",
+      "services_encryption_service_encryptionservice_encrypt",
+      "services_encryption_service_encryptionservice_getitem",
+      "services_encryption_service_encryptionservice_removeitem",
+      "services_encryption_service_encryptionservice_setitem",
+      "src_app_core_services_encryption_service_ts"
+    ],
+    "11": [
+      "chat_chat_component_chatcomponent",
+      "chat_chat_component_chatcomponent_loadchathistory",
+      "chat_chat_component_chatcomponent_loadreceiverinfo",
+      "chat_chat_component_chatcomponent_ngafterviewchecked",
+      "chat_chat_component_chatcomponent_ngondestroy",
+      "chat_chat_component_chatcomponent_ngoninit",
+      "chat_chat_component_chatcomponent_scrolltobottom",
+      "chat_chat_component_chatcomponent_sendmessage"
+    ],
+    "12": [
+      "users_users_list_component_userslistcomponent",
+      "users_users_list_component_userslistcomponent_acceptuser",
+      "users_users_list_component_userslistcomponent_getstatusclass",
+      "users_users_list_component_userslistcomponent_loadusers",
+      "users_users_list_component_userslistcomponent_ngoninit",
+      "users_users_list_component_userslistcomponent_onrolechange",
+      "users_users_list_component_userslistcomponent_rejectuser"
+    ],
+    "13": [
+      "register_register_component_registercomponent",
+      "register_register_component_registercomponent_extractavatarfromcard",
+      "register_register_component_registercomponent_oncardselected",
+      "register_register_component_registercomponent_onfileselected",
+      "register_register_component_registercomponent_onsubmit",
+      "register_register_component_registercomponent_parseextractedtext",
+      "register_register_component_registercomponent_passwordmatchvalidator"
+    ],
+    "14": [
+      "directory_directory_component_directorycomponent",
+      "directory_directory_component_directorycomponent_applyfilters",
+      "directory_directory_component_directorycomponent_loadusers",
+      "directory_directory_component_directorycomponent_ngoninit",
+      "directory_directory_component_directorycomponent_resetfilters",
+      "directory_directory_component_directorycomponent_settab"
+    ],
+    "15": [
+      "home_home_component_homecomponent",
+      "home_home_component_homecomponent_calculatecompletion",
+      "home_home_component_homecomponent_loaduserdata",
+      "home_home_component_homecomponent_navigatetoprofile",
+      "home_home_component_homecomponent_ngoninit",
+      "home_home_component_homecomponent_openbadgemodal"
+    ],
+    "16": [
+      "mentorsettings_mentoringsettings_component_mentoringsettingscomponent",
+      "mentorsettings_mentoringsettings_component_mentoringsettingscomponent_loadhelpdata",
+      "mentorsettings_mentoringsettings_component_mentoringsettingscomponent_ngoninit",
+      "mentorsettings_mentoringsettings_component_mentoringsettingscomponent_oncancel",
+      "mentorsettings_mentoringsettings_component_mentoringsettingscomponent_onsave"
+    ],
+    "17": [
+      "ai_chat_page_ai_chat_page_component_aichatpagecomponent",
+      "src_app_features_ai_ai_chat_page_ai_chat_page_component_ts"
+    ],
+    "18": [
+      "ancien_shell_ancien_shell_component_ancienshellcomponent",
+      "src_app_features_ancien_ancien_shell_ancien_shell_component_ts"
+    ],
+    "19": [
+      "enseignant_shell_enseignant_shell_component_enseignantshellcomponent",
+      "src_app_features_enseignant_enseignant_shell_enseignant_shell_component_ts"
+    ],
+    "20": [
+      "entreprise_shell_entreprise_shell_component_entrepriseshellcomponent",
+      "src_app_features_entreprise_entreprise_shell_entreprise_shell_component_ts"
+    ],
+    "21": [
+      "events_events_component_eventscomponent",
+      "src_app_features_etudiant_events_events_component_ts"
+    ],
+    "22": [
+      "feed_feed_component_feedcomponent",
+      "src_app_features_etudiant_feed_feed_component_ts"
+    ],
+    "23": [
+      "group_feed_group_feed_component_groupfeedcomponent",
+      "src_app_features_etudiant_groups_group_feed_group_feed_component_ts"
+    ],
+    "24": [
+      "info_support_info_support_component_infosupportcomponent",
+      "src_app_features_etudiant_info_support_info_support_component_ts"
+    ],
+    "25": [
+      "mentoring_mentoring_component_mentoringcomponent",
+      "src_app_features_etudiant_mentoring_mentoring_component_ts"
+    ],
+    "26": [
+      "photos_photos_component_photoscomponent",
+      "src_app_features_etudiant_photos_photos_component_ts"
+    ],
+    "27": [
+      "resources_resources_component_resourcescomponent",
+      "src_app_features_etudiant_resources_resources_component_ts"
+    ],
+    "28": [
+      "postcss_config_js"
+    ],
+    "29": [
+      "tailwind_config_js"
+    ]
+  },
+  "cohesion": {},
+  "god_nodes": [
+    {
+      "id": "services_profile_service_profileservice",
+      "label": "ProfileService",
+      "degree": 24
+    },
+    {
+      "id": "profile_profile_component_profilecomponent",
+      "label": "ProfileComponent",
+      "degree": 24
+    },
+    {
+      "id": "services_user_service_userservice",
+      "label": "UserService",
+      "degree": 20
+    },
+    {
+      "id": "services_auth_service_authservice",
+      "label": "AuthService",
+      "degree": 19
+    },
+    {
+      "id": "navbar_navbar_component_navbarcomponent",
+      "label": "NavbarComponent",
+      "degree": 14
+    },
+    {
+      "id": "models_user_model_user",
+      "label": "User",
+      "degree": 13
+    },
+    {
+      "id": "models_user_role_enum_userrole",
+      "label": "UserRole",
+      "degree": 12
+    },
+    {
+      "id": "services_chat_service_chatservice",
+      "label": "ChatService",
+      "degree": 12
+    },
+    {
+      "id": "group_create_group_create_component_groupcreatecomponent",
+      "label": "GroupCreateComponent",
+      "degree": 9
+    },
+    {
+      "id": "services_encryption_service_encryptionservice",
+      "label": "EncryptionService",
+      "degree": 8
+    }
+  ],
+  "surprises": []
+}

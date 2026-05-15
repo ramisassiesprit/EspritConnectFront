@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../models/profile.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-  private readonly apiUrl = 'http://localhost:8086/EspritConnect/profile';
+  private readonly apiUrl = `${environment.apiUrl}profile`;
   private http = inject(HttpClient);
 
   // --- Esprit Profile ---
@@ -67,7 +68,32 @@ export class ProfileService {
     return this.http.post<WillingToHelp>(`${this.apiUrl}/help`, help);
   }
 
+  updateHelp(id: string, help: WillingToHelp): Observable<WillingToHelp> {
+    return this.http.put<WillingToHelp>(`${this.apiUrl}/help/${id}`, help);
+  }
+
   deleteHelp(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/help/${id}`);
+  }
+
+  // --- Public profile by userId ---
+  getEspritProfileByUserId(userId: string): Observable<EspritProfile> {
+    return this.http.get<EspritProfile>(`${this.apiUrl}/users/${userId}/esprit`);
+  }
+
+  getWorkExperiencesByUserId(userId: string): Observable<WorkExperience[]> {
+    return this.http.get<WorkExperience[]>(`${this.apiUrl}/users/${userId}/experience`);
+  }
+
+  getEducationsByUserId(userId: string): Observable<OtherEducation[]> {
+    return this.http.get<OtherEducation[]>(`${this.apiUrl}/users/${userId}/education`);
+  }
+
+  getSkillsByUserId(userId: string): Observable<Skill[]> {
+    return this.http.get<Skill[]>(`${this.apiUrl}/users/${userId}/skills`);
+  }
+
+  getWillingToHelpsByUserId(userId: string): Observable<WillingToHelp[]> {
+    return this.http.get<WillingToHelp[]>(`${this.apiUrl}/users/${userId}/help`);
   }
 }

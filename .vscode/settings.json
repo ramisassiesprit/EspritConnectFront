@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^python -c \"\nimport json\nfrom graphify\\.cache import check_semantic_cache\nfrom pathlib import Path\n\ndetect = json\\.loads\\(Path\\('graphify-out/\\.graphify_detect\\.json'\\)\\.read_text\\(\\)\\)\nall_files = \\[f for files in detect\\['files'\\]\\.values\\(\\) for f in files\\]\ncached_nodes, cached_edges, cached_hyperedges, uncached = check_semantic_cache\\(all_files\\)\n\nif cached_nodes or cached_edges:\n    Path\\('graphify-out/\\.graphify_cached\\.json'\\)\\.write_text\\(json\\.dumps\\(\\{'nodes': cached_nodes, 'edges': cached_edges, 'hyperedges': cached_hyperedges\\}\\)\\)\nPath\\('graphify-out/\\.graphify_uncached\\.txt'\\)\\.write_text\\('\\\\n'\\.join\\(uncached\\)\\)\nprint\\('Cache: \\{\\} hit, \\{\\} need extraction'\\.format\\(len\\(all_files\\)-len\\(uncached\\), len\\(uncached\\)\\)\\)\n\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

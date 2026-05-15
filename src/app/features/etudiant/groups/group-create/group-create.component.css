@@ -1,0 +1,417 @@
+.group-create-container {
+  font-family: 'Inter', sans-serif;
+}
+
+
+.create-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  padding-bottom: 40px;
+}
+
+/* Stepper Header - Exact Match from Image */
+.stepper-header {
+  padding: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  background: white;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+}
+
+.step-item.active {
+  color: #e11d48;
+}
+
+.step-item.completed {
+  color: #e11d48;
+}
+
+.step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #94a3b8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.step-item.active .step-number {
+  background: #e11d48;
+}
+
+.step-item.completed .step-number {
+  background: #e11d48;
+}
+
+.step-connector {
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0 20px;
+}
+
+/* Form Content */
+.form-content {
+  padding: 0 40px;
+}
+
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.step-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 30px;
+  text-transform: capitalize;
+}
+
+.step-subtitle {
+  color: #64748b;
+  margin-bottom: 30px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Underline Inputs - Step 1 & 3 Style */
+.form-group {
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.form-group.required label {
+  color: #e11d48;
+}
+
+.underline-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 10px 0;
+  font-size: 15px;
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.underline-input:focus {
+  outline: none;
+  border-bottom-color: #e11d48;
+}
+
+/* Quill Editor Styles */
+::ng-deep .ql-toolbar.ql-snow {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 10px !important;
+}
+
+::ng-deep .ql-container.ql-snow {
+  border: 1px solid #e2e8f0;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  min-height: 250px;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 11px;
+  color: #e11d48;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Upload Section - Exact Match */
+.upload-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.upload-placeholder {
+  background: #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.upload-placeholder:hover {
+  background: #e2e8f0;
+}
+
+.logo-box {
+  width: 180px;
+  height: 180px;
+}
+
+.banner-box {
+  width: 100%;
+  max-width: 500px;
+  height: 140px;
+}
+
+.cam-icon-circle {
+  width: 36px;
+  height: 36px;
+  background: #94a3b8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Radio Button Styling - Exact Match */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.radio-circle {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.radio-option.active .radio-circle {
+  border-color: #e11d48;
+}
+
+.radio-inner {
+  width: 10px;
+  height: 10px;
+  background: #e11d48;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.2s;
+}
+
+.radio-option.active .radio-inner {
+  transform: scale(1);
+}
+
+/* Step 2 Add Labels Row */
+.labels-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.labels-text h4 {
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: #1e293b;
+}
+
+.labels-text p {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.label-input-wrapper {
+  flex: 1;
+  max-width: 380px;
+}
+
+.rounded-pill-input {
+  width: 100%;
+  padding: 12px 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 30px;
+  font-size: 14px;
+  background: white;
+  transition: all 0.2s;
+}
+
+.rounded-pill-input:focus {
+  outline: none;
+  border-color: #cbd5e1;
+}
+
+/* Step 3 Two Column Layout */
+.criteria-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.section-divider-row {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #1e293b;
+  margin: 20px 0 10px;
+}
+
+.section-divider-row i {
+  color: #64748b;
+}
+
+/* Custom Dropdown Step 3 */
+.dropdown-field {
+  border-bottom: 1px solid #cbd5e1;
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 15px;
+  color: #64748b;
+  position: relative;
+}
+
+.dropdown-field::after {
+  content: '▼';
+  font-size: 9px;
+  color: #94a3b8;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  margin-top: 8px;
+  padding: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Pill Buttons - Exact Match */
+.footer-row {
+  padding: 40px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.btn-pill-action {
+  padding: 12px 32px;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 13px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-pill-red {
+  background: #e11d48;
+  color: white;
+  box-shadow: 0 4px 10px rgba(225, 29, 72, 0.2);
+}
+
+.btn-pill-red:hover:not(:disabled) {
+  background: #be123c;
+  transform: translateY(-1px);
+}
+
+.btn-text-cancel {
+  background: transparent;
+  color: #1e293b;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.btn-text-cancel:hover {
+  color: #e11d48;
+}
+
+@media (max-width: 768px) {
+  .criteria-container {
+    grid-template-columns: 1fr;
+  }
+
+  .stepper-header {
+    padding: 20px;
+  }
+
+  .step-label {
+    display: none;
+  }
+
+  .form-content {
+    padding: 0 20px;
+  }
+}

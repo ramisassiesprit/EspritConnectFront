@@ -1,1 +1,193 @@
-<p>jobs works!</p>
+<div class="jobs-page" *ngIf="!selectedJob">
+  <section class="jobs-main">
+    <div class="jobs-header">
+      <div class="jobs-heading-row">
+        <h1>Jobs</h1>
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" [(ngModel)]="search" placeholder="Search jobs" />
+        </div>
+      </div>
+      <p class="jobs-result">Found {{ filteredJobs.length }} job opportunities</p>
+    </div>
+
+    <p class="inline-state error" *ngIf="error">{{ error }}</p>
+    <p class="inline-state loading" *ngIf="loading">Loading jobs...</p>
+
+    <div class="job-list" *ngIf="!loading && filteredJobs.length > 0">
+      <article class="job-card" *ngFor="let job of filteredJobs" (click)="openJob(job.id)">
+        <div class="job-card-top">
+          <div class="company-logo">
+            {{ job.company ? (job.company.charAt(0) | uppercase) : 'C' }}
+          </div>
+          <div class="job-card-info">
+            <h3>{{ job.title }}</h3>
+            <p class="company-name">{{ job.company || 'Company N/A' }}</p>
+          </div>
+        </div>
+        <div class="job-card-meta">
+          <span>Posted {{ job.createdAt | date:'dd/MM/yyyy' }}</span>
+          <span>{{ job.location || 'Location N/A' }}</span>
+        </div>
+        <p class="job-card-desc">{{ job.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <aside class="filters-card">
+    <h2>Filter by</h2>
+    <input type="text" [(ngModel)]="filterCompany" placeholder="Company" />
+    <input type="text" [(ngModel)]="filterTitle" placeholder="Job title" />
+
+    <div class="filter-field">
+      <label>Employment type</label>
+      <div class="multi-select">
+        <button
+          type="button"
+          class="multi-select-toggle"
+          [ngClass]="{ placeholder: !selectedContractTypes.length }"
+          (click)="toggleDropdown('contract')"
+        >
+          <span class="multi-select-value">
+            {{ selectedContractTypes.length ? selectedContractTypes.join(', ') : 'Select' }}
+          </span>
+          <span class="arrow" [class.open]="isContractDropdownOpen"></span>
+        </button>
+
+        <div class="multi-select-panel" *ngIf="isContractDropdownOpen" (wheel)="preventScrollBubble($event)">
+          <input
+            type="text"
+            class="multi-search"
+            placeholder="Search"
+            [(ngModel)]="contractSearch"
+            (click)="$event.stopPropagation()"
+          />
+          <label *ngFor="let option of filteredContractTypeOptions" class="multi-option">
+            <input
+              type="checkbox"
+              [checked]="selectedContractTypes.includes(option.value)"
+              (change)="toggleSelectedContractType(option.value)"
+            />
+            <span>{{ option.label }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-field">
+      <label>Job function</label>
+      <div class="multi-select">
+        <button
+          type="button"
+          class="multi-select-toggle"
+          [ngClass]="{ placeholder: !selectedIndustryOptions.length }"
+          (click)="toggleDropdown('industry')"
+        >
+          <span class="multi-select-value">
+            {{ selectedIndustryOptions.length ? selectedIndustryOptions.join(', ') : 'Select' }}
+          </span>
+          <span class="arrow" [class.open]="isIndustryDropdownOpen"></span>
+        </button>
+
+        <div class="multi-select-panel" *ngIf="isIndustryDropdownOpen" (wheel)="preventScrollBubble($event)">
+          <input
+            type="text"
+            class="multi-search"
+            placeholder="Search"
+            [(ngModel)]="industrySearch"
+            (click)="$event.stopPropagation()"
+          />
+          <label *ngFor="let option of filteredIndustryOptions" class="multi-option">
+            <input
+              type="checkbox"
+              [checked]="selectedIndustryOptions.includes(option)"
+              (change)="toggleSelectedIndustry(option)"
+            />
+            <span>{{ option }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-field">
+      <label>Location</label>
+      <div class="multi-select">
+        <button
+          type="button"
+          class="multi-select-toggle"
+          [ngClass]="{ placeholder: !selectedLocationOptions.length }"
+          (click)="toggleDropdown('location')"
+        >
+          <span class="multi-select-value">
+            {{ selectedLocationOptions.length ? selectedLocationOptions.join(', ') : 'Select location' }}
+          </span>
+          <span class="arrow" [class.open]="isLocationDropdownOpen"></span>
+        </button>
+
+        <div class="multi-select-panel" *ngIf="isLocationDropdownOpen" (wheel)="preventScrollBubble($event)">
+          <input
+            type="text"
+            class="multi-search"
+            placeholder="Search"
+            [(ngModel)]="locationSearch"
+            (click)="$event.stopPropagation()"
+          />
+          <label *ngFor="let option of filteredLocationOptions" class="multi-option">
+            <input
+              type="checkbox"
+              [checked]="selectedLocationOptions.includes(option)"
+              (change)="toggleSelectedLocation(option)"
+            />
+            <span>{{ option }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button class="reset" (click)="resetFilters()">RESET</button>
+  </aside>
+</div>
+
+<div class="job-detail" *ngIf="selectedJob">
+  <button class="back" (click)="backToList()">Back to job board</button>
+
+  <article class="detail-card">
+    <h1>{{ selectedJob.title }}</h1>
+
+    <div class="detail-grid">
+      <div>
+        <label>Organisation</label>
+        <p>{{ selectedJob.company || 'N/A' }}</p>
+      </div>
+      <div>
+        <label>Employment type</label>
+        <p>{{ selectedJob.contractType || 'N/A' }}</p>
+      </div>
+      <div>
+        <label>Posted</label>
+        <p>{{ selectedJob.createdAt | date:'dd/MM/yyyy' }}</p>
+      </div>
+      <div>
+        <label>Location</label>
+        <p>{{ selectedJob.location || 'N/A' }}</p>
+      </div>
+      <div>
+        <label>Closing date for applications</label>
+        <p>{{ selectedJob.deadline | date:'dd/MM/yyyy' }}</p>
+      </div>
+    </div>
+
+    <div class="description">{{ selectedJob.description }}</div>
+
+    <div class="apply-box" *ngIf="!hasApplied(selectedJob.id)">
+      <h3>Apply now</h3>
+      <input type="text" [(ngModel)]="cvUrl" placeholder="CV URL (optional)" />
+      <input type="text" [(ngModel)]="coverLetterUrl" placeholder="Cover letter URL (optional)" />
+      <button class="apply" (click)="applyToSelectedJob()">APPLY</button>
+    </div>
+
+    <p class="applied" *ngIf="hasApplied(selectedJob.id)">You already applied for this job.</p>
+    <p class="message" *ngIf="message">{{ message }}</p>
+    <p class="error" *ngIf="error">{{ error }}</p>
+  </article>
+</div>

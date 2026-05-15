@@ -93,9 +93,49 @@ export const routes: Routes = [
           import('./features/etudiant/mentoring/mentoring.component').then(
             (m) => m.MentoringComponent,
           ),
+        children: [
+          {
+            path: '',
+            redirectTo: 'find',
+            pathMatch: 'full',
+          },
+          {
+            path: 'find',
+            loadComponent: () =>
+              import(
+                './features/etudiant/mentoring/find-mentor/find-mentor.component'
+              ).then((m) => m.FindMentorComponent),
+          },
+          {
+            path: 'settings',
+            loadComponent: () =>
+              import(
+                './features/etudiant/mentoring/MentorSettings/mentoringSettings.component'
+              ).then((m) => m.MentoringSettingsComponent),
+          },
+          {
+            path: 'profile/:id',
+            loadComponent: () =>
+              import(
+                './features/etudiant/mentoring/mentor-profile/mentor-profile.component'
+              ).then((m) => m.MentorProfileComponent),
+          },
+        ],
       },
       {
         path: 'jobs',
+        loadComponent: () =>
+          import('./features/etudiant/jobs/jobs.component').then(
+            (m) => m.JobsComponent,
+          ),
+      },
+      {
+        path: 'jobs/board',
+        redirectTo: 'jobs',
+        pathMatch: 'full',
+      },
+      {
+        path: 'jobs/:id',
         loadComponent: () =>
           import('./features/etudiant/jobs/jobs.component').then(
             (m) => m.JobsComponent,
@@ -110,10 +150,28 @@ export const routes: Routes = [
       },
       {
         path: 'groups',
-        loadComponent: () =>
-          import('./features/etudiant/groups/groups.component').then(
-            (m) => m.GroupsComponent,
-          ),
+        loadComponent: () => import('./features/etudiant/groups/groups.component').then(m => m.GroupsComponent),
+        children: [
+          {
+            path: 'create',
+            loadComponent: () => import('./features/etudiant/groups/group-create/group-create.component').then(m => m.GroupCreateComponent)
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./features/etudiant/groups/group-update/group-update.component').then(m => m.GroupUpdateComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/etudiant/groups/group-details/group-details.component').then(m => m.GroupDetailsComponent),
+            children: [
+              { path: '', redirectTo: 'feed', pathMatch: 'full' },
+              { path: 'feed', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-feed-tab/group-feed-tab.component').then(m => m.GroupFeedTabComponent) },
+              { path: 'members', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-members-tab/group-members-tab.component').then(m => m.GroupMembersTabComponent) },
+              { path: 'photos-albums', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-photos-tab/group-photos-tab.component').then(m => m.GroupPhotosTabComponent) },
+              { path: 'events', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-events-tab/group-events-tab.component').then(m => m.GroupEventsTabComponent) },
+            ]
+          }
+        ]
       },
       {
         path: 'events',
@@ -130,6 +188,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'resources/:id',
+        loadComponent: () =>
+          import('./features/etudiant/resources/resources.component').then(
+            (m) => m.ResourcesComponent,
+          ),
+      },
+      {
         path: 'info-support',
         loadComponent: () =>
           import('./features/etudiant/info-support/info-support.component').then(
@@ -138,12 +203,21 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
-        loadComponent: () =>
-          import('./features/etudiant/profile/profile.component').then(
-            (m) => m.ProfileComponent,
-          ),
+        loadComponent: () => import('./features/etudiant/profile/profile.component').then(m => m.ProfileComponent)
       },
-    ],
+      {
+        path: 'chat/:id',
+        loadComponent: () => import('./features/etudiant/chat/chat.component').then(m => m.ChatComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () => import('./features/etudiant/chat/chat-list.component').then(m => m.ChatListComponent)
+      },
+      {
+        path: 'user/:id',
+        loadComponent: () => import('./features/etudiant/user-details/user-details.component').then(m => m.UserDetailsComponent)
+      }
+    ]
   },
   {
     path: 'ancien',
@@ -186,6 +260,22 @@ export const routes: Routes = [
             (m) => m.UsersListComponent,
           ),
       },
+      {
+        path: 'resources',
+        loadComponent: () =>
+          import('./features/admin/resources/admin-resources.component').then(
+            (m) => m.AdminResourcesComponent,
+          ),
+      },
+      {
+        path: 'jobs',
+        loadComponent: () =>
+          import('./features/admin/jobs/admin-jobs.component').then(
+            (m) => m.AdminJobsComponent,
+          ),
+      },
     ],
   },
 ];
+
+

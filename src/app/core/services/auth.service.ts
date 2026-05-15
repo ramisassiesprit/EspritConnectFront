@@ -5,12 +5,13 @@ import { Observable, tap, catchError, throwError } from 'rxjs';
 import { AuthRequest, AuthResponse, RegisterRequest, UserSession } from '../models/auth.models';
 import { EncryptionService } from './encryption.service';
 import { UserRole } from '../models/user-role.enum';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8086/EspritConnect/auth';
+  private readonly apiUrl = `${environment.apiUrl}auth`;
   private readonly sessionKey = 'user_session';
 
   private http = inject(HttpClient);
@@ -26,9 +27,13 @@ export class AuthService {
 
   private loadSession() {
     const session = this.encryptionService.getItem(this.sessionKey) as UserSession;
+    console.log('Loading session:', session);
     if (session) {
       this.isLoggedIn.set(true);
       this.currentUser.set(session);
+      console.log('User is logged in with role:', session.role);
+    } else {
+      console.log('No session found');
     }
   }
 
@@ -39,7 +44,11 @@ export class AuthService {
           token: response.accessToken,
           refreshToken: response.refreshToken,
           role: response.role,
-          userId: response.userId
+          userId: response.userId,
+          firstName: response.firstName,
+          lastName: response.lastName,
+          email: response.email,
+          avatarUrl: response.avatarUrl
         };
         this.saveSession(session);
         this.redirectBasedOnRole(response.role);
@@ -55,7 +64,11 @@ export class AuthService {
             token: response.accessToken,
             refreshToken: response.refreshToken,
             role: response.role,
-            userId: response.userId
+            userId: response.userId,
+            firstName: response.firstName,
+            lastName: response.lastName,
+            email: response.email,
+            avatarUrl: response.avatarUrl
           };
           this.saveSession(session);
           this.redirectBasedOnRole(response.role);
@@ -74,7 +87,11 @@ export class AuthService {
           token: response.accessToken,
           refreshToken: response.refreshToken,
           role: response.role,
-          userId: response.userId
+          userId: response.userId,
+          firstName: response.firstName,
+          lastName: response.lastName,
+          email: response.email,
+          avatarUrl: response.avatarUrl
         };
         this.saveSession(session);
       }),

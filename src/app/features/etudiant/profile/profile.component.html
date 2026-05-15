@@ -26,7 +26,15 @@
         <!-- Name + Role + Button + Social -->
         <div class="header-info">
           <h1 class="user-name">{{ user.firstName }} {{ user.lastName }}</h1>
-          <p class="user-role">{{ user.role || 'Student' }}</p>
+          <p class="user-role">{{ user.role || 'Student' }} - {{ user.code || '—' }}</p>
+          
+
+          <!-- Additional User Info Display -->
+          <div class="user-meta-info" *ngIf="user.jobTitle || user.companyName">
+            <span class="meta-item" *ngIf="user.jobTitle">{{ user.jobTitle }}</span>
+            <span class="meta-divider" *ngIf="user.jobTitle && user.companyName">at</span>
+            <span class="meta-item font-bold text-red-600" *ngIf="user.companyName">{{ user.companyName }}</span>
+          </div>
 
           <button (click)="toggleEditProfile()" class="btn-edit-profile">EDIT PROFILE</button>
 
@@ -38,11 +46,15 @@
         </div>
 
         <!-- Achievements -->
-        <div class="achievements">
+        <div class="achievements" *ngIf="user.badges && user.badges.length > 0">
           <span class="achievements-title">Achievements</span>
           <div class="badges">
-            <div class="badge-hex badge-purple"><i class="bi bi-people-fill"></i></div>
-            <div class="badge-hex badge-gold"><i class="bi bi-flag-fill"></i></div>
+            <div *ngFor="let badge of user.badges" 
+                 class="badge-hex" 
+                 [ngClass]="badge.name === 'Mentor Pro' ? 'badge-gold' : 'badge-purple'"
+                 [title]="badge.name + ': ' + badge.description">
+              <i class="bi" [ngClass]="badge.name === 'Mentor Pro' ? 'bi-person-video3' : 'bi-award-fill'"></i>
+            </div>
           </div>
           <a href="#" class="whats-this">WHAT'S THIS?</a>
         </div>
@@ -60,6 +72,30 @@
             <input [(ngModel)]="user.lastName" placeholder="Last Name">
           </div>
           <div class="form-field">
+            <label>Code</label>
+            <input [(ngModel)]="user.code" placeholder="User Code">
+          </div>
+          <div class="form-field">
+            <label>Company Name</label>
+            <input [(ngModel)]="user.companyName" placeholder="Company Name">
+          </div>
+          <div class="form-field">
+            <label>Job Title</label>
+            <input [(ngModel)]="user.jobTitle" placeholder="Job Title">
+          </div>
+          <div class="form-field">
+            <label>Job Function</label>
+            <input [(ngModel)]="user.jobFunction" placeholder="Job Function">
+          </div>
+          <div class="form-field">
+            <label>Industry</label>
+            <input [(ngModel)]="user.industry" placeholder="Industry">
+          </div>
+          <div class="form-field">
+            <label>Phone</label>
+            <input [(ngModel)]="user.numTel" placeholder="Phone Number">
+          </div>
+          <div class="form-field">
             <label>LinkedIn URL</label>
             <input [(ngModel)]="user.linkedinUrl" placeholder="LinkedIn URL">
           </div>
@@ -70,10 +106,6 @@
           <div class="form-field">
             <label>GitHub URL</label>
             <input [(ngModel)]="user.githubUrl" placeholder="GitHub URL">
-          </div>
-          <div class="form-field">
-            <label>Phone</label>
-            <input [(ngModel)]="user.numTel" placeholder="Phone Number">
           </div>
         </div>
         <div class="form-actions">
@@ -112,10 +144,6 @@
 
       <div *ngIf="isEditingEsprit" class="edit-form-panel">
         <div class="edit-form-grid">
-          <div class="form-field">
-            <label>Student Number *</label>
-            <input [(ngModel)]="espritProfile.studentNumber" placeholder="e.g. 21-1MT-0123">
-          </div>
           <div class="form-field">
             <label>Field of Study *</label>
             <input [(ngModel)]="espritProfile.fieldOfStudy" placeholder="e.g. Computer Science">
@@ -207,12 +235,17 @@
 
     <!-- Willing to help + Seeking help (combined card with red top border) -->
     <div class="card card-help">
+      <div class="absolute top-4 right-4">
+        <button (click)="toggleEditHelp()" class="btn-icon">
+          <i class="bi" [ngClass]="isEditingHelp ? 'bi-x-lg' : 'bi-pencil'"></i>
+        </button>
+      </div>
       <div class="help-section">
         <div class="help-row">
           <i class="bi bi-life-preserver icon-red"></i>
           <span class="help-title">Willing to help</span>
         </div>
-        <p class="help-text">{{ helps[0]?.offering || 'Open doors at workplace' }}</p>
+        <p class="help-text">{{ helps[0].offerHelp || 'Non disponible' }}</p>
       </div>
       <div class="help-divider"></div>
       <div class="help-section">
@@ -220,17 +253,26 @@
           <i class="bi bi-life-preserver icon-red"></i>
           <span class="help-title">Seeking help</span>
         </div>
-        <p class="help-text">{{ helps[0]?.seeking || 'Open doors at workplace' }}</p>
+        <p class="help-text">{{ helps[0].seekHelp || 'Non disponible' }}</p>
       </div>
     </div>
 
     <!-- Offering mentoring -->
-    <div class="card">
+    <div class="card" *ngIf="helps[0].offerMentor">
       <div class="help-row mb-2">
         <i class="bi bi-person-video3 icon-gray"></i>
         <span class="help-title text-gray-600">Offering mentoring</span>
       </div>
-      <p class="help-text">{{ user.isMentor ? 'Mentor a student' : 'Non disponible' }}</p>
+      <p class="help-text">{{ helps[0].offerMentor }}</p>
+    </div>
+
+    <!-- Seeking mentoring -->
+    <div class="card" *ngIf="helps[0].seekMentor">
+      <div class="help-row mb-2">
+        <i class="bi bi-person-video3 icon-gray"></i>
+        <span class="help-title text-gray-600">Seeking mentoring</span>
+      </div>
+      <p class="help-text">{{ helps[0].seekMentor }}</p>
     </div>
 
     <!-- Contact information -->
@@ -248,3 +290,11 @@
 
   </div>
 </div>
+
+<!-- Help & Mentoring Edit Card (shown separately) -->
+<app-help-mentoring-form
+  *ngIf="isEditingHelp"
+  [initialHelp]="helps[0]"
+  (save)="onHelpSaved($event)"
+  (cancel)="toggleEditHelp()">
+</app-help-mentoring-form>

@@ -141,6 +141,21 @@
   margin: 0;
 }
 
+.user-meta-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #5f6368;
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+
+.meta-divider {
+  color: #9aa0a6;
+  font-size: 12px;
+}
+
 .btn-edit-profile {
   display: inline-flex;
   align-items: center;

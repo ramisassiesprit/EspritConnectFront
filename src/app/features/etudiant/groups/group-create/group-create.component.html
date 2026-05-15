@@ -1,0 +1,414 @@
+<div class="group-create-container">
+  <div class="create-card">
+    <!-- Stepper Header - Exact Match from Image -->
+    <div class="stepper-header">
+      <div class="step-item" [class.active]="activeStep === 1" [class.completed]="activeStep > 1">
+        <div class="step-number" (click)="goToStep(1)">
+          <span *ngIf="activeStep === 1">1</span>
+          <i *ngIf="activeStep > 1" class="fas fa-pencil-alt"></i>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item" [class.active]="activeStep === 2" [class.completed]="activeStep > 2">
+        <div class="step-number" (click)="goToStep(2)">
+          <span *ngIf="activeStep <= 2">2</span>
+          <i *ngIf="activeStep > 2" class="fas fa-pencil-alt"></i>
+        </div>
+        <span class="step-label">Edit Settings</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item" [class.active]="activeStep === 3">
+        <div class="step-number" (click)="goToStep(3)">3</div>
+        <span class="step-label">Add Members</span>
+      </div>
+    </div>
+
+    <div class="form-content" [formGroup]="groupForm">
+      <!-- Step 1: Create New Group -->
+      <div *ngIf="activeStep === 1" class="step-panel">
+        <h2 class="step-title">{{ isEditMode ? 'Edit group details' : 'Create new group' }}</h2>
+
+        <div class="form-group"
+          [class.required]="groupForm.get('groupName')?.invalid && groupForm.get('groupName')?.touched">
+          <label>Group name **</label>
+          <input type="text" formControlName="groupName" class="underline-input" placeholder="Enter group name">
+        </div>
+
+        <div class="form-group">
+          <label>Website</label>
+          <input type="text" formControlName="website" class="underline-input" placeholder="Enter website URL">
+        </div>
+
+        <div class="form-group"
+          [class.required]="groupForm.get('description')?.invalid && groupForm.get('description')?.touched">
+          <label>Description *</label>
+          <div class="quill-wrapper">
+            <quill-editor formControlName="description" [modules]="quillModules" placeholder="Describe your group...">
+            </quill-editor>
+            <div class="char-counter">
+              {{ groupForm.get('description')?.value?.length || 0 }} / 4000
+            </div>
+          </div>
+        </div>
+
+        <div class="upload-grid">
+          <div class="upload-item">
+            <label>Logo</label>
+            <div class="upload-placeholder logo-box" (click)="logoInput.click()">
+              <img *ngIf="logoPreview" [src]="logoPreview" class="preview-img">
+              <div *ngIf="!logoPreview" class="cam-icon-circle">
+                <i class="fas fa-camera"></i>
+              </div>
+              <input #logoInput type="file" (change)="onLogoFileSelected($event)" accept="image/*" hidden>
+            </div>
+          </div>
+
+          <div class="upload-item">
+            <label>Banner</label>
+            <div class="upload-placeholder banner-box" (click)="bannerInput.click()">
+              <img *ngIf="bannerPreview" [src]="bannerPreview" class="preview-img">
+              <div *ngIf="!bannerPreview" class="cam-icon-circle">
+                <i class="fas fa-camera"></i>
+              </div>
+              <input #bannerInput type="file" (change)="onBannerFileSelected($event)" accept="image/*" hidden>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-row">
+          <button class="btn-pill-action btn-pill-red" (click)="advanceStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Edit Settings -->
+      <div *ngIf="activeStep === 2" class="step-panel">
+        <h2 class="step-title">Edit settings</h2>
+
+        <div class="form-group">
+          <label>Privacy</label>
+          <div class="radio-group">
+            <div class="radio-option" [class.active]="groupForm.get('privacy')?.value === 'PUBLIC'"
+              (click)="groupForm.get('privacy')?.setValue('PUBLIC')">
+              <div class="radio-circle">
+                <div class="radio-inner"></div>
+              </div>
+              <span>Open group (no approval is required to join / see group posts)</span>
+            </div>
+            <div class="radio-option" [class.active]="groupForm.get('privacy')?.value === 'PRIVATE'"
+              (click)="groupForm.get('privacy')?.setValue('PRIVATE')">
+              <div class="radio-circle">
+                <div class="radio-inner"></div>
+              </div>
+              <span>Closed group (members must be approved first)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 40px;">
+          <label>Tagging</label>
+          <div class="radio-group">
+            <div class="radio-option" [class.active]="groupForm.get('tagging')?.value === true"
+              (click)="groupForm.get('tagging')?.setValue(true)">
+              <div class="radio-circle">
+                <div class="radio-inner"></div>
+              </div>
+              <span>Allow non-admin group members to tag the entire group</span>
+            </div>
+            <div class="radio-option" [class.active]="groupForm.get('tagging')?.value === false"
+              (click)="groupForm.get('tagging')?.setValue(false)">
+              <div class="radio-circle">
+                <div class="radio-inner"></div>
+              </div>
+              <span>Do not allow non-admin group members to tag the entire group (default)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="labels-section">
+          <div class="labels-text">
+            <h4>Add Labels</h4>
+            <p>Add/create a new label for the group</p>
+            <div class="tags-display" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+              <div *ngFor="let label of labels" class="tag-pill"
+                style="background: #e11d48; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                {{ label }}
+                <i class="fas fa-times" (click)="removeLabel(label)" style="cursor: pointer; font-size: 10px;"></i>
+              </div>
+            </div>
+          </div>
+          <div class="label-input-wrapper" style="position: relative;">
+            <input type="text" class="rounded-pill-input" placeholder="New Label..."
+              [(ngModel)]="newLabel" [ngModelOptions]="{standalone: true}"
+              (keydown.enter)="$event.preventDefault(); addLabel()">
+            <i class="fas fa-plus" (click)="addLabel()"
+              style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b;"></i>
+          </div>
+        </div>
+
+        <div class="footer-row">
+          <button class="btn-pill-action btn-pill-red" (click)="advanceStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Add Members -->
+      <div *ngIf="activeStep === 3" class="step-panel">
+        <h2 class="step-title">Add members</h2>
+        <p class="step-subtitle">Select which users should be automatically added to your group. Note: Users need to
+          match all settings in order to qualify.</p>
+
+        <div class="criteria-container">
+          <!-- Left Column -->
+          <div class="col-left">
+            <div class="form-group">
+              <label>Location</label>
+              <div style="position: relative;">
+                <input type="text" class="underline-input" placeholder="Location"
+                  [(ngModel)]="newLocation" [ngModelOptions]="{standalone: true}"
+                  (keydown.enter)="$event.preventDefault(); addLocation()">
+                <i class="fas fa-map-marker-alt"
+                  style="position: absolute; right: 0; bottom: 10px; color: #64748b;"></i>
+              </div>
+              <div class="tags-display" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+                <div *ngFor="let loc of locations" class="tag-pill"
+                  style="background: #f1f5f9; color: #1e293b; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                  {{ loc }}
+                  <i class="fas fa-times" (click)="removeLocation(loc)" style="cursor: pointer; font-size: 10px;"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-divider-row">
+              <i class="fas fa-university"></i> Esprit
+            </div>
+
+            <div class="form-group">
+              <label>Field of study</label>
+              <div class="dropdown-field" (click)="toggleDropdown('fieldOfStudy')">
+                {{ selectedOptions['fieldOfStudy'].length ? selectedOptions['fieldOfStudy'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['fieldOfStudy']" (click)="$event.stopPropagation()">
+                  <div class="search-box"><input type="text" placeholder="Search..."
+                      [(ngModel)]="searchTerms['fieldOfStudy']" [ngModelOptions]="{standalone: true}"></div>
+                  <div class="checkbox-item"
+                    *ngFor="let opt of getFilteredOptions('fieldOfStudy', ['Mobile', 'Web', 'Data', 'Cloud', 'AI', 'Security', 'Business', 'HR'])"
+                    (click)="toggleOption('fieldOfStudy', opt)">
+                    <input type="checkbox" [checked]="isSelected('fieldOfStudy', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Graduation year</label>
+              <div class="dropdown-field" (click)="toggleDropdown('graduationYear')">
+                {{ selectedOptions['graduationYear'].length ? selectedOptions['graduationYear'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['graduationYear']" (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let year of ['2020','2021','2022','2023','2024','2025']"
+                    (click)="toggleOption('graduationYear', year)">
+                    <input type="checkbox" [checked]="isSelected('graduationYear', year)">
+                    <span>{{ year }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-divider-row">
+              <i class="fas fa-graduation-cap"></i> Other Education
+            </div>
+
+            <div class="form-group">
+              <label>Degree</label>
+              <div class="dropdown-field" (click)="toggleDropdown('otherDegree')">
+                {{ selectedOptions['otherDegree'].length ? selectedOptions['otherDegree'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['otherDegree']" (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let opt of ['Licence', 'Master', 'PhD']"
+                    (click)="toggleOption('otherDegree', opt)">
+                    <input type="checkbox" [checked]="isSelected('otherDegree', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Graduation year</label>
+              <div class="dropdown-field" (click)="toggleDropdown('otherGraduationYear')">
+                {{ selectedOptions['otherGraduationYear'].length ? selectedOptions['otherGraduationYear'].join(', ') :
+                'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['otherGraduationYear']"
+                  (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let year of ['2020','2021','2022','2023','2024','2025']"
+                    (click)="toggleOption('otherGraduationYear', year)">
+                    <input type="checkbox" [checked]="isSelected('otherGraduationYear', year)">
+                    <span>{{ year }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="col-right">
+            <div class="form-group">
+              <label style="color: #e11d48;">Affiliation</label>
+              <div class="dropdown-field" (click)="toggleDropdown('affiliation')" style="border-bottom-color: #e11d48;">
+                {{ selectedOptions['affiliation'].length ? selectedOptions['affiliation'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['affiliation']" (click)="$event.stopPropagation()">
+                  <div class="search-box"><input type="text" placeholder="Search..."
+                      [(ngModel)]="searchTerms['affiliation']" [ngModelOptions]="{standalone: true}"></div>
+                  <div class="checkbox-item" *ngFor="let opt of getFilteredOptions('affiliation', affiliationOptions)"
+                    (click)="toggleOption('affiliation', opt)">
+                    <input type="checkbox" [checked]="isSelected('affiliation', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="height: 50px;"></div>
+
+            <div class="form-group" style="margin-top: 110px;">
+              <div class="section-divider-row" style="margin-bottom: 0;">
+                <i class="fas fa-briefcase"></i> Professional information
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Company</label>
+              <input type="text" formControlName="company" class="underline-input" placeholder="Company">
+            </div>
+
+            <div class="form-group">
+              <label>Industry</label>
+              <div class="dropdown-field" (click)="toggleDropdown('industry')">
+                {{ selectedOptions['industry'].length ? selectedOptions['industry'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['industry']" (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let opt of ['Tech', 'Finance', 'Health', 'Education']"
+                    (click)="toggleOption('industry', opt)">
+                    <input type="checkbox" [checked]="isSelected('industry', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Job function</label>
+              <div class="dropdown-field" (click)="toggleDropdown('jobFunction')">
+                {{ selectedOptions['jobFunction'].length ? selectedOptions['jobFunction'].join(', ') : 'Select' }}
+                <div class="dropdown-menu" *ngIf="dropdownStates['jobFunction']" (click)="$event.stopPropagation()">
+                  <div class="checkbox-item" *ngFor="let opt of ['Engineering', 'Marketing', 'Sales', 'HR']"
+                    (click)="toggleOption('jobFunction', opt)">
+                    <input type="checkbox" [checked]="isSelected('jobFunction', opt)">
+                    <span>{{ opt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Width Sections -->
+          <div class="section-divider-row" style="grid-column: span 2;">
+            <i class="fas fa-globe"></i> Willing to help
+          </div>
+          <div class="form-group">
+            <label>Offering Help</label>
+            <div class="dropdown-field" (click)="toggleDropdown('offeringHelp')">
+              {{ selectedOptions['offeringHelp'].length ? selectedOptions['offeringHelp'].join(', ') : 'Select' }}
+              <div class="dropdown-menu" *ngIf="dropdownStates['offeringHelp']" (click)="$event.stopPropagation()">
+                <div class="checkbox-item" *ngFor="let opt of helpOptions" (click)="toggleOption('offeringHelp', opt)">
+                  <input type="checkbox" [checked]="isSelected('offeringHelp', opt)">
+                  <span>{{ opt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Seeking help</label>
+            <div class="dropdown-field" (click)="toggleDropdown('seekingHelp')">
+              {{ selectedOptions['seekingHelp'].length ? selectedOptions['seekingHelp'].join(', ') : 'Select' }}
+              <div class="dropdown-menu" *ngIf="dropdownStates['seekingHelp']" (click)="$event.stopPropagation()">
+                <div class="checkbox-item" *ngFor="let opt of helpOptions" (click)="toggleOption('seekingHelp', opt)">
+                  <input type="checkbox" [checked]="isSelected('seekingHelp', opt)">
+                  <span>{{ opt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider-row" style="grid-column: span 2;">
+            <i class="fas fa-flag"></i> Mentoring
+          </div>
+          <div class="form-group">
+            <label>Offering Help</label>
+            <div class="dropdown-field" (click)="toggleDropdown('mentoringOffering')">
+              {{ selectedOptions['mentoringOffering'].length ? selectedOptions['mentoringOffering'].join(', ') :
+              'Select' }}
+              <div class="dropdown-menu" *ngIf="dropdownStates['mentoringOffering']" (click)="$event.stopPropagation()">
+                <div class="checkbox-item" *ngFor="let opt of mentoringOptions"
+                  (click)="toggleOption('mentoringOffering', opt)">
+                  <input type="checkbox" [checked]="isSelected('mentoringOffering', opt)">
+                  <span>{{ opt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Seeking help</label>
+            <div class="dropdown-field" (click)="toggleDropdown('mentoringSeeking')">
+              {{ selectedOptions['mentoringSeeking'].length ? selectedOptions['mentoringSeeking'].join(', ') : 'Select'
+              }}
+              <div class="dropdown-menu" *ngIf="dropdownStates['mentoringSeeking']" (click)="$event.stopPropagation()">
+                <div class="checkbox-item" *ngFor="let opt of mentoringOptions"
+                  (click)="toggleOption('mentoringSeeking', opt)">
+                  <input type="checkbox" [checked]="isSelected('mentoringSeeking', opt)">
+                  <span>{{ opt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Member Search -->
+        <div class="member-search-section" style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 30px;">
+          <h4 style="font-size: 16px; margin-bottom: 20px;">Add individual users to your group</h4>
+          <div class="form-group">
+            <label>Add members</label>
+            <div style="position: relative;">
+              <input type="text" class="underline-input" placeholder="Search users..." [(ngModel)]="userSearchTerm"
+                [ngModelOptions]="{standalone: true}" (input)="searchUsers()">
+              <div class="dropdown-menu" *ngIf="foundUsers.length > 0" style="width: 100%;">
+                <div class="checkbox-item" *ngFor="let user of foundUsers" (click)="addMember(user)">
+                  <span>{{ user.firstName }} {{ user.lastName }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="tags-display" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+              <div *ngFor="let member of addedMembers" class="tag-pill"
+                style="background: #f1f5f9; color: #1e293b; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                {{ member.firstName }} {{ member.lastName }}
+                <i class="fas fa-times" (click)="removeMember(member.id)" style="cursor: pointer; color: #94a3b8;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-row" style="margin-top: 40px; display: flex; align-items: center; gap: 16px;">
+          <button class="btn-pill-action btn-pill-red" [disabled]="creating" (click)="submit()">
+            {{ creating ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Group' : 'Create Group')
+            }}
+          </button>
+          <button class="btn-text-cancel" (click)="onCancel()">Cancel</button>
+          <div style="flex-grow: 1;"></div>
+          <button *ngIf="isEditMode" class="btn-text-cancel" style="color: #e11d48;" (click)="deleteGroup()">
+            <i class="fas fa-trash" style="margin-right: 6px;"></i> Delete Group
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+    </div>
+  </div>
+</div>
