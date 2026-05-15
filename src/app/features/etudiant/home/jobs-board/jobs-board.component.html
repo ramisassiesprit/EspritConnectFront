@@ -17,7 +17,13 @@
       (click)="openJob(job.id)"
     >
       <div class="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-2 shrink-0 shadow-sm overflow-hidden">
-        <span class="text-[#e50043] font-bold text-base">
+        <img
+          *ngIf="job.imageUrl"
+          [src]="resolveImageUrl(job.imageUrl)"
+          alt="Job image"
+          class="max-w-full max-h-full object-cover rounded-lg"
+        />
+        <span *ngIf="!job.imageUrl" class="text-[#e50043] font-bold text-base">
           {{ job.company ? (job.company.charAt(0) | uppercase) : 'J' }}
         </span>
       </div>

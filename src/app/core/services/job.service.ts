@@ -31,6 +31,12 @@ export class JobService {
     return this.http.put<JobOffer>(`${this.jobsUrl}/${jobId}`, job);
   }
 
+  uploadJobImage(jobId: string, file: File): Observable<JobOffer> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<JobOffer>(`${this.jobsUrl}/${jobId}/image`, formData);
+  }
+
   deleteJob(jobId: string): Observable<void> {
     return this.http.delete<void>(`${this.jobsUrl}/${jobId}`);
   }

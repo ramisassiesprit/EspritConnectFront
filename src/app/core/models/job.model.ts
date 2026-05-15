@@ -5,14 +5,23 @@ export type ApplicationStatus = 'PENDING' | 'REVIEWED' | 'SHORTLISTED' | 'REJECT
 export interface JobOffer {
   id?: string;
   publisherId?: string;
+  publisherName?: string;
+  publisherAvatarUrl?: string;
+  publisherJobTitle?: string;
+  publisherCompanyName?: string;
   title: string;
   description?: string;
   company?: string;
   industry?: string;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   contractType?: ContractType;
   experienceLevel?: string;
   deadline?: string;
+  applyUrl?: string;
+  attachmentUrl?: string;
+  imageUrl?: string;
   status: JobStatus;
   createdAt?: string;
   updatedAt?: string;

@@ -35,6 +35,21 @@
       </label>
 
       <label>
+        Apply link (external URL)
+        <input [(ngModel)]="form.applyUrl" type="url" placeholder="https://..." />
+      </label>
+
+      <label>
+        Attachment link (optional)
+        <input [(ngModel)]="form.attachmentUrl" type="url" placeholder="https://..." />
+      </label>
+
+      <label>
+        Job image
+        <input type="file" accept="image/*" (change)="onImageSelected($event)" />
+      </label>
+
+      <label>
         Contract type
         <select [(ngModel)]="form.contractType">
           <option *ngFor="let type of contractTypes" [value]="type">{{ type }}</option>
@@ -57,6 +72,19 @@
         Deadline
         <input [(ngModel)]="form.deadline" type="date" />
       </label>
+
+    </div>
+
+    <div class="map-picker">
+      <div class="map-picker__actions">
+        <button class="btn btn--ghost" type="button" (click)="pickFromLocationText()" [disabled]="geocoding">
+          {{ geocoding ? 'Locating...' : 'Pick From Location Text' }}
+        </button>
+        <button class="btn btn--ghost" type="button" (click)="useCurrentLocation()">Use Current Location</button>
+      </div>
+      <p class="map-pin">Map pin: {{ mapPinText }}</p>
+      <p class="map-help">Double-click on the map to choose the exact location.</p>
+      <div id="job-map-picker"></div>
     </div>
 
     <label class="full">

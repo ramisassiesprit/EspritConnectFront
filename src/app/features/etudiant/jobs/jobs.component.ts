@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { JobApplication, JobOffer } from '../../../core/models/job.model';
+import { JobOffer } from '../../../core/models/job.model';
 import { JobService } from '../../../core/services/job.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-jobs',
@@ -15,7 +17,6 @@ import { JobService } from '../../../core/services/job.service';
 export class JobsComponent implements OnInit {
   jobs: JobOffer[] = [];
   selectedJob: JobOffer | null = null;
-  myApplications: JobApplication[] = [];
 
   loading = false;
   error = '';
@@ -65,18 +66,15 @@ export class JobsComponent implements OnInit {
   industrySearch = '';
   locationSearch = '';
 
-  cvUrl = '';
-  coverLetterUrl = '';
-
   constructor(
     private readonly jobService: JobService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
     this.loadJobs();
-    this.loadMyApplications();
 
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
@@ -206,43 +204,25 @@ export class JobsComponent implements OnInit {
     this.router.navigate(['/etudiant/jobs']);
   }
 
-  hasApplied(jobId: string | undefined): boolean {
-    if (!jobId) {
-      return false;
+  openApplyLink(): void {
+    const url = this.selectedJob?.applyUrl?.trim();
+    if (!url) {
+      this.error = 'No apply link is available for this job.';
+      return;
     }
-    return this.myApplications.some((a) => a.jobOfferId === jobId);
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
-  applyToSelectedJob(): void {
-    if (!this.selectedJob?.id) {
-      return;
+  resolveImageUrl(url?: string): string {
+    if (!url || !url.trim()) {
+      return 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=200&h=200&fit=crop';
     }
-
-    this.error = '';
-    this.message = '';
-
-    if (this.hasApplied(this.selectedJob.id)) {
-      this.message = 'You already applied for this job.';
-      return;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
     }
-
-    const payload: JobApplication = {
-      jobOfferId: this.selectedJob.id,
-      cvUrl: this.cvUrl || undefined,
-      coverLetterUrl: this.coverLetterUrl || undefined
-    };
-
-    this.jobService.apply(payload).subscribe({
-      next: () => {
-        this.message = 'Application submitted successfully.';
-        this.cvUrl = '';
-        this.coverLetterUrl = '';
-        this.loadMyApplications();
-      },
-      error: () => {
-        this.error = 'Unable to submit application.';
-      }
-    });
+    const base = environment.apiUrl.endsWith('/') ? environment.apiUrl.slice(0, -1) : environment.apiUrl;
+    const path = url.startsWith('/') ? url : `/${url}`;
+    return `${base}${path}`;
   }
 
   private loadJobs(): void {
@@ -264,6 +244,7 @@ export class JobsComponent implements OnInit {
     this.jobService.getJobById(jobId).subscribe({
       next: (job) => {
         this.selectedJob = job;
+        this.error = '';
         this.loading = false;
       },
       error: () => {
@@ -273,14 +254,21 @@ export class JobsComponent implements OnInit {
     });
   }
 
-  private loadMyApplications(): void {
-    this.jobService.getMyApplications().subscribe({
-      next: (apps) => {
-        this.myApplications = apps;
-      },
-      error: () => {
-        this.myApplications = [];
-      }
-    });
+  mapEmbedUrl(job: JobOffer): SafeResourceUrl | null {
+    if (job.latitude == null || job.longitude == null) {
+      return null;
+    }
+    const lat = Number(job.latitude);
+    const lng = Number(job.longitude);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) {
+      return null;
+    }
+    const delta = 0.02;
+    const left = lng - delta;
+    const right = lng + delta;
+    const top = lat + delta;
+    const bottom = lat - delta;
+    const url = `https://www.openstreetmap.org/export/embed.html?bbox=${left}%2C${bottom}%2C${right}%2C${top}&layer=mapnik&marker=${lat}%2C${lng}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 }

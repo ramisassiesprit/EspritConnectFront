@@ -115,13 +115,9 @@
   width: 56px;
   height: 56px;
   min-width: 56px;
-  display: grid;
-  place-items: center;
+  object-fit: cover;
   border-radius: 18px;
-  background: #fee2e2;
-  color: #b91c1c;
-  font-weight: 700;
-  font-size: 18px;
+  border: 1px solid #e5e7eb;
 }
 
 .job-card-info h3 {
@@ -322,6 +318,12 @@
   font-size: 15px;
 }
 
+.job-detail-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 0.8fr;
+  gap: 16px;
+}
+
 .detail-card h1 {
   margin: 0 0 20px;
   color: #111827;
@@ -329,9 +331,23 @@
   font-weight: 700;
 }
 
+.detail-head {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.detail-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -353,29 +369,30 @@
   white-space: pre-wrap;
 }
 
-.apply-box {
-  margin-top: 24px;
-  background: #f8fafc;
-  border-radius: 20px;
-  padding: 22px;
-}
-
-.apply-box h3 {
-  margin: 0 0 14px;
-  font-size: 18px;
-  color: #111827;
-}
-
-.apply-box input {
+.map-frame {
   width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 999px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
-  font-size: 15px;
+  height: 250px;
+  border: 0;
+  border-radius: 10px;
+  margin: 8px 0 14px;
+}
+
+.job-meta p {
+  margin: 0 0 8px;
+  color: #334155;
+}
+
+.job-meta a {
+  color: #dc2626;
+  text-decoration: none;
+}
+
+.job-meta a:hover {
+  text-decoration: underline;
 }
 
 .apply {
+  margin-top: 8px;
   border: none;
   border-radius: 999px;
   padding: 12px 22px;
@@ -385,19 +402,45 @@
   cursor: pointer;
 }
 
-.applied,
-.message,
-.error {
-  margin-top: 14px;
-  font-size: 15px;
+.added-by-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 16px;
+  height: fit-content;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
 }
 
-.applied,
-.message {
-  color: #16a34a;
+.added-by-card h3 {
+  margin: 0 0 10px;
+  font-size: 28px;
+  color: #374151;
+}
+
+.added-by-user {
+  display: flex;
+  gap: 10px;
+}
+
+.added-by-user img {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.added-by-user .name {
+  margin: 0;
+  font-weight: 700;
+}
+
+.added-by-user .title {
+  margin: 2px 0 0;
+  color: #6b7280;
+  font-size: 13px;
 }
 
 .error {
+  margin-top: 10px;
   color: #dc2626;
 }
 
@@ -407,6 +450,10 @@
   }
 
   .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .job-detail-layout {
     grid-template-columns: 1fr;
   }
 }

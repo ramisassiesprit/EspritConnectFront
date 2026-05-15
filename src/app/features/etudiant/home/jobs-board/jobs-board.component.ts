@@ -3,6 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { JobOffer } from '../../../../core/models/job.model';
 import { JobService } from '../../../../core/services/job.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-jobs-board',
@@ -27,6 +28,18 @@ export class JobsBoardComponent implements OnInit {
       return;
     }
     this.router.navigate(['/etudiant/jobs', id]);
+  }
+
+  resolveImageUrl(url?: string): string {
+    if (!url || !url.trim()) {
+      return '';
+    }
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    const base = environment.apiUrl.endsWith('/') ? environment.apiUrl.slice(0, -1) : environment.apiUrl;
+    const path = url.startsWith('/') ? url : `/${url}`;
+    return `${base}${path}`;
   }
 
   private loadJobs(): void {
