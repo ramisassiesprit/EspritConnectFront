@@ -8,6 +8,9 @@ export const etudiantGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const session = authService.currentUser();
   
+  console.log('Etudiant guard check - session:', session);
+  console.log('Is logged in:', authService.isLoggedIn());
+  
   if (session && session.role === UserRole.ETUDIANT) {
     return true;
   }

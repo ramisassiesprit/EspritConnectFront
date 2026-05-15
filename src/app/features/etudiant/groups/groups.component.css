@@ -2,9 +2,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background-color: #f3f3f3;
-  min-height: 100vh;
-  padding: 24px;
   font-family: 'Inter', -apple-system, sans-serif;
 }
 
@@ -279,6 +276,59 @@
   font-weight: 700;
   color: #666;
   text-transform: uppercase;
+}
+
+/* Management Actions */
+.group-management-overlay {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.group-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mgmt-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.mgmt-btn:hover {
+  background-color: #f3f4f6;
+  color: #333;
+}
+
+.mgmt-btn.delete:hover {
+  color: #ef4444;
+  background-color: #fee2e2;
+}
+
+.btn-join {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-join:hover {
+  background-color: #dc2626;
 }
 
 /* Loading/Error/Empty States */

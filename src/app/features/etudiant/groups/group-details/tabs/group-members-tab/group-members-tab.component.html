@@ -35,7 +35,9 @@
         <div class="member-info-wrapper">
           <div class="member-avatar-container">
             <div class="willing-badge" *ngIf="member.id === '2' || member.id === '6'">Willing to help</div>
-            <img [src]="member.avatarUrl" [alt]="member.firstName" class="member-large-avatar">
+            <div class="member-large-avatar" style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #6b7280;">
+              <lucide-icon [img]="User" size="40"></lucide-icon>
+            </div>
             <span class="status-indicator" [class.online]="member.isOnline"></span>
           </div>
           <div class="member-details">

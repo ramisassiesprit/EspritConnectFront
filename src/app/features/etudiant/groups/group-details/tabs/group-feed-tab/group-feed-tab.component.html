@@ -12,9 +12,12 @@
 
     <!-- Post Creator -->
     <div class="section-card creator-card">
-      <img [src]="currentUser()?.avatarUrl || 'assets/default-avatar.png'" class="creator-avatar">
+      <div class="creator-avatar" style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #6b7280;">
+        <lucide-icon [img]="User" size="24"></lucide-icon>
+      </div>
       <div class="creator-input-wrapper">
-        <input type="text" [placeholder]="'What\'s on your mind, ' + (currentUser()?.firstName || 'User') + '?'" [(ngModel)]="newPostContent" (keyup.enter)="createPost()">
+        <input type="text" [placeholder]="'What\'s on your mind, ' + (currentUser()?.firstName || 'User') + '?'"
+          [(ngModel)]="newPostContent" (keyup.enter)="createPost()">
       </div>
     </div>
 
@@ -29,7 +32,9 @@
       </div>
       <div class="online-list">
         <div *ngFor="let member of onlineMembers | slice:0:9" class="member-thumb">
-          <img [src]="member.avatarUrl" [alt]="member.firstName">
+          <div style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #6b7280; width: 100%; height: 100%;">
+            <lucide-icon [img]="User" size="20"></lucide-icon>
+          </div>
           <span class="status-dot" [class.online]="member.isOnline" [class.away]="!member.isOnline"></span>
         </div>
       </div>
@@ -40,16 +45,18 @@
       <article *ngFor="let post of posts" class="section-card post-card">
         <div class="post-header">
           <div class="post-meta">
-            <img [src]="post.authorAvatar" class="post-author-img">
+            <div class="post-author-img" style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #6b7280;">
+              <lucide-icon [img]="User" size="24"></lucide-icon>
+            </div>
             <div class="post-author-details">
               <div class="name-row">
                 <span class="author-name">{{ post.authorName }}</span>
                 <span class="author-badges">
                   <span class="badge-p">
-                     <lucide-icon [img]="Users" size="12"></lucide-icon>
+                    <lucide-icon [img]="Users" size="12"></lucide-icon>
                   </span>
                   <span class="badge-y">
-                     <lucide-icon [img]="Info" size="12"></lucide-icon>
+                    <lucide-icon [img]="Info" size="12"></lucide-icon>
                   </span>
                 </span>
               </div>
@@ -61,13 +68,13 @@
             <lucide-icon [img]="MoreVertical" size="18"></lucide-icon>
           </button>
         </div>
-        
+
         <div class="post-body">
           <p class="post-text">{{ post.content }}</p>
           <a href="#" class="read-more">Read more</a>
-          
+
           <!-- GitHub Card Mockup -->
-          <div class="github-card" *ngIf="post.id === '1'">
+          <!-- <div class="github-card" *ngIf="post.id === '1'">
             <div class="github-header">
               <lucide-icon [img]="Github" size="16"></lucide-icon>
               <span>GitHub</span>
@@ -81,7 +88,7 @@
                 <a href="#" class="github-link">Go to our website</a>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
 
         <div class="post-footer">
@@ -92,7 +99,9 @@
             </button>
           </div>
           <div class="comment-section">
-            <img [src]="currentUser()?.avatarUrl || 'assets/default-avatar.png'" class="comment-avatar">
+            <div class="comment-avatar" style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #6b7280;">
+              <lucide-icon [img]="User" size="18"></lucide-icon>
+            </div>
             <input type="text" placeholder="Write a comment..." class="comment-input">
           </div>
         </div>
