@@ -4,12 +4,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GroupService } from '../../../../core/services/group.service';
 import { GroupCreateRequest, GroupPrivacy } from '../../../../core/models/group.model';
-import { QuillModule } from 'ngx-quill';
 
 @Component({
   selector: 'app-group-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, QuillModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './group-create.component.html',
   styleUrls: ['./group-create.component.css']
 })
