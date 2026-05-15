@@ -116,11 +116,11 @@ export class AdminJobsComponent implements OnInit {
     const isEdit = !!this.editingJobId;
     this.saving = true;
     const payload: JobOffer = {
-      ...this.form,
       title: this.form.title.trim(),
       company: this.form.company?.trim() || undefined,
       industry: this.form.industry?.trim() || undefined,
       location: this.form.location?.trim() || undefined,
+      contractType: this.form.contractType,
       experienceLevel: this.form.experienceLevel?.trim() || undefined,
       description: this.form.description?.trim() || undefined,
       deadline: this.form.deadline ? this.form.deadline : undefined,

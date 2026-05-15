@@ -16,7 +16,10 @@
     <h2>Create New Folder</h2>
     <div class="grid-2">
       <input type="text" [(ngModel)]="folderName" placeholder="Folder name" />
-      <input type="file" accept="image/*" (change)="onCreateCoverSelected($event)" />
+      <div>
+        <input type="file" accept="image/*" (change)="onCreateCoverSelected($event)" />
+        <small>{{ createCoverFileName || 'No image selected' }}</small>
+      </div>
     </div>
     <button class="btn-primary" (click)="createFolder()">Create folder</button>
   </section>
@@ -25,7 +28,10 @@
     <h2>Edit Folder</h2>
     <div class="grid-2">
       <input type="text" [(ngModel)]="editFolderName" placeholder="Folder name" />
-      <input type="file" accept="image/*" (change)="onEditCoverSelected($event)" />
+      <div>
+        <input type="file" accept="image/*" (change)="onEditCoverSelected($event)" />
+        <small>{{ editCoverFileName || 'No image selected' }}</small>
+      </div>
     </div>
     <button class="btn-secondary" (click)="updateFolder()">Save changes</button>
   </section>

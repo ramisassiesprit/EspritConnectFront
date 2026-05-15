@@ -37,6 +37,9 @@ export class JobsBoardComponent implements OnInit {
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
+    if (url.startsWith('/EspritConnect')) {
+      return `${window.location.protocol}//${window.location.hostname}:8086${url}`;
+    }
     const base = environment.apiUrl.endsWith('/') ? environment.apiUrl.slice(0, -1) : environment.apiUrl;
     const path = url.startsWith('/') ? url : `/${url}`;
     return `${base}${path}`;
