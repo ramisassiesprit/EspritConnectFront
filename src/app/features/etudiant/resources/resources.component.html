@@ -31,7 +31,7 @@
 
     <div class="folders-grid" *ngIf="!loading && !error && viewMode === 'GRID'">
       <article class="folder-tile" *ngFor="let folder of filteredFolders" (click)="openFolder(folder.id)">
-        <img [src]="folder.coverImageUrl || '/assets/folder-default.jpg'" alt="folder cover" />
+        <img [src]="resolveCoverUrl(folder.coverImageUrl)" alt="folder cover" />
         <span class="items-pill">{{ folder.itemsCount }} {{ folder.itemsCount > 1 ? 'Items' : 'Item' }}</span>
         <div class="overlay">
           <h3>{{ folder.name }}</h3>
@@ -41,7 +41,7 @@
 
     <div class="folders-list" *ngIf="!loading && !error && viewMode === 'LIST'">
       <article class="folder-row" *ngFor="let folder of filteredFolders" (click)="openFolder(folder.id)">
-        <img [src]="folder.coverImageUrl || '/assets/folder-default.jpg'" alt="folder cover" />
+        <img [src]="resolveCoverUrl(folder.coverImageUrl)" alt="folder cover" />
         <div class="meta">
           <h3>{{ folder.name }}</h3>
           <p>Created by <strong>{{ folder.creatorName }}</strong> on {{ formatDate(folder.createdAt) }}</p>
@@ -55,7 +55,7 @@
     <button class="back-btn" (click)="backToAllResources()">Back to all resources</button>
 
     <div class="folder-header">
-      <img [src]="selectedFolder.coverImageUrl || '/assets/folder-default.jpg'" alt="folder cover" />
+      <img [src]="resolveCoverUrl(selectedFolder.coverImageUrl)" alt="folder cover" />
       <div>
         <h2>{{ selectedFolder.name }}</h2>
         <p>

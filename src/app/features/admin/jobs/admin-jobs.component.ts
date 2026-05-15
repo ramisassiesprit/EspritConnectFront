@@ -123,6 +123,8 @@ export class AdminJobsComponent implements OnInit {
       location: this.form.location?.trim() || undefined,
       experienceLevel: this.form.experienceLevel?.trim() || undefined,
       description: this.form.description?.trim() || undefined,
+      deadline: this.form.deadline ? this.form.deadline : undefined,
+      status: this.form.status || 'OPEN',
       applyUrl: this.form.applyUrl?.trim() || undefined,
       attachmentUrl: this.form.attachmentUrl?.trim() || undefined,
       latitude: this.form.latitude != null ? Number(this.form.latitude) : undefined,
@@ -158,7 +160,7 @@ export class AdminJobsComponent implements OnInit {
       },
       error: (err) => {
         this.saving = false;
-        this.error = err?.error?.message || 'Unable to save job.';
+        this.error = this.extractApiError(err) || 'Unable to save job.';
       }
     });
   }
@@ -317,6 +319,29 @@ export class AdminJobsComponent implements OnInit {
       attachmentUrl: '',
       status: 'OPEN'
     };
+  }
+
+  private extractApiError(err: any): string {
+    const data = err?.error;
+    if (!data) {
+      return '';
+    }
+    if (typeof data === 'string') {
+      return data;
+    }
+    if (typeof data.message === 'string' && data.message.trim()) {
+      return data.message;
+    }
+    if (Array.isArray(data.errors) && data.errors.length > 0) {
+      return data.errors.join(' | ');
+    }
+    if (typeof data.errors === 'object' && data.errors !== null) {
+      const values = Object.values(data.errors).filter((v) => typeof v === 'string');
+      if (values.length > 0) {
+        return values.join(' | ');
+      }
+    }
+    return '';
   }
 
   private initMap(): void {
