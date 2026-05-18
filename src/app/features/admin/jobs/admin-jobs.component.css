@@ -81,6 +81,37 @@ textarea {
   margin-bottom: 12px;
 }
 
+.map-picker {
+  margin-bottom: 12px;
+}
+
+.map-picker__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.map-pin {
+  margin: 10px 0 0;
+  color: #4b5f75;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.map-help {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+#job-map-picker {
+  margin-top: 10px;
+  width: 100%;
+  height: 220px;
+  border: 1px solid #d5dce4;
+  border-radius: 10px;
+}
+
 .actions {
   display: flex;
   gap: 10px;

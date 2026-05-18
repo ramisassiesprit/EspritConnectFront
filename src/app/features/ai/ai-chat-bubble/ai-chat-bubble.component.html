@@ -65,7 +65,8 @@
 
       <!-- Messages Area -->
       <div
-        class="h-96 md:h-[500px] bg-gray-50 flex-1 p-4 overflow-y-auto flex flex-col gap-4"
+        #scrollContainer
+        class="custom-scrollbar h-96 md:h-[500px] bg-gray-50 flex-1 p-4 overflow-y-auto flex flex-col gap-4"
       >
         @for (msg of messages; track $index) {
           @if (msg.sender === 'ai') {
@@ -125,9 +126,19 @@
               AI
             </div>
             <div
-              class="bg-white px-4 py-2 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100 italic"
+              class="bg-white px-4 py-2 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 border border-gray-100"
             >
-              Typing...
+              <div class="typing-container">
+                <span class="bounce-letter">T</span>
+                <span class="bounce-letter">y</span>
+                <span class="bounce-letter">p</span>
+                <span class="bounce-letter">i</span>
+                <span class="bounce-letter">n</span>
+                <span class="bounce-letter">g</span>
+                <span class="bounce-letter">.</span>
+                <span class="bounce-letter">.</span>
+                <span class="bounce-letter">.</span>
+              </div>
             </div>
           </div>
         }

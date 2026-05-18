@@ -17,10 +17,12 @@ export class AdminResourcesComponent implements OnInit {
   selectedFolderDetails: ResourceFolderDetails | null = null;
 
   folderName = '';
-  coverImageUrl = '';
   editFolderName = '';
-  editCoverImageUrl = '';
   uploadFile: File | null = null;
+  createCoverFile: File | null = null;
+  editCoverFile: File | null = null;
+  createCoverFileName = '';
+  editCoverFileName = '';
   searchTerm = '';
 
   loading = false;
@@ -110,7 +112,8 @@ export class AdminResourcesComponent implements OnInit {
       next: (folder) => {
         this.selectedFolderDetails = folder;
         this.editFolderName = folder.name;
-        this.editCoverImageUrl = folder.coverImageUrl || '';
+        this.editCoverFile = null;
+        this.editCoverFileName = '';
       },
       error: () => {
         this.error = 'Unable to load selected folder details.';
@@ -129,12 +132,29 @@ export class AdminResourcesComponent implements OnInit {
     }
 
     this.resourceService.createFolder({
-      name: trimmedName,
-      coverImageUrl: this.coverImageUrl.trim() || undefined
+      name: trimmedName
     }).subscribe({
       next: (folder) => {
         this.folderName = '';
-        this.coverImageUrl = '';
+        if (this.createCoverFile) {
+          this.resourceService.uploadFolderCover(folder.id, this.createCoverFile).subscribe({
+            next: () => {
+              this.createCoverFile = null;
+              this.createCoverFileName = '';
+              this.message = 'Folder created successfully.';
+              this.loadFolders();
+              this.loadFolderDetails(folder.id);
+            },
+            error: () => {
+              this.createCoverFile = null;
+              this.createCoverFileName = '';
+              this.message = 'Folder created, but cover upload failed.';
+              this.loadFolders();
+              this.loadFolderDetails(folder.id);
+            }
+          });
+          return;
+        }
         this.message = 'Folder created successfully.';
         this.loadFolders();
         this.loadFolderDetails(folder.id);
@@ -161,10 +181,28 @@ export class AdminResourcesComponent implements OnInit {
     }
 
     this.resourceService.updateFolder(this.selectedFolderId, {
-      name,
-      coverImageUrl: this.editCoverImageUrl.trim() || undefined
+      name
     }).subscribe({
-      next: () => {
+      next: (folder) => {
+        if (this.editCoverFile) {
+          this.resourceService.uploadFolderCover(folder.id, this.editCoverFile).subscribe({
+            next: () => {
+              this.editCoverFile = null;
+              this.editCoverFileName = '';
+              this.message = 'Folder updated successfully.';
+              this.loadFolders();
+              this.loadFolderDetails(this.selectedFolderId);
+            },
+            error: () => {
+              this.editCoverFile = null;
+              this.editCoverFileName = '';
+              this.message = 'Folder updated, but cover upload failed.';
+              this.loadFolders();
+              this.loadFolderDetails(this.selectedFolderId);
+            }
+          });
+          return;
+        }
         this.message = 'Folder updated successfully.';
         this.loadFolders();
         this.loadFolderDetails(this.selectedFolderId);
@@ -178,6 +216,18 @@ export class AdminResourcesComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.uploadFile = input.files?.[0] || null;
+  }
+
+  onCreateCoverSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.createCoverFile = input.files?.[0] || null;
+    this.createCoverFileName = this.createCoverFile?.name || '';
+  }
+
+  onEditCoverSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.editCoverFile = input.files?.[0] || null;
+    this.editCoverFileName = this.editCoverFile?.name || '';
   }
 
   submitUpload(): void {

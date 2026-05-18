@@ -1,4 +1,4 @@
-<div class="admin-resources">
+﻿<div class="admin-resources">
   <header class="admin-resources__header">
     <div>
       <h1>Resources Management</h1>
@@ -16,7 +16,10 @@
     <h2>Create New Folder</h2>
     <div class="grid-2">
       <input type="text" [(ngModel)]="folderName" placeholder="Folder name" />
-      <input type="text" [(ngModel)]="coverImageUrl" placeholder="Cover image URL (optional)" />
+      <div>
+        <input type="file" accept="image/*" (change)="onCreateCoverSelected($event)" />
+        <small>{{ createCoverFileName || 'No image selected' }}</small>
+      </div>
     </div>
     <button class="btn-primary" (click)="createFolder()">Create folder</button>
   </section>
@@ -25,7 +28,10 @@
     <h2>Edit Folder</h2>
     <div class="grid-2">
       <input type="text" [(ngModel)]="editFolderName" placeholder="Folder name" />
-      <input type="text" [(ngModel)]="editCoverImageUrl" placeholder="Cover image URL" />
+      <div>
+        <input type="file" accept="image/*" (change)="onEditCoverSelected($event)" />
+        <small>{{ editCoverFileName || 'No image selected' }}</small>
+      </div>
     </div>
     <button class="btn-secondary" (click)="updateFolder()">Save changes</button>
   </section>
@@ -54,7 +60,7 @@
       <article class="folder-row" *ngFor="let folder of pagedFolders">
         <div class="folder-info" (click)="loadFolderDetails(folder.id)">
           <h3>{{ folder.name }}</h3>
-          <p>{{ folder.itemsCount }} item(s) � Updated {{ folder.updatedAt | date:'mediumDate' }}</p>
+          <p>{{ folder.itemsCount }} item(s) · Updated {{ folder.updatedAt | date:'mediumDate' }}</p>
         </div>
         <button class="btn-danger" (click)="deleteFolder(folder.id)">Delete</button>
       </article>
@@ -95,3 +101,4 @@
     </ng-template>
   </section>
 </div>
+

@@ -26,6 +26,12 @@ export class ResourceService {
     return this.http.put<ResourceFolder>(`${this.baseUrl}/folders/${folderId}`, payload);
   }
 
+  uploadFolderCover(folderId: string, file: File): Observable<ResourceFolder> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ResourceFolder>(`${this.baseUrl}/folders/${folderId}/cover`, formData);
+  }
+
   uploadFile(folderId: string, file: File): Observable<ResourceFile> {
     const formData = new FormData();
     formData.append('file', file);

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceFile, ResourceFolder, ResourceFolderDetails } from '../../../core/models/resource.model';
 import { ResourceService } from '../../../core/services/resource.service';
+import { environment } from '../../../../environments/environment';
 
 type ViewMode = 'GRID' | 'LIST';
 type SortType = 'LAST_UPDATED' | 'A_TO_Z';
@@ -200,5 +201,20 @@ export class ResourcesComponent implements OnInit {
 
   private safeFileName(name: string): string {
     return name.replace(/[\\/:*?"<>|]/g, '_');
+  }
+
+  resolveCoverUrl(url?: string): string {
+    if (!url || !url.trim()) {
+      return '/assets/folder-default.jpg';
+    }
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    if (url.startsWith('/EspritConnect')) {
+      return `${window.location.protocol}//${window.location.hostname}:8086${url}`;
+    }
+    const base = environment.apiUrl.endsWith('/') ? environment.apiUrl.slice(0, -1) : environment.apiUrl;
+    const path = url.startsWith('/') ? url : `/${url}`;
+    return `${base}${path}`;
   }
 }
