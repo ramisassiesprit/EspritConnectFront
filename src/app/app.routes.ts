@@ -47,6 +47,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'oauth2-redirect',
+    loadComponent: () =>
+      import('./auth/oauth2-redirect/oauth2-redirect.component').then(
+        (m) => m.Oauth2RedirectComponent,
+      ),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./auth/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent,
+      ),
+  },
+  {
     path: 'ai-chat',
     loadComponent: () =>
       import('./features/ai/ai-chat-page/ai-chat-page.component').then(

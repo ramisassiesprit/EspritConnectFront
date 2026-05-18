@@ -109,7 +109,7 @@ export class AuthService {
     this.router.navigate(['/acceuil']);
   }
 
-  private saveSession(session: UserSession) {
+  saveSession(session: UserSession) {
     this.encryptionService.setItem(this.sessionKey, session);
     this.isLoggedIn.set(true);
     this.currentUser.set(session);
@@ -131,5 +131,13 @@ export class AuthService {
 
   private redirectBasedOnRole(role: UserRole) {
     this.router.navigate([this.getHomePath()]);
+  }
+
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(request: any): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/reset-password`, request);
   }
 }

@@ -1,5 +1,5 @@
 import { Component, signal, inject, effect, HostListener, ElementRef } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../core/services/auth.service';
@@ -17,6 +17,7 @@ export class NavbarComponent {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private el = inject(ElementRef);
+  private route = inject(ActivatedRoute);
 
   isLoggedIn = this.authService.isLoggedIn;
   showJoinModal = signal(false);
@@ -34,6 +35,12 @@ export class NavbarComponent {
   }
 
   constructor() {
+    this.route.queryParams.subscribe(params => {
+      if (params['login'] === 'true') {
+        this.showLoginModal.set(true);
+      }
+    });
+
     effect(() => {
       if (this.isLoggedIn()) {
         this.userService.getCurrentUser().subscribe({
@@ -65,6 +72,43 @@ export class NavbarComponent {
     password: ''
   };
 
+  forgotPasswordMode = signal(false);
+  forgotPasswordSuccess = signal(false);
+  forgotPasswordEmail = signal('');
+  forgotPasswordLoading = signal(false);
+  forgotPasswordError = signal('');
+
+  toggleForgotPasswordMode(val: boolean) {
+    this.forgotPasswordMode.set(val);
+    this.forgotPasswordSuccess.set(false);
+    this.forgotPasswordEmail.set('');
+    this.forgotPasswordError.set('');
+    this.forgotPasswordLoading.set(false);
+  }
+
+  onSendForgotPassword() {
+    const email = this.forgotPasswordEmail().trim();
+    if (!email) {
+      this.forgotPasswordError.set("L'adresse e-mail est requise");
+      return;
+    }
+
+    this.forgotPasswordLoading.set(true);
+    this.forgotPasswordError.set('');
+
+    this.authService.forgotPassword(email).subscribe({
+      next: () => {
+        this.forgotPasswordLoading.set(false);
+        this.forgotPasswordSuccess.set(true);
+      },
+      error: (err) => {
+        this.forgotPasswordLoading.set(false);
+        this.forgotPasswordError.set(err.error?.message || "L'adresse email n'a pas été trouvée");
+        console.error('Forgot password failed', err);
+      }
+    });
+  }
+
   toggleProfileMenu() {
     this.showProfileMenu.update(v => !v);
   }
@@ -75,6 +119,9 @@ export class NavbarComponent {
 
   toggleLoginModal() {
     this.showLoginModal.update(v => !v);
+    if (!this.showLoginModal()) {
+      this.toggleForgotPasswordMode(false);
+    }
   }
 
   onLogin() {

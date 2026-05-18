@@ -11,7 +11,6 @@ import { QuillModule } from 'ngx-quill';
 @Component({
   selector: 'app-group-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   imports: [CommonModule, ReactiveFormsModule, FormsModule, QuillModule],
   templateUrl: './group-create.component.html',
   styleUrls: ['./group-create.component.css']

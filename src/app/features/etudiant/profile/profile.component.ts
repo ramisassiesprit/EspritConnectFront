@@ -106,11 +106,22 @@ export class ProfileComponent implements OnInit {
 
   loadAllData(): void {
     this.userService.getCurrentUser().subscribe(u => this.user = u);
-    this.profileService.getMyEspritProfile().subscribe(p => this.espritProfile = p);
+    this.profileService.getMyEspritProfile().subscribe(p => {
+      this.espritProfile = p ? p : {
+        studentNumber: '',
+        fieldOfStudy: '',
+        degree: '',
+        graduationYear: new Date().getFullYear(),
+        program: '',
+        institution: ''
+      };
+    });
     this.profileService.getMyExperiences().subscribe(exps => this.experiences = exps);
     this.profileService.getMyEducations().subscribe(edus => this.educations = edus);
     this.profileService.getMySkills().subscribe(skills => this.skills = skills);
-    this.profileService.getMyHelps().subscribe(helps => this.helps = helps);
+    this.profileService.getMyHelps().subscribe(helps => {
+      this.helps = helps && helps.length > 0 ? helps : [this.resetHelp()];
+    });
   }
 
   updateProfile(): void {
@@ -123,6 +134,7 @@ export class ProfileComponent implements OnInit {
 
   updateEspritProfile(): void {
     this.profileService.updateEspritProfile(this.espritProfile).subscribe(p => {
+    console.log(p);
       this.espritProfile = p;
       this.isEditingEsprit = false;
       alert('Profil Esprit mis à jour !');
