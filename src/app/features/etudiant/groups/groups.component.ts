@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
@@ -208,7 +209,7 @@ export class GroupsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to delete group', err);
-        alert('Failed to delete group. Please try again.');
+        Swal.fire('Failed to delete group. Please try again.');
       }
     });
   }
@@ -224,7 +225,7 @@ export class GroupsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to join group', err);
-        alert('Failed to join group. Please try again.');
+        Swal.fire('Failed to join group. Please try again.');
       }
     });
   }
@@ -242,7 +243,7 @@ export class GroupsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to leave group', err);
-        alert('Failed to leave group. Please try again.');
+        Swal.fire('Failed to leave group. Please try again.');
       }
     });
   }

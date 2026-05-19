@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -157,7 +158,7 @@ export class ProfileComponent implements OnInit {
     this.userService.updateProfile(this.user).subscribe(u => {
       this.user = u;
       this.isEditingProfile = false;
-      alert('Informations personnelles mises à jour !');
+      Swal.fire('Informations personnelles mises à jour !');
     });
   }
 
@@ -166,7 +167,7 @@ export class ProfileComponent implements OnInit {
     console.log(p);
       this.espritProfile = p;
       this.isEditingEsprit = false;
-      alert('Profil Esprit mis à jour !');
+      Swal.fire('Profil Esprit mis à jour !');
     });
   }
 

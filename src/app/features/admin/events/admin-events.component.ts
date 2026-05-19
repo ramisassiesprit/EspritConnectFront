@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -49,10 +50,10 @@ export class AdminEventsComponent implements OnInit {
     if (confirm("Voulez-vous vraiment approuver cet événement ? Il sera immédiatement publié et visible de tous.")) {
       this.eventService.approveEvent(eventId).subscribe({
         next: () => {
-          alert("L'événement a été approuvé avec succès ! Une notification a été envoyée à tous les utilisateurs.");
+          Swal.fire("L'événement a été approuvé avec succès ! Une notification a été envoyée à tous les utilisateurs.");
           this.loadEvents();
         },
-        error: (err) => alert("Erreur lors de l'approbation de l'événement")
+        error: (err) => Swal.fire("Erreur lors de l'approbation de l'événement")
       });
     }
   }
@@ -62,10 +63,10 @@ export class AdminEventsComponent implements OnInit {
     if (confirm("Voulez-vous vraiment rejeter cet événement ?")) {
       this.eventService.rejectEvent(eventId).subscribe({
         next: () => {
-          alert("L'événement a été rejeté.");
+          Swal.fire("L'événement a été rejeté.");
           this.loadEvents();
         },
-        error: (err) => alert("Erreur lors du rejet de l'événement")
+        error: (err) => Swal.fire("Erreur lors du rejet de l'événement")
       });
     }
   }
