@@ -268,6 +268,18 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'groups',
+        loadComponent: () => import('./features/admin/admin-shell/groups-manage/groups-manage.component').then(m => m.GroupsManageComponent),
+      },
+      {
+        path: 'groups/:id',
+        loadComponent: () => import('./features/admin/admin-shell/groups-control/groups-control.component').then(m => m.GroupsControlComponent),
+      },
+      {
+        path: 'groups/:id/edit',
+        loadComponent: () => import('./features/etudiant/groups/group-update/group-update.component').then(m => m.GroupUpdateComponent),
+      },
+      {
         path: 'jobs',
         loadComponent: () =>
           import('./features/admin/jobs/admin-jobs.component').then(
