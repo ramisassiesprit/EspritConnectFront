@@ -41,7 +41,9 @@
               <div class="user-info">
                 <img [src]="user.avatarUrl || 'assets/default-avatar.png'" alt="Avatar" class="user-avatar">
                 <div class="user-name">
-                  <span class="full-name">{{ user.firstName }} {{ user.lastName }}</span>
+                  <a [routerLink]="['/admin/users', user.id]" class="full-name clickable-name" title="Voir les détails">
+                    {{ user.firstName }} {{ user.lastName }}
+                  </a>
                   <span class="role-badge">{{ user.role }}</span>
                 </div>
               </div>

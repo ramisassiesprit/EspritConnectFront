@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
@@ -400,7 +401,7 @@ export class GroupCreateComponent implements OnInit {
     if (this.isEditMode && this.editGroupId) {
       this.groupService.updateGroup(this.editGroupId, payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
         next: () => {
-          alert('Group updated successfully!');
+          Swal.fire('Group updated successfully!');
           this.router.navigate(['/etudiant/groups']);
         },
         error: (err) => {
@@ -412,7 +413,7 @@ export class GroupCreateComponent implements OnInit {
     } else {
       this.groupService.createGroupWithFiles(payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
         next: () => {
-          alert('Group created successfully! Your group is pending admin approval.');
+          Swal.fire('Group created successfully! Your group is pending admin approval.');
           this.router.navigate(['/etudiant/groups']);
         },
         error: (err) => {
@@ -430,7 +431,7 @@ export class GroupCreateComponent implements OnInit {
     
     this.groupService.deleteGroup(this.editGroupId).subscribe({
       next: () => {
-        alert('Group deleted successfully.');
+        Swal.fire('Group deleted successfully.');
         this.router.navigate(['/etudiant/groups']);
       },
       error: (err) => {

@@ -18,14 +18,30 @@ export class GemAiServiceService {
   constructor() { }
 
   sendMessage(message: string): Observable<AiChatResponse> {
-    // Sending a POST request and extracting the content and reasoning from the choices array
-    return this.http.post<any>(this.apiUrl, { prompt: message }).pipe(
+    // Handling backend returning Server-Sent Events (SSE) stream text
+    return this.http.post(this.apiUrl, { prompt: message }, { responseType: 'text' }).pipe(
       map(res => {
-        const msgNode = res?.choices?.[0]?.message;
-        return {
-          content: msgNode?.content || 'No response content available.',
-          reasoning: msgNode?.reasoning_content
-        };
+        try {
+          // If the backend returns pure JSON
+          const jsonRes = JSON.parse(res);
+          const msgNode = jsonRes?.choices?.[0]?.message;
+          return {
+            content: msgNode?.content || 'No response content available.',
+            reasoning: msgNode?.reasoning_content
+          };
+        } catch (e) {
+          // If the backend returns SSE stream: `data:Hello\n\ndata:!\n\n`
+          const content = res
+            .split('\n')
+            .filter(line => line.startsWith('data:'))
+            // The backend does not use a padding space after 'data:', any space is part of the message itself.
+            .map(line => line.substring(5))
+            .join('');
+
+          return {
+            content: content || 'No response content available.',
+          };
+        }
       })
     );
   }

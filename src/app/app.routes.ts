@@ -47,6 +47,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'oauth2-redirect',
+    loadComponent: () =>
+      import('./auth/oauth2-redirect/oauth2-redirect.component').then(
+        (m) => m.Oauth2RedirectComponent,
+      ),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./auth/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent,
+      ),
+  },
+  {
     path: 'ai-chat',
     loadComponent: () =>
       import('./features/ai/ai-chat-page/ai-chat-page.component').then(
@@ -112,14 +126,7 @@ export const routes: Routes = [
               import(
                 './features/etudiant/mentoring/MentorSettings/mentoringSettings.component'
               ).then((m) => m.MentoringSettingsComponent),
-          },
-          {
-            path: 'profile/:id',
-            loadComponent: () =>
-              import(
-                './features/etudiant/mentoring/mentor-profile/mentor-profile.component'
-              ).then((m) => m.MentorProfileComponent),
-          },
+          }
         ],
       },
       {
@@ -175,10 +182,22 @@ export const routes: Routes = [
       },
       {
         path: 'events',
-        loadComponent: () =>
-          import('./features/etudiant/events/events.component').then(
-            (m) => m.EventsComponent,
-          ),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/etudiant/events/events.component').then(
+                (m) => m.EventsComponent,
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/etudiant/events/event-details/event-details.component').then(
+                (m) => m.EventDetailsComponent,
+              ),
+          }
+        ]
       },
       {
         path: 'resources',
@@ -261,6 +280,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'users/:id',
+        loadComponent: () =>
+          import('./features/admin/Users/user-details/user-details.component').then(
+            (m) => m.UserDetailsComponent,
+          ),
+      },
+      {
         path: 'resources',
         loadComponent: () =>
           import('./features/admin/resources/admin-resources.component').then(
@@ -284,6 +310,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/jobs/admin-jobs.component').then(
             (m) => m.AdminJobsComponent,
+          ),
+      },
+      {
+        path: 'events',
+        loadComponent: () =>
+          import('./features/admin/events/admin-events.component').then(
+            (m) => m.AdminEventsComponent,
           ),
       },
     ],

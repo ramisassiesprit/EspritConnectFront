@@ -1,4 +1,4 @@
-import { Component, inject, ElementRef, HostListener } from '@angular/core';
+import { Component, inject, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,8 @@ export interface ChatMessage {
   styleUrl: './ai-chat-bubble.component.css',
 })
 export class AiChatBubbleComponent {
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+
   isOpen = false;
   private router = inject(Router);
   private aiService = inject(GemAiServiceService);
@@ -58,6 +60,16 @@ export class AiChatBubbleComponent {
     return this.sanitizer.bypassSecurityTrustHtml(formattedText);
   }
 
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      try {
+        if (this.scrollContainer) {
+          this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+        }
+      } catch(err) { }
+    }, 50); // slight delay to allow DOM render
+  }
+
   sendMessage() {
     if (!this.userInput.trim() || this.isLoading) return;
 
@@ -65,6 +77,7 @@ export class AiChatBubbleComponent {
     this.messages.push({ text: messageText, sender: 'user' });
     this.userInput = '';
     this.isLoading = true;
+    this.scrollToBottom();
 
     this.aiService.sendMessage(messageText).subscribe({
       next: (response) => {
@@ -75,11 +88,13 @@ export class AiChatBubbleComponent {
           isReasoningExpanded: false
         });
         this.isLoading = false;
+        this.scrollToBottom();
       },
       error: (err) => {
         console.error('AI chat error:', err);
         this.messages.push({ text: 'Sorry, I encountered an error connecting to the AI service.', sender: 'ai' });
         this.isLoading = false;
+        this.scrollToBottom();
       }
     });
   }

@@ -1,0 +1,30 @@
+export enum NotificationType {
+  CONNECTION_REQUEST = 'CONNECTION_REQUEST',
+  CONNECTION_ACCEPTED = 'CONNECTION_ACCEPTED',
+  POST_REACTION = 'POST_REACTION',
+  POST_COMMENT = 'POST_COMMENT',
+  COMMENT_REPLY = 'COMMENT_REPLY',
+  EVENT_REMINDER = 'EVENT_REMINDER',
+  JOB_APPLICATION = 'JOB_APPLICATION',
+  MENTORING_REQUEST = 'MENTORING_REQUEST',
+  MENTORING_ACCEPTED = 'MENTORING_ACCEPTED',
+  MESSAGE_RECEIVED = 'MESSAGE_RECEIVED',
+  GROUP_INVITE = 'GROUP_INVITE',
+  GROUP_JOIN = 'GROUP_JOIN',
+  GROUP_APPROVED = 'GROUP_APPROVED',
+  GROUP_REJECTED = 'GROUP_REJECTED',
+  NEWSLETTER = 'NEWSLETTER',
+  SYSTEM = 'SYSTEM'
+}
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  title?: string;
+  body?: string;
+  targetType?: string;
+  targetId?: string;
+  isRead: boolean;
+  createdAt: string;
+}

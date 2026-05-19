@@ -1,10 +1,12 @@
-import { Component, signal, inject, effect, HostListener, ElementRef } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, signal, inject, effect, HostListener, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../core/services/auth.service';
 import { UserService } from '../core/services/User.service';
 import { User } from '../core/models/user.model';
+import { NotificationService } from '../core/services/notification.service';
+import { Notification } from '../core/models/notification.model';
 
 @Component({
   selector: 'app-navbar',
@@ -13,10 +15,12 @@ import { User } from '../core/models/user.model';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private userService = inject(UserService);
+  private notificationService = inject(NotificationService);
   private el = inject(ElementRef);
+  private route = inject(ActivatedRoute);
 
   isLoggedIn = this.authService.isLoggedIn;
   showJoinModal = signal(false);
@@ -24,25 +28,85 @@ export class NavbarComponent {
   notifCount = signal(0);
   msgCount = signal(0);
   showProfileMenu = signal(false);
+  showNotifDropdown = signal(false);
   currentUser = signal<User | null>(null);
+  notifications = signal<Notification[]>([]);
+  private pollInterval: any;
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (this.showProfileMenu() && !this.el.nativeElement.contains(event.target)) {
       this.showProfileMenu.set(false);
     }
+    if (this.showNotifDropdown() && !this.el.nativeElement.contains(event.target)) {
+      this.showNotifDropdown.set(false);
+    }
   }
 
   constructor() {
+    this.route.queryParams.subscribe(params => {
+      if (params['login'] === 'true') {
+        this.showLoginModal.set(true);
+      }
+    });
+
     effect(() => {
       if (this.isLoggedIn()) {
         this.userService.getCurrentUser().subscribe({
           next: (user) => this.currentUser.set(user),
           error: (err) => console.error('Failed to fetch user profile', err)
         });
+        this.loadNotifications();
       } else {
         this.currentUser.set(null);
+        this.notifications.set([]);
+        this.notifCount.set(0);
       }
+    });
+  }
+
+  ngOnInit() {
+    if (this.isLoggedIn()) {
+      this.loadNotifications();
+      this.pollInterval = setInterval(() => this.loadNotifications(), 10000);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+    }
+  }
+
+  loadNotifications() {
+    if (this.isLoggedIn()) {
+      this.notificationService.getNotifications().subscribe({
+        next: (notifs) => {
+          this.notifications.set(notifs);
+          this.notifCount.set(notifs.filter(n => !n.isRead).length);
+        },
+        error: (err) => console.error('Failed to load notifications', err)
+      });
+    }
+  }
+
+  toggleNotifDropdown() {
+    this.showNotifDropdown.update(v => !v);
+    if (this.showNotifDropdown()) {
+      this.showProfileMenu.set(false);
+    }
+  }
+
+  markNotificationAsRead(notif: Notification, event: Event) {
+    event.stopPropagation();
+    this.notificationService.markAsRead(notif.id).subscribe(() => {
+      this.loadNotifications();
+    });
+  }
+
+  markAllNotificationsAsRead() {
+    this.notificationService.markAllAsRead().subscribe(() => {
+      this.loadNotifications();
     });
   }
 
@@ -65,6 +129,43 @@ export class NavbarComponent {
     password: ''
   };
 
+  forgotPasswordMode = signal(false);
+  forgotPasswordSuccess = signal(false);
+  forgotPasswordEmail = signal('');
+  forgotPasswordLoading = signal(false);
+  forgotPasswordError = signal('');
+
+  toggleForgotPasswordMode(val: boolean) {
+    this.forgotPasswordMode.set(val);
+    this.forgotPasswordSuccess.set(false);
+    this.forgotPasswordEmail.set('');
+    this.forgotPasswordError.set('');
+    this.forgotPasswordLoading.set(false);
+  }
+
+  onSendForgotPassword() {
+    const email = this.forgotPasswordEmail().trim();
+    if (!email) {
+      this.forgotPasswordError.set("L'adresse e-mail est requise");
+      return;
+    }
+
+    this.forgotPasswordLoading.set(true);
+    this.forgotPasswordError.set('');
+
+    this.authService.forgotPassword(email).subscribe({
+      next: () => {
+        this.forgotPasswordLoading.set(false);
+        this.forgotPasswordSuccess.set(true);
+      },
+      error: (err) => {
+        this.forgotPasswordLoading.set(false);
+        this.forgotPasswordError.set(err.error?.message || "L'adresse email n'a pas été trouvée");
+        console.error('Forgot password failed', err);
+      }
+    });
+  }
+
   toggleProfileMenu() {
     this.showProfileMenu.update(v => !v);
   }
@@ -75,6 +176,9 @@ export class NavbarComponent {
 
   toggleLoginModal() {
     this.showLoginModal.update(v => !v);
+    if (!this.showLoginModal()) {
+      this.toggleForgotPasswordMode(false);
+    }
   }
 
   onLogin() {

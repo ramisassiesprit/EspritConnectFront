@@ -4,11 +4,12 @@ import { UserService } from '../../../core/services/User.service';
 import { User, UserStatus } from '../../../core/models/user.model';
 import { UserRole } from '../../../core/models/user-role.enum';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './users-list.component.html',
   styleUrl: './users-list.component.css'
 })
