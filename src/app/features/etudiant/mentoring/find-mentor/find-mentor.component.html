@@ -63,7 +63,7 @@
           </div>
 
           @for (mentor of filteredUsers; track mentor.user.id) {
-            <div [routerLink]="['../profile', mentor.user.id]" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 pl-8 flex items-center gap-6 relative group hover:shadow-md transition-shadow cursor-pointer">
+            <div [routerLink]="['/etudiant/user', mentor.user.id]" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 pl-8 flex items-center gap-6 relative group hover:shadow-md transition-shadow cursor-pointer">
               
               <!-- Willing to help Ribbon -->
               <div class="absolute -left-2 top-4 bg-gray-500 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider rounded-r-md before:content-['] before:absolute before:-bottom-1.5 before:left-0 before:border-t-[6px] before:border-t-gray-700 before:border-l-[6px] before:border-l-transparent">

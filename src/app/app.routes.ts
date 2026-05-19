@@ -126,14 +126,7 @@ export const routes: Routes = [
               import(
                 './features/etudiant/mentoring/MentorSettings/mentoringSettings.component'
               ).then((m) => m.MentoringSettingsComponent),
-          },
-          {
-            path: 'profile/:id',
-            loadComponent: () =>
-              import(
-                './features/etudiant/mentoring/mentor-profile/mentor-profile.component'
-              ).then((m) => m.MentorProfileComponent),
-          },
+          }
         ],
       },
       {
