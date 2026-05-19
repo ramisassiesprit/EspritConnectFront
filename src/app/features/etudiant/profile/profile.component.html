@@ -146,11 +146,32 @@
         <div class="edit-form-grid">
           <div class="form-field">
             <label>Field of Study *</label>
-            <input [(ngModel)]="espritProfile.fieldOfStudy" placeholder="e.g. Computer Science">
+            <select [(ngModel)]="espritProfile.fieldOfStudy">
+              <option value="" disabled>Select Field of Study</option>
+              <option value="Génie Logiciel">Génie Logiciel (Software Engineering)</option>
+              <option value="Informatique">Informatique (Computer Science)</option>
+              <option value="Génie Télécommunications">Génie Télécommunications (Telecommunications)</option>
+              <option value="Génie Électromécanique">Génie Électromécanique (Electromechanical Engineering)</option>
+              <option value="Génie Civil">Génie Civil (Civil Engineering)</option>
+              <option value="Management & Business">Management & Business (Business School)</option>
+              <option value="Science des Données">Science des Données (Data Science)</option>
+              <option value="Systèmes Embarqués">Systèmes Embarqués (Embedded Systems)</option>
+              <option value="Cloud & Sécurité">Cloud & Sécurité (Cloud & Security)</option>
+              <option value="Réseaux & Télécoms">Réseaux & Télécoms (Networks & Telecoms)</option>
+              <option value="Finance & Comptabilité">Finance & Comptabilité (Finance & Accounting)</option>
+              <option value="Marketing & Ventes">Marketing & Ventes (Marketing & Sales)</option>
+            </select>
           </div>
           <div class="form-field">
             <label>Degree</label>
-            <input [(ngModel)]="espritProfile.degree" placeholder="e.g. Engineering">
+            <select [(ngModel)]="espritProfile.degree">
+              <option value="" disabled>Select Degree</option>
+              <option value="Diplôme d'Ingénieur">Diplôme d'Ingénieur (Engineering Degree)</option>
+              <option value="Licence">Licence (Bachelor's Degree)</option>
+              <option value="Master Professionnel">Master Professionnel (Professional Master)</option>
+              <option value="Classe Préparatoire">Classe Préparatoire (Preparatory Classes)</option>
+              <option value="Executive MBA / Master">Executive MBA / Master (Executive Master)</option>
+            </select>
           </div>
           <div class="form-field">
             <label>Graduation Year</label>
@@ -160,9 +181,18 @@
             <label>Institution</label>
             <input [(ngModel)]="espritProfile.institution" placeholder="e.g. Esprit Ghazela">
           </div>
-          <div class="form-field">
-            <label>Program</label>
-            <input [(ngModel)]="espritProfile.program" placeholder="e.g. Dual Studies">
+          <div class="form-field col-span-2">
+            <label>Program (Multiple Choices)</label>
+            <div class="program-checkbox-group">
+              <div *ngFor="let opt of programOptions" class="program-checkbox-item">
+                <input 
+                  type="checkbox" 
+                  [id]="'opt-' + opt.value"
+                  [checked]="isProgramSelected(opt.value)"
+                  (change)="toggleProgramOption(opt.value)">
+                <label [for]="'opt-' + opt.value">{{ opt.label }}</label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="form-actions">
@@ -225,6 +255,58 @@
           </div>
         </div>
         <p *ngIf="experiences.length === 0" class="empty-state">No experience added yet.</p>
+      </div>
+    </div>
+
+    <!-- Other Education Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="bi bi-mortarboard icon-red"></i>
+          <span>Other Education</span>
+        </div>
+        <button (click)="toggleAddEducation()" class="btn-icon">
+          <i class="bi" [ngClass]="showAddEducation ? 'bi-dash-lg' : 'bi-plus-lg'"></i>
+        </button>
+      </div>
+
+      <div *ngIf="showAddEducation" class="add-form-panel">
+        <div class="edit-form-grid">
+          <div class="form-field">
+            <label>Institution Name</label>
+            <input [(ngModel)]="newEducation.institutionName" placeholder="e.g. Stanford University">
+          </div>
+          <div class="form-field">
+            <label>Degree</label>
+            <input [(ngModel)]="newEducation.degree" placeholder="e.g. Master of Science">
+          </div>
+          <div class="form-field">
+            <label>Graduation Year</label>
+            <input [(ngModel)]="newEducation.graduationYear" type="number" placeholder="e.g. 2024">
+          </div>
+        </div>
+        <div class="form-actions mt-3">
+          <button (click)="addEducation()" class="btn-save">ADD</button>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div *ngFor="let edu of educations" class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <div>
+                <h4 class="timeline-title">{{ edu.degree }}</h4>
+                <p class="timeline-sub">{{ edu.institutionName }}</p>
+                <p class="timeline-date">Graduation Year: {{ edu.graduationYear }}</p>
+              </div>
+              <button (click)="deleteEducation(edu.id)" class="btn-icon text-gray-300 hover:text-red-500">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="educations.length === 0" class="empty-state">No other education added yet.</p>
       </div>
     </div>
 

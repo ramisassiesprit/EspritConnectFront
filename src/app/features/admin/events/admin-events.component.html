@@ -1,0 +1,104 @@
+<div class="admin-events-container">
+  <div class="admin-events-header">
+    <h2>Gestion & Approbation des Événements</h2>
+    <p>Gérez et modérez les propositions d'événements créées par les utilisateurs de la plateforme.</p>
+  </div>
+
+  <!-- Navigation tabs -->
+  <div class="tabs-row">
+    <div class="tabs-group">
+      <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="activeTab.set('pending')">
+        En attente
+        @if (getPendingCount() > 0) {
+          <span class="badge badge-warning">{{ getPendingCount() }}</span>
+        }
+      </button>
+      <button class="tab-btn" [class.active]="activeTab() === 'approved'" (click)="activeTab.set('approved')">
+        Approuvés
+      </button>
+      <button class="tab-btn" [class.active]="activeTab() === 'all'" (click)="activeTab.set('all')">
+        Tous
+      </button>
+    </div>
+  </div>
+
+  <!-- Content table -->
+  <div class="table-card">
+    @if (filteredEvents.length === 0) {
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <p>Aucun événement dans cette catégorie pour le moment.</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Événement & Type</th>
+              <th>Date & Heure</th>
+              <th>Lieu</th>
+              <th>Statut</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (event of filteredEvents; track event.id) {
+              <tr>
+                <td style="width: 80px;">
+                  <img [src]="event.coverUrl" alt="Cover" class="table-cover-img">
+                </td>
+                <td>
+                  <div class="title-cell">
+                    <span class="event-title">{{ event.title }}</span>
+                    <span class="event-type-badge">{{ getEventTypeLabel(event.eventType) }}</span>
+                  </div>
+                  <p class="event-description-text">{{ event.description }}</p>
+                </td>
+                <td>
+                  <div class="date-cell">
+                    <strong>{{ event.startAt | date:'dd MMM yyyy' }}</strong>
+                    <span>à {{ event.startAt | date:'HH:mm' }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="location-text">{{ event.location || 'Non spécifié' }}</span>
+                </td>
+                <td>
+                  <span class="status-pill" [class]="event.status?.toLowerCase()">
+                    {{ getEventStatusLabel(event.status) }}
+                  </span>
+                </td>
+                <td class="text-right">
+                  <div class="actions-cell">
+                    @if (event.status === 'PENDING') {
+                      <button class="btn-icon btn-approve" title="Approuver" (click)="approve(event.id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Approuver
+                      </button>
+                      <button class="btn-icon btn-reject" title="Rejeter" (click)="reject(event.id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Rejeter
+                      </button>
+                    } @else {
+                      <span class="action-done">Aucune action requise</span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

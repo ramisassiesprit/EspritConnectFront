@@ -51,6 +51,35 @@ export class ProfileComponent implements OnInit {
   isEditingProfile: boolean = false;
   isEditingEsprit: boolean = false;
 
+  programOptions = [
+    { value: 'ESE-ESPRIT School of Engineering', label: 'ESE - ESPRIT School of Engineering' },
+    { value: 'ESB-Esprit school of business', label: 'ESB - Esprit School of Business' },
+    { value: 'ESM-Esprim Monastir', label: 'ESM - Esprim Monastir' },
+    { value: 'Evening classes', label: 'Evening classes' },
+    { value: 'dual studies', label: 'dual studies' }
+  ];
+
+  isProgramSelected(option: string): boolean {
+    if (!this.espritProfile.program) return false;
+    const selected = this.espritProfile.program.split(',').map(s => s.trim());
+    return selected.includes(option);
+  }
+
+  toggleProgramOption(option: string): void {
+    let selected = this.espritProfile.program 
+      ? this.espritProfile.program.split(',').map(s => s.trim()).filter(s => s !== '')
+      : [];
+    
+    if (selected.includes(option)) {
+      selected = selected.filter(s => s !== option);
+    } else {
+      selected.push(option);
+    }
+    
+    this.espritProfile.program = selected.join(',');
+  }
+
+
   showAddExperience: boolean = false;
   showAddSkill: boolean = false;
   showAddEducation: boolean = false;

@@ -1,0 +1,432 @@
+<div class="event-details-page-wrapper fade-in">
+  <!-- Back navigation bar -->
+  <div class="back-navigation-bar">
+    <button class="btn-back" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Retour aux événements
+    </button>
+  </div>
+
+  @if (selectedEvent()) {
+    <div class="details-page-card">
+      <div class="modal-banner">
+        <img [src]="selectedEvent()?.coverUrl" alt="Cover Image" class="modal-banner-img">
+        <div class="modal-banner-overlay"></div>
+        <div class="modal-banner-content">
+          <span class="modal-category-badge">{{ getEventTypeLabel(selectedEvent()!.eventType) }}</span>
+          <h2>{{ selectedEvent()?.title }}</h2>
+        </div>
+      </div>
+
+      <div class="modal-details-body">
+        <div class="details-left">
+          <!-- Espace Organisateur (QR Code Scanner) -->
+          @if (selectedEvent()?.creatorId === currentUser()?.id || currentUser()?.role === 'ADMIN') {
+            <div class="organizer-scanner-card fade-in">
+              <h4 class="organizer-card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <rect x="7" y="7" width="3" height="3"></rect>
+                  <rect x="14" y="7" width="3" height="3"></rect>
+                  <rect x="7" y="14" width="3" height="3"></rect>
+                  <rect x="14" y="14" width="3" height="3"></rect>
+                </svg>
+                🎛️ Espace Organisateur : Contrôle d'Accès QR
+              </h4>
+              <p class="organizer-card-subtitle">Scannez le ticket QR des participants pour valider instantanément leur présence à l'événement.</p>
+              
+              <div class="scanner-interface-box">
+                @if (isScanning()) {
+                  <div class="scanner-active-container">
+                    <div id="qr-reader"></div>
+                    <div class="scanner-hud">
+                      <div class="scanner-laser-line"></div>
+                      <span class="hud-text">Scannez le QR Code en le centrant dans le cadre</span>
+                    </div>
+                    <button class="btn-scanner-action stop" (click)="stopScanner()">
+                      Arrêter l'appareil photo
+                    </button>
+                  </div>
+                } @else {
+                  <div class="scanner-idle-container">
+                    <button class="btn-scanner-action start" (click)="startScanner()">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                      </svg>
+                      Lancer le Scanner Caméra
+                    </button>
+                    
+                    <div class="scanner-divider">
+                      <span>OU</span>
+                    </div>
+                    
+                    <div class="manual-checkin-form">
+                      <input type="text" [(ngModel)]="manualCodeInput" class="manual-checkin-input" placeholder="Saisir le Code de Ticket manuellement...">
+                      <button class="btn-manual-checkin-submit" (click)="submitManualCheckIn()">
+                        Valider
+                      </button>
+                    </div>
+                  </div>
+                }
+
+                @if (scanSuccessMessage()) {
+                  <div class="scan-success-alert fade-in">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span>{{ scanSuccessMessage() }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Winners Banner -->
+          @if (winners().length > 0) {
+            <div class="winners-podium-card fade-in">
+              <h4 class="winners-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="7"></circle>
+                  <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+                🏆 Podium des Vainqueurs
+              </h4>
+              <div class="winners-list">
+                @for (win of winners(); track win.id) {
+                  <div class="winner-badge-item rank-{{ win.winnerRank || 1 }}">
+                    <span class="rank-icon">
+                      {{ win.winnerRank === 1 ? '🥇' : win.winnerRank === 2 ? '🥈' : win.winnerRank === 3 ? '🥉' : '🏆' }}
+                    </span>
+                    <div class="winner-detail">
+                      <strong>{{ win.userFullName }}</strong>
+                      <span>Rang {{ win.winnerRank || 'Général' }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <div class="description-section">
+            <h3>Description de l'événement</h3>
+            <p class="details-description">{{ selectedEvent()?.description }}</p>
+          </div>
+
+          <div class="details-meta-grid">
+            <div class="meta-item-card">
+              <div class="meta-icon-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </div>
+              <div class="meta-info-box">
+                <strong>Date et heure</strong>
+                <p>{{ selectedEvent()?.startAt | date:'EEEE dd MMMM yyyy à HH:mm' }}</p>
+              </div>
+            </div>
+
+            @if (selectedEvent()?.location) {
+              <div class="meta-item-card">
+                <div class="meta-icon-box">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                </div>
+                <div class="meta-info-box">
+                  <strong>Lieu</strong>
+                  <p>{{ selectedEvent()?.location }}</p>
+                </div>
+              </div>
+            }
+
+            @if (selectedEvent()?.meetingUrl) {
+              <div class="meta-item-card col-span-2">
+                <div class="meta-icon-box online">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                </div>
+                <div class="meta-info-box">
+                  <strong>Lien de réunion en ligne</strong>
+                  <p><a [href]="selectedEvent()?.meetingUrl" target="_blank" class="meeting-link">{{ selectedEvent()?.meetingUrl }}</a></p>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Participants list -->
+          <div class="participants-section-wrapper">
+            <div class="section-title-row">
+              <h3>Participants inscrits</h3>
+              <span class="participants-counter">{{ selectedEventRegistrations().length }} inscrits</span>
+            </div>
+            
+            @if (selectedEventRegistrations().length === 0) {
+              <div class="empty-participants-card">
+                <p class="no-participants">Aucun participant inscrit pour le moment. Soyez le premier à rejoindre !</p>
+              </div>
+            } @else {
+              <div class="participants-scroll-list">
+                @for (reg of selectedEventRegistrations(); track reg.id) {
+                  <div class="participant-item-card">
+                    <div class="participant-avatar-badge">
+                      {{ reg.userFullName.charAt(0) }}
+                    </div>
+                    <div class="participant-meta-info">
+                      <span class="participant-name">{{ reg.userFullName }}</span>
+                      <div class="participant-status-tag-row">
+                        <span class="status-tag" [class.attended]="reg.status === 'ATTENDED'" [class.waitlist]="reg.status === 'WAITLISTED'">
+                          {{ reg.status === 'ATTENDED' ? 'Présent' : reg.status === 'WAITLISTED' ? 'Sur liste d\'attente' : 'Inscrit' }}
+                        </span>
+                        @if (reg.isWinner) {
+                          <span class="winner-tag-pill">🏆 Gagnant (Rang {{ reg.winnerRank || 'Général' }})</span>
+                        }
+                      </div>
+                    </div>
+                    
+                    <!-- Organiser quick actions -->
+                    @if (selectedEvent()?.creatorId === currentUser()?.id || currentUser()?.role === 'ADMIN') {
+                      <div class="organizer-controls">
+                        @if (reg.status !== 'ATTENDED' && reg.status !== 'WAITLISTED') {
+                          <button class="btn-action-mini btn-mini-checkin" (click)="checkInUser(reg.userId)">
+                            Check-In
+                          </button>
+                        }
+                        @if (reg.status === 'ATTENDED' && !reg.isWinner) {
+                          <button class="btn-action-mini btn-mini-winner" (click)="declareWinner(reg.userId)">
+                            Winner
+                          </button>
+                        }
+                      </div>
+                    }
+                    
+                    <span class="participant-date-registered">{{ reg.registeredAt | date:'dd MMM, HH:mm' }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Attendance Certificate Download Button (Only if attended) -->
+          @if (hasAttended(selectedEvent()?.id)) {
+            <div class="cert-download-banner fade-in">
+              <div class="cert-icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+              </div>
+              <div class="cert-content">
+                <h4>Félicitations pour votre présence !</h4>
+                <p>Votre certificat officiel de présence est généré et prêt au téléchargement.</p>
+              </div>
+              <button class="btn-print-cert-action" (click)="printCertificate()">
+                Imprimer Certificat de Présence
+              </button>
+            </div>
+          }
+
+          <!-- Winner Certificate Download Banner (Only if Winner) -->
+          @if (isWinnerOfEvent(selectedEvent()?.id)) {
+            <div class="winner-cert-download-banner fade-in">
+              <div class="winner-cert-icon-wrapper">
+                <svg class="gold-trophy-svg" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <div class="winner-cert-content">
+                <h4>🏆 Félicitations, vous êtes Lauréat !</h4>
+                <p>Votre certificat officiel de victoire (Rang {{ getWinnerRank(selectedEvent()?.id) || 'Général' }}) est disponible.</p>
+              </div>
+              <button class="btn-print-winner-cert-action" (click)="printWinnerCertificate()">
+                Télécharger Certificat de Victoire
+              </button>
+            </div>
+          }
+
+          <!-- Feedback rating submission -->
+          @if (isRegistered(selectedEvent()?.id) && !hasFeedbackSubmitted()) {
+            <div class="feedback-submission-card fade-in">
+              <h4>Laisser votre avis</h4>
+              <p class="feedback-subtitle-text">Comment s'est passée votre expérience à cet événement ?</p>
+              
+              <div class="rating-stars-input-wrapper">
+                @for (star of [1,2,3,4,5]; track star) {
+                  <span class="star-interactive-icon" [class.active-star]="userRating >= star" (click)="userRating = star">★</span>
+                }
+              </div>
+              
+              <textarea class="feedback-textarea-input" [(ngModel)]="userComment" rows="3" placeholder="Racontez-nous ce que vous avez aimé ou ce qui peut être amélioré..."></textarea>
+              
+              <button class="btn-submit-feedback-action" (click)="submitFeedback()">
+                Soumettre mon avis
+              </button>
+            </div>
+          }
+
+          <!-- Feedbacks list display -->
+          @if (feedbacks().length > 0) {
+            <div class="feedbacks-display-section">
+              <h3>Avis des participants ({{ feedbacks().length }})</h3>
+              <div class="feedbacks-list-wrapper">
+                @for (feed of feedbacks(); track feed.id) {
+                  <div class="feedback-comment-card">
+                    <div class="feedback-header-row">
+                      <div class="feedback-user-info">
+                        <strong>{{ feed.userFullName }}</strong>
+                        <span>{{ feed.registeredAt | date:'dd MMM yyyy' }}</span>
+                      </div>
+                      <div class="feedback-stars-badge">
+                        @for (s of getStars(feed.feedbackRating); track $index) {
+                          ★
+                        }
+                      </div>
+                    </div>
+                    <p class="feedback-text-content">{{ feed.feedbackComment }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="details-right">
+          <div class="sticky-registration-card">
+            <h4>Statut de participation</h4>
+            
+            <div class="capacity-status-indicator">
+              @if (selectedEvent()?.capacity) {
+                <div class="capacity-metric">
+                  <span class="metric-value">{{ selectedEvent()!.capacity! - (selectedEvent()!.registeredCount || 0) }}</span>
+                  <span class="metric-lbl">Places restantes</span>
+                </div>
+                <div class="capacity-progress-bar">
+                  <div class="fill" [style.width.%]="((selectedEvent()!.registeredCount || 0) / selectedEvent()!.capacity!) * 100"></div>
+                </div>
+                <p class="capacity-legend">Sur une capacité maximale de {{ selectedEvent()?.capacity }} inscrits.</p>
+              } @else {
+                <div class="unlimited-badge-card">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  <span>Entrée libre et illimitée</span>
+                </div>
+              }
+            </div>
+
+            <div class="registration-action-button-box">
+              @if (selectedEvent()?.status === 'PENDING') {
+                <button class="btn-block-register btn-pending" disabled>
+                  En attente de validation admin
+                </button>
+              } @else if (isRegistered(selectedEvent()?.id)) {
+                <button class="btn-block-register btn-leave" (click)="unregister(selectedEvent()?.id)">
+                  Se désinscrire
+                </button>
+              } @else {
+                <button class="btn-block-register btn-join" [disabled]="selectedEvent()?.capacity && (selectedEvent()?.registeredCount || 0) >= selectedEvent()!.capacity!" (click)="register(selectedEvent()?.id)">
+                  {{ selectedEvent()?.capacity && (selectedEvent()?.registeredCount || 0) >= selectedEvent()!.capacity! ? 'Événement Complet' : 'S\'inscrire à l\'événement' }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Access Pass (QR Code) for participants -->
+          @if (isRegistered(selectedEvent()?.id) && getRegistrationStatus(selectedEvent()?.id) !== 'WAITLISTED') {
+            <div class="access-pass-ticket fade-in">
+              <div class="ticket-header">
+                <h5>Ticket d'Accès Officiel</h5>
+                <span class="ticket-branding">ESPRIT CONNECT</span>
+              </div>
+              
+              <div class="ticket-body">
+                <div class="qr-code-container-box">
+                  <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + getRegistrationId(selectedEvent()!.id)" alt="Access QR Code" class="qr-code-image-file">
+                </div>
+                
+                <div class="ticket-user-info">
+                  <strong>{{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</strong>
+                  <span>{{ currentUser()?.role || 'Étudiant' }}</span>
+                </div>
+              </div>
+              
+              <div class="ticket-dashed-divider"></div>
+              
+              <div class="ticket-footer">
+                <p class="qr-explanation-text">Présentez ce code QR lors du contrôle d'accès numérique à l'entrée de l'événement.</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Hidden printable Certificate Container -->
+  @if (selectedEvent()) {
+    <div class="cert-print-container" [class.print-winner-mode]="printType() === 'winner'">
+      @if (printType() === 'presence') {
+        <!-- Presence Certificate -->
+        <div class="cert-print-frame">
+          <div class="cert-print-inner">
+            <h1 class="cert-print-header">ESPRIT CONNECT</h1>
+            <h2 class="cert-print-title">Certificat de Présence Officiel</h2>
+            
+            <div class="cert-print-divider"></div>
+            
+            <p class="cert-print-text-intro">Le comité Esprit Connect atteste par la présente que :</p>
+            <h3 class="cert-print-recipient">{{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</h3>
+            
+            <p class="cert-print-text-body">a assisté avec succès et participé activement à l'événement intitulé :</p>
+            <h4 class="cert-print-event-title">" {{ selectedEvent()?.title }} "</h4>
+            
+            <p class="cert-print-date">Délivré le {{ selectedEvent()?.startAt | date:'dd MMMM yyyy' }} par la communauté Esprit Connect.</p>
+            
+            <div class="cert-print-signature-row">
+              <div class="signature-box">
+                <span class="sign-label">Comité d'organisation</span>
+                <span class="sign-logo">Esprit Connect</span>
+              </div>
+              <div class="signature-box">
+                <span class="sign-label">Code d'authenticité</span>
+                <span class="sign-code">{{ getRegistrationId(selectedEvent()!.id) || 'EC-CERT-VALID' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- Winner Certificate -->
+        <div class="cert-print-frame winner-frame">
+          <div class="cert-print-inner winner-inner">
+            <div class="gold-seal-badge">🏆</div>
+            <h1 class="cert-print-header winner-gold">ESPRIT CONNECT</h1>
+            <h2 class="cert-print-title winner-gold-title">Certificat d'Excellence & de Victoire</h2>
+            
+            <div class="cert-print-divider gold-divider"></div>
+            
+            <p class="cert-print-text-intro">Le comité d'Esprit Connect décerne solennellement ce titre à :</p>
+            <h3 class="cert-print-recipient winner-name">{{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</h3>
+            
+            <p class="cert-print-text-body">pour s'être brillamment distingué(e) et avoir remporté la victoire au rang :</p>
+            <h4 class="winner-rank-display">🎖️ Rang {{ getWinnerRank(selectedEvent()?.id) || 'Lauréat' }} 🎖️</h4>
+            
+            <p class="cert-print-text-body">lors du défi / de l'événement compétitif intitulé :</p>
+            <h4 class="cert-print-event-title winner-event">" {{ selectedEvent()?.title }} "</h4>
+            
+            <p class="cert-print-date">Délivré le {{ selectedEvent()?.startAt | date:'dd MMMM yyyy' }} en reconnaissance d'un parcours exceptionnel.</p>
+            
+            <div class="cert-print-signature-row">
+              <div class="signature-box">
+                <span class="sign-label">Comité des Jurys</span>
+                <span class="sign-logo winner-sign">Esprit Connect Excellence</span>
+              </div>
+              <div class="signature-box">
+                <span class="sign-label">Identifiant de Victoire</span>
+                <span class="sign-code">{{ getRegistrationId(selectedEvent()!.id) || 'EC-WIN-VALID' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

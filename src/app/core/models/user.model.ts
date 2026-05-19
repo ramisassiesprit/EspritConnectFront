@@ -15,6 +15,47 @@ export interface Badge {
   earnedAt: string;
 }
 
+export interface EspritProfile {
+  id?: string;
+  fieldOfStudy?: string;
+  degree?: string;
+  graduationYear?: number;
+  program?: string;
+  institution?: string;
+}
+
+export interface WillingToHelp {
+  id?: string;
+  offerHelp?: string;
+  seekHelp?: string;
+  offerMentor?: string;
+  seekMentor?: string;
+}
+
+export interface WorkExperience {
+  id?: string;
+  company?: string;
+  jobTitle?: string;
+  industry?: string;
+  jobFunction?: string;
+  startDate?: string;
+  endDate?: string;
+  isCurrent?: boolean;
+  description?: string;
+}
+
+export interface OtherEducation {
+  id?: string;
+  institutionName?: string;
+  degree?: string;
+  graduationYear?: number;
+}
+
+export interface Skill {
+  id?: string;
+  name?: string;
+}
+
 export interface User {
   id: string;
   firstName: string;
@@ -41,4 +82,9 @@ export interface User {
   updatedAt?: string;
   isOnline?: boolean;
   badges?: Badge[];
+  espritProfile?: EspritProfile;
+  willingToHelps?: WillingToHelp[];
+  workExperiences?: WorkExperience[];
+  otherEducations?: OtherEducation[];
+  skills?: Skill[];
 }

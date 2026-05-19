@@ -98,6 +98,13 @@
 .full-name {
   font-weight: 600;
   color: #1e293b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.clickable-name:hover {
+  color: #4f46e5;
+  text-decoration: underline;
 }
 
 .role-badge {

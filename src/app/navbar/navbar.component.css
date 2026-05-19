@@ -525,3 +525,20 @@
   from { opacity: 0; transform: translateX(20px); }
   to { opacity: 1; transform: translateX(0); }
 }
+
+/* Custom styles for Notification Items in navbar */
+.navbar__notif-item {
+  background-color: #ffffff;
+}
+
+.navbar__notif-item:hover {
+  background-color: #f9f9f9 !important;
+}
+
+.navbar__notif-item--unread {
+  background-color: #fff5f5 !important;
+}
+
+.navbar__notif-item--unread:hover {
+  background-color: #ffebeb !important;
+}

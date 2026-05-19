@@ -380,7 +380,7 @@
   letter-spacing: 0.05em;
 }
 
-.form-field input, .form-field textarea {
+.form-field input, .form-field textarea, .form-field select {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 8px 12px;
@@ -388,11 +388,31 @@
   background: #fff;
   outline: none;
   transition: border-color 0.2s;
+  height: 38px;
+  color: #3c3c3c;
+  font-family: inherit;
+  box-sizing: border-box;
 }
 
-.form-field input:focus, .form-field textarea:focus {
+.form-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2370757a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.form-field textarea {
+  height: auto;
+}
+
+.form-field input:focus, .form-field textarea:focus, .form-field select:focus {
   border-color: #ED1C24;
 }
+
 
 .form-actions {
   display: flex;
@@ -518,3 +538,53 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Program Checkbox List Layout & Design ── */
+.col-span-2 {
+  grid-column: span 2;
+}
+
+.program-checkbox-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-top: 4px;
+}
+
+.program-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.program-checkbox-item input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: #ED1C24;
+  cursor: pointer;
+}
+
+.program-checkbox-item label {
+  font-size: 13px !important;
+  color: #3c3c3c !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  cursor: pointer;
+  margin: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .col-span-2 {
+    grid-column: span 1;
+  }
+  .program-checkbox-group {
+    grid-template-columns: 1fr;
+  }
+}
+

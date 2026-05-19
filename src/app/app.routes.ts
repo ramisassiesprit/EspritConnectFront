@@ -189,10 +189,22 @@ export const routes: Routes = [
       },
       {
         path: 'events',
-        loadComponent: () =>
-          import('./features/etudiant/events/events.component').then(
-            (m) => m.EventsComponent,
-          ),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/etudiant/events/events.component').then(
+                (m) => m.EventsComponent,
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/etudiant/events/event-details/event-details.component').then(
+                (m) => m.EventDetailsComponent,
+              ),
+          }
+        ]
       },
       {
         path: 'resources',
@@ -275,6 +287,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'users/:id',
+        loadComponent: () =>
+          import('./features/admin/Users/user-details/user-details.component').then(
+            (m) => m.UserDetailsComponent,
+          ),
+      },
+      {
         path: 'resources',
         loadComponent: () =>
           import('./features/admin/resources/admin-resources.component').then(
@@ -286,6 +305,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/jobs/admin-jobs.component').then(
             (m) => m.AdminJobsComponent,
+          ),
+      },
+      {
+        path: 'events',
+        loadComponent: () =>
+          import('./features/admin/events/admin-events.component').then(
+            (m) => m.AdminEventsComponent,
           ),
       },
     ],
