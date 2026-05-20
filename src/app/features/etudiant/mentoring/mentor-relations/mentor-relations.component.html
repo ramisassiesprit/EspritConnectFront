@@ -1,0 +1,54 @@
+<div class="h-full min-h-[calc(100vh-100px)]">
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    
+    <!-- Tabs -->
+    <div class="flex items-center px-4 pt-2 border-b border-gray-100">
+      <button 
+        (click)="setTab('current')"
+        class="px-8 py-4 text-xs font-bold tracking-wider uppercase transition-all border-b-[3px]"
+        [ngClass]="activeTab === 'current' ? 'text-[#ED1C24] border-[#ED1C24]' : 'text-gray-500 border-transparent hover:text-gray-700'">
+        Current
+      </button>
+      
+      <button 
+        (click)="setTab('declined')"
+        class="px-8 py-4 text-xs font-bold tracking-wider uppercase transition-all border-b-[3px]"
+        [ngClass]="activeTab === 'declined' ? 'text-[#ED1C24] border-[#ED1C24]' : 'text-gray-500 border-transparent hover:text-gray-700'">
+        Declined
+      </button>
+      
+      <button 
+        (click)="setTab('canceled')"
+        class="px-8 py-4 text-xs font-bold tracking-wider uppercase transition-all border-b-[3px]"
+        [ngClass]="activeTab === 'canceled' ? 'text-[#ED1C24] border-[#ED1C24]' : 'text-gray-500 border-transparent hover:text-gray-700'">
+        Canceled
+      </button>
+
+      <button 
+        (click)="setTab('past')"
+        class="px-8 py-4 text-xs font-bold tracking-wider uppercase transition-all border-b-[3px]"
+        [ngClass]="activeTab === 'past' ? 'text-[#ED1C24] border-[#ED1C24]' : 'text-gray-500 border-transparent hover:text-gray-700'">
+        Past
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Area Placeholder -->
+  <div class="mt-6">
+    <div *ngIf="activeTab === 'current'" class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
+      No current active mentor relationships found.
+    </div>
+    
+    <div *ngIf="activeTab === 'declined'" class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
+      No declined requests.
+    </div>
+    
+    <div *ngIf="activeTab === 'canceled'" class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
+      No canceled relationships.
+    </div>
+    
+    <div *ngIf="activeTab === 'past'" class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
+      No past mentoring sessions.
+    </div>
+  </div>
+</div>
