@@ -86,4 +86,9 @@ export class EventService {
   getWinners(id: string): Observable<EventRegistration[]> {
     return this.http.get<EventRegistration[]>(`${this.apiUrl}/${id}/winners`);
   }
+
+  
+  getAdminEventStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/admin/stats`);
+  }
 }
