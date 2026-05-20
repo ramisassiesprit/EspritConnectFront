@@ -121,6 +121,13 @@ export const routes: Routes = [
               ).then((m) => m.FindMentorComponent),
           },
           {
+            path: 'relations',
+            loadComponent: () =>
+              import(
+                './features/etudiant/mentoring/mentor-relations/mentor-relations.component'
+              ).then((m) => m.MentorRelationsComponent),
+          },
+          {
             path: 'settings',
             loadComponent: () =>
               import(

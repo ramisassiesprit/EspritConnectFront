@@ -47,7 +47,7 @@ export class SidebarComponent implements OnInit {
       isOpen: false,
       subItems: [
         { label: 'Find a Mentor', route: '/etudiant/mentoring/find' },
-        { label: 'Mentoring Relationships', route: '/etudiant/mentoring/relationships' },
+        { label: 'Mentoring Relationships', route: '/etudiant/mentoring/relations' },
         { label: 'Settings', route: '/etudiant/mentoring/settings' }
       ]
     },

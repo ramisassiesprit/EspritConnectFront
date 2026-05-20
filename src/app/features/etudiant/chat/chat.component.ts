@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ChatService } from '../../../core/services/chat.service';
 import { UserService } from '../../../core/services/User.service';
 import { Message } from '../../../core/models/message.model';
@@ -21,12 +22,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private chatService = inject(ChatService);
   private userService = inject(UserService);
   private route = inject(ActivatedRoute);
+  private sanitizer = inject(DomSanitizer);
 
   currentUser: User | null = null;
   receiverId: string | null = null;
   receiver: User | null = null;
   messages: Message[] = [];
   newMessage: string = '';
+  contacts: User[] = [];
   private messageSub?: Subscription;
 
   ngOnInit(): void {
@@ -34,11 +37,25 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.currentUser = user;
       this.chatService.connect(user.id);
       
+      this.loadContacts();
+      
       this.route.params.subscribe(params => {
         this.receiverId = params['id'];
         if (this.receiverId) {
           this.loadReceiverInfo();
           this.loadChatHistory();
+          
+          // Check for auto-send message from navigation state
+          const autoSendMsg = history.state.autoSendMsg;
+          if (autoSendMsg) {
+            // Wait for STOMP to connect before sending
+            setTimeout(() => {
+              this.newMessage = autoSendMsg;
+              this.sendMessage();
+              // Clear state to prevent resending on refresh
+              history.replaceState({ ...history.state, autoSendMsg: null }, '');
+            }, 1000);
+          }
         }
       });
     });
@@ -62,6 +79,20 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.scrollToBottom();
         }
       }
+    });
+  }
+
+  loadContacts(): void {
+    if (!this.currentUser) return;
+    // Fetch only users the current user has conversations with
+    this.chatService.getConversations(this.currentUser.id).subscribe(convs => {
+      const activeContactIds = new Set(
+        convs.map(msg => msg.senderId === this.currentUser!.id ? msg.receiverId : msg.senderId)
+      );
+
+      this.userService.getAllUsers().subscribe(users => {
+        this.contacts = users.filter(u => activeContactIds.has(u.id));
+      });
     });
   }
 
@@ -111,6 +142,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     } catch(err) { }
+  }
+
+  getSafeHtml(content: string): SafeHtml {
+    if (!content) return '';
+    // Bypass Angular's exact sanitization to retain Quill's tags/inline classes 
+    // And allow display of lists, bold, etc. 
+    return this.sanitizer.bypassSecurityTrustHtml(content);
   }
 
   ngOnDestroy(): void {
