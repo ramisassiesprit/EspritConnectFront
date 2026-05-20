@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HelpMentoringFormComponent } from '../../../../shared/components/help-mentoring-form/help-mentoring-form.component';
@@ -31,12 +32,12 @@ export class MentoringSettingsComponent implements OnInit {
   onSave(updatedHelp: WillingToHelp): void {
     if (updatedHelp.id) {
       this.profileService.updateHelp(updatedHelp.id, updatedHelp).subscribe(() => {
-        alert('Settings updated successfully!');
+        Swal.fire('Settings updated successfully!');
       });
     } else {
       this.profileService.addHelp(updatedHelp).subscribe(h => {
         this.helpData = h;
-        alert('Settings saved successfully!');
+        Swal.fire('Settings saved successfully!');
       });
     }
   }

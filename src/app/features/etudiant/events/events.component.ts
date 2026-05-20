@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -138,7 +139,7 @@ export class EventsComponent implements OnInit {
           this.openDetails(this.selectedEvent()!);
         }
       },
-      error: (err) => alert(err.error?.message || "Erreur lors de l'inscription")
+      error: (err) => Swal.fire(err.error?.message || "Erreur lors de l'inscription")
     });
   }
 
@@ -153,7 +154,7 @@ export class EventsComponent implements OnInit {
           this.openDetails(this.selectedEvent()!);
         }
       },
-      error: (err) => alert("Erreur lors de la désinscription")
+      error: (err) => Swal.fire("Erreur lors de la désinscription")
     });
   }
 
@@ -178,7 +179,7 @@ export class EventsComponent implements OnInit {
 
   submitEvent() {
     if (!this.newEvent.title || !this.newEvent.startAt) {
-      alert("Le titre et la date de début sont obligatoires.");
+      Swal.fire("Le titre et la date de début sont obligatoires.");
       return;
     }
 
@@ -199,12 +200,12 @@ export class EventsComponent implements OnInit {
         this.closeCreateModal();
         this.loadData();
         if (created.status === EventStatus.PENDING) {
-          alert("Votre événement a été créé avec succès ! Il sera visible de tous dès qu'un administrateur l'aura approuvé.");
+          Swal.fire("Votre événement a été créé avec succès ! Il sera visible de tous dès qu'un administrateur l'aura approuvé.");
         } else {
-          alert("Votre événement a été créé et publié avec succès !");
+          Swal.fire("Votre événement a été créé et publié avec succès !");
         }
       },
-      error: (err) => alert("Erreur lors de la création de l'événement")
+      error: (err) => Swal.fire("Erreur lors de la création de l'événement")
     });
   }
 
@@ -229,10 +230,10 @@ export class EventsComponent implements OnInit {
     if (!event || !event.id) return;
     this.eventService.checkIn(event.id, userId).subscribe({
       next: () => {
-        alert("Présence validée avec succès !");
+        Swal.fire("Présence validée avec succès !");
         this.openDetails(event);
       },
-      error: (err) => alert(err.error?.message || "Erreur lors de la validation de présence")
+      error: (err) => Swal.fire(err.error?.message || "Erreur lors de la validation de présence")
     });
   }
 
@@ -245,10 +246,10 @@ export class EventsComponent implements OnInit {
 
     this.eventService.declareWinner(event.id, userId, rank).subscribe({
       next: () => {
-        alert("Gagnant déclaré avec succès ! Le badge de vainqueur a été généré et attribué.");
+        Swal.fire("Gagnant déclaré avec succès ! Le badge de vainqueur a été généré et attribué.");
         this.openDetails(event);
       },
-      error: (err) => alert(err.error?.message || "Erreur lors de la désignation du vainqueur")
+      error: (err) => Swal.fire(err.error?.message || "Erreur lors de la désignation du vainqueur")
     });
   }
 
@@ -257,11 +258,11 @@ export class EventsComponent implements OnInit {
     if (!event || !event.id) return;
     this.eventService.submitFeedback(event.id, this.userRating, this.userComment).subscribe({
       next: () => {
-        alert("Votre avis a été enregistré. Merci pour votre retour !");
+        Swal.fire("Votre avis a été enregistré. Merci pour votre retour !");
         this.userComment = '';
         this.openDetails(event);
       },
-      error: (err) => alert(err.error?.message || "Erreur lors de la soumission de l'avis")
+      error: (err) => Swal.fire(err.error?.message || "Erreur lors de la soumission de l'avis")
     });
   }
 

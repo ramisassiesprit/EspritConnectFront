@@ -5,23 +5,21 @@
     <div class="section-card members-search-card">
       <div class="search-box">
         <lucide-icon [img]="Search" size="18" class="search-icon"></lucide-icon>
-        <input type="text" placeholder="Search people">
+        <input type="text" placeholder="Search people" [(ngModel)]="searchQuery"
+          (ngModelChange)="applyFiltersAndSorting()">
       </div>
       <div class="sorting-row">
-        <span class="results-count">15286 results</span>
+        <span class="results-count">{{ filteredMembers.length }} results</span>
         <div class="sort-options">
           <label class="radio-option">
-            <input type="radio" name="sort" checked>
+            <input type="radio" name="sort" value="Alphabetically" [(ngModel)]="sortOption"
+              (ngModelChange)="applyFiltersAndSorting()">
             <span class="radio-mark"></span>
             Alphabetically
           </label>
           <label class="radio-option">
-            <input type="radio" name="sort">
-            <span class="radio-mark"></span>
-            Recently joined
-          </label>
-          <label class="radio-option">
-            <input type="radio" name="sort">
+            <input type="radio" name="sort" value="Recently online" [(ngModel)]="sortOption"
+              (ngModelChange)="applyFiltersAndSorting()">
             <span class="radio-mark"></span>
             Recently online
           </label>
@@ -31,25 +29,37 @@
 
     <!-- Members List -->
     <div class="members-list">
-      <div *ngFor="let member of onlineMembers" class="section-card member-item-card">
+      <!-- Empty state -->
+      <div *ngIf="filteredMembers.length === 0" class="section-card"
+        style="padding: 40px; text-align: center; color: #65676b;">
+        <lucide-icon [img]="Users" size="48" style="margin-bottom: 12px; color: #ef4444; opacity: 0.5;"></lucide-icon>
+        <p style="font-size: 16px; font-weight: 600; margin: 0;">No members found matching your search</p>
+      </div>
+
+      <div *ngFor="let member of filteredMembers" class="section-card member-item-card">
         <div class="member-info-wrapper">
           <div class="member-avatar-container">
-            <div class="willing-badge" *ngIf="member.id === '2' || member.id === '6'">Willing to help</div>
-            <div class="member-large-avatar" style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #6b7280;">
+            <div class="willing-badge" *ngIf="member.role === 'ALUMNI'">Willing to help</div>
+
+            <img [src]="member.avatarUrl" *ngIf="member.avatarUrl" class="member-large-avatar" alt="Avatar">
+            <div class="member-large-avatar" *ngIf="!member.avatarUrl"
+              style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #6b7280;">
               <lucide-icon [img]="User" size="40"></lucide-icon>
             </div>
+
             <span class="status-indicator" [class.online]="member.isOnline"></span>
           </div>
           <div class="member-details">
             <div class="member-name-row">
               <h4 class="member-name">{{ member.firstName }} {{ member.lastName }}</h4>
-              <span class="member-badges" *ngIf="member.id === '2' || member.id === '6'">
-                <span class="badge-p"><lucide-icon [img]="Users" size="10"></lucide-icon></span>
-                <span class="badge-y"><lucide-icon [img]="Info" size="10"></lucide-icon></span>
+              <span class="member-badges" *ngIf="member.role === 'ALUMNI'">
+                <span class="badge-p" title="Alumni Mentor"><lucide-icon [img]="Users" size="10"></lucide-icon></span>
+                <span class="badge-y" title="Help Available"><lucide-icon [img]="Info" size="10"></lucide-icon></span>
               </span>
             </div>
             <span class="role-badge">{{ member.role === 'ALUMNI' ? 'Alumni' : 'Student' }}</span>
-            <p class="member-affiliation">Computing, ESE - Esprit School of Engineering</p>
+            <p class="member-affiliation">{{ member.role === 'ALUMNI' ? 'Alumni - Esprit School of Engineering' :
+              'Student - Esprit School of Engineering' }}</p>
           </div>
         </div>
         <button class="member-arrow">
@@ -66,24 +76,17 @@
         <lucide-icon [img]="Filter" size="16"></lucide-icon>
         <h3>Filter by</h3>
       </div>
-      
+
       <div class="filter-group">
         <label>First name</label>
-        <input type="text" class="filter-input">
+        <input type="text" class="filter-input" [(ngModel)]="filterFirstName" (ngModelChange)="applyFiltersAndSorting()"
+          placeholder="e.g. John">
       </div>
-      
+
       <div class="filter-group">
         <label>Last name</label>
-        <input type="text" class="filter-input">
-      </div>
-      
-      <div class="filter-group">
-        <label>Affiliation</label>
-        <div class="select-wrapper">
-          <select>
-            <option value="">Affiliation</option>
-          </select>
-        </div>
+        <input type="text" class="filter-input" [(ngModel)]="filterLastName" (ngModelChange)="applyFiltersAndSorting()"
+          placeholder="e.g. Doe">
       </div>
 
       <div class="accordion-list">
@@ -117,7 +120,7 @@
         </div>
       </div>
 
-      <button class="btn-reset">Reset</button>
+      <button class="btn-reset" (click)="resetFilters()">Reset</button>
     </div>
   </div>
 </div>

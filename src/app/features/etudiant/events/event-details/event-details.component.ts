@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -131,7 +132,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
       next: () => {
         this.loadEventData(eventId);
       },
-      error: (err) => alert(err.error?.message || "Erreur lors de l'inscription")
+      error: (err) => Swal.fire(err.error?.message || "Erreur lors de l'inscription")
     });
   }
 
@@ -142,7 +143,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
       next: () => {
         this.loadEventData(eventId);
       },
-      error: (err) => alert("Erreur lors de la désinscription")
+      error: (err) => Swal.fire("Erreur lors de la désinscription")
     });
   }
 
@@ -151,10 +152,10 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     if (!id) return;
     this.eventService.checkIn(id, userId).subscribe({
       next: () => {
-        alert("Présence validée avec succès !");
+        Swal.fire("Présence validée avec succès !");
         this.loadAdditionalData(id);
       },
-      error: (err) => alert(err.error?.message || "Erreur lors de la validation de présence")
+      error: (err) => Swal.fire(err.error?.message || "Erreur lors de la validation de présence")
     });
   }
 
@@ -167,10 +168,10 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
 
     this.eventService.declareWinner(id, userId, rank).subscribe({
       next: () => {
-        alert("Gagnant déclaré avec succès ! Le badge de vainqueur a été généré et attribué.");
+        Swal.fire("Gagnant déclaré avec succès ! Le badge de vainqueur a été généré et attribué.");
         this.loadAdditionalData(id);
       },
-      error: (err) => alert(err.error?.message || "Erreur lors de la désignation du vainqueur")
+      error: (err) => Swal.fire(err.error?.message || "Erreur lors de la désignation du vainqueur")
     });
   }
 
@@ -179,11 +180,11 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     if (!id) return;
     this.eventService.submitFeedback(id, this.userRating, this.userComment).subscribe({
       next: () => {
-        alert("Votre avis a été enregistré. Merci pour votre retour !");
+        Swal.fire("Votre avis a été enregistré. Merci pour votre retour !");
         this.userComment = '';
         this.loadAdditionalData(id);
       },
-      error: (err) => alert(err.error?.message || "Erreur lors de la soumission de l'avis")
+      error: (err) => Swal.fire(err.error?.message || "Erreur lors de la soumission de l'avis")
     });
   }
 
@@ -279,7 +280,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
         }
       ).catch((err: any) => {
         console.error("Camera access failed", err);
-        alert("Impossible d'accéder à la caméra : " + err);
+        Swal.fire("Impossible d'accéder à la caméra : " + err);
         this.isScanning.set(false);
       });
     }, 200);
@@ -311,7 +312,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
         if (eventId) this.loadEventData(eventId);
       },
       error: (err) => {
-        alert(err.error?.message || "Erreur de check-in : Code QR invalide ou déjà scanné");
+        Swal.fire(err.error?.message || "Erreur de check-in : Code QR invalide ou déjà scanné");
         this.scannedCode.set(null);
       }
     });

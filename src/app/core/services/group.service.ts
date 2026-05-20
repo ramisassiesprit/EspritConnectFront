@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, tap } from 'rxjs';
 import { Group, GroupCreateRequest } from '../models/group.model';
@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment';
 export class GroupService {
   private readonly apiUrl = `${environment.apiUrl}groups`;
   private http = inject(HttpClient);
-  
+
   private membershipChanged = new Subject<void>();
   membershipChanged$ = this.membershipChanged.asObservable();
 
@@ -72,18 +72,50 @@ export class GroupService {
     return this.http.post<Group>(`${this.apiUrl}/${encodeURIComponent(groupId)}/reject`, {});
   }
 
+  setGroupStatus(groupId: string, status: 'PENDING' | 'APPROVED' | 'REJECTED'): Observable<Group> {
+    return this.http.post<Group>(`${this.apiUrl}/${encodeURIComponent(groupId)}/status`, null, {
+      params: { status }
+    });
+  }
+
   updateGroup(groupId: string, payload: GroupCreateRequest, logoFile?: File, bannerFile?: File): Observable<Group> {
+    // Always send multipart form-data to the backend update endpoint.
+    // This avoids issues with multipart+PUT and keeps server handling consistent.
     const formData = new FormData();
     const groupBlob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
     formData.append('group', groupBlob);
-
     if (logoFile) formData.append('logoFile', logoFile);
     if (bannerFile) formData.append('bannerFile', bannerFile);
-
-    return this.http.put<Group>(`${this.apiUrl}/${encodeURIComponent(groupId)}`, formData);
+    return this.http.post<Group>(`${this.apiUrl}/${encodeURIComponent(groupId)}/with-files`, formData);
   }
 
   deleteGroup(groupId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${encodeURIComponent(groupId)}`);
+  }
+
+  getGroupMembers(groupId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${encodeURIComponent(groupId)}/members`);
+  }
+
+  addMember(groupId: string, userId: string, role: string = 'MEMBER'): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${encodeURIComponent(groupId)}/members`, null, {
+      params: {
+        userId: userId,
+        role: role
+      }
+    });
+  }
+
+  removeMember(groupId: string, userId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${encodeURIComponent(groupId)}/members/${encodeURIComponent(userId)}`)
+      .pipe(tap(() => this.membershipChanged.next()));
+  }
+
+  // --- Shared Photo Albums signal ---
+  private groupPhotosSignal = signal<string[]>([]);
+  groupPhotos = this.groupPhotosSignal.asReadonly();
+
+  addPhotos(urls: string[]) {
+    this.groupPhotosSignal.update((existing: string[]) => [...urls, ...existing]);
   }
 }

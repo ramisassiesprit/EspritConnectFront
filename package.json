@@ -27,6 +27,7 @@
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "sockjs-client": "^1.6.1",
+    "sweetalert2": "^11.26.24",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },

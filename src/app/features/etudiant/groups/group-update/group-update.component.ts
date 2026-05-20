@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GroupService } from '../../../../core/services/group.service';
 import { Group, GroupPrivacy } from '../../../../core/models/group.model';
 import { QuillModule } from 'ngx-quill';
+import { AuthService } from '../../../../core/services/auth.service';
+import { UserRole } from '../../../../core/models/user-role.enum';
 
 @Component({
   selector: 'app-group-update',
@@ -18,6 +20,7 @@ export class GroupUpdateComponent implements OnInit {
   private groupService = inject(GroupService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
 
   updating = false;
   error = '';
@@ -115,7 +118,7 @@ export class GroupUpdateComponent implements OnInit {
     description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(4000)]],
     website: [''],
     privacy: ['PUBLIC', Validators.required],
-    tagging: [false, Validators.required],
+      tagging: [false],
     company: ['']
   });
 
@@ -308,7 +311,12 @@ export class GroupUpdateComponent implements OnInit {
     this.groupService.updateGroup(this.groupId, payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
       next: (updatedGroup) => {
         this.updating = false;
-        this.router.navigate(['/etudiant/groups', this.groupId]);
+        const session = this.authService.currentUser();
+        if (session && session.role === UserRole.ADMIN) {
+          this.router.navigate(['/admin/groups', this.groupId]);
+        } else {
+          this.router.navigate(['/etudiant/groups', this.groupId, 'feed']);
+        }
       },
       error: (err) => {
         this.updating = false;
@@ -319,10 +327,19 @@ export class GroupUpdateComponent implements OnInit {
   }
 
   cancel() {
-    if (this.groupId) {
-      this.router.navigate(['/etudiant/groups', this.groupId]);
+    const session = this.authService.currentUser();
+    if (session && session.role === UserRole.ADMIN) {
+      if (this.groupId) {
+        this.router.navigate(['/admin/groups', this.groupId]);
+      } else {
+        this.router.navigate(['/admin/groups']);
+      }
     } else {
-      this.router.navigate(['/etudiant/groups']);
+      if (this.groupId) {
+        this.router.navigate(['/etudiant/groups', this.groupId, 'feed']);
+      } else {
+        this.router.navigate(['/etudiant/groups']);
+      }
     }
   }
 }

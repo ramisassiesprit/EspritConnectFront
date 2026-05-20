@@ -126,14 +126,7 @@ export const routes: Routes = [
               import(
                 './features/etudiant/mentoring/MentorSettings/mentoringSettings.component'
               ).then((m) => m.MentoringSettingsComponent),
-          },
-          {
-            path: 'profile/:id',
-            loadComponent: () =>
-              import(
-                './features/etudiant/mentoring/mentor-profile/mentor-profile.component'
-              ).then((m) => m.MentorProfileComponent),
-          },
+          }
         ],
       },
       {
@@ -299,6 +292,18 @@ export const routes: Routes = [
           import('./features/admin/resources/admin-resources.component').then(
             (m) => m.AdminResourcesComponent,
           ),
+      },
+      {
+        path: 'groups',
+        loadComponent: () => import('./features/admin/admin-shell/groups-manage/groups-manage.component').then(m => m.GroupsManageComponent),
+      },
+      {
+        path: 'groups/:id',
+        loadComponent: () => import('./features/admin/admin-shell/groups-control/groups-control.component').then(m => m.GroupsControlComponent),
+      },
+      {
+        path: 'groups/:id/edit',
+        loadComponent: () => import('./features/etudiant/groups/group-update/group-update.component').then(m => m.GroupUpdateComponent),
       },
       {
         path: 'jobs',
