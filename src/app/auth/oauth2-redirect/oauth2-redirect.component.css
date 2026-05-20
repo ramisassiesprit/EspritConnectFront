@@ -1,0 +1,350 @@
+/* c:\Users\ramis\OneDrive\Bureau\Esprit\Semestre 2\Mission d'entreprise\EspritConnectFrontend\src\app\auth\oauth2-redirect\oauth2-redirect.component.css */
+
+/* Custom Google Fonts & Colors */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:host {
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --primary-color: #721c24;
+  --primary-accent: #dc3545;
+  --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --text-dark: #2d3748;
+  --text-muted: #718096;
+  --border-color: #e2e8f0;
+  --input-focus: #e53e3e;
+}
+
+/* Page Container styling */
+.completion-container,
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg-gradient);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Glassmorphism Card Details */
+.completion-card,
+.loader-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 
+              0 1px 3px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  width: 100%;
+  max-width: 580px;
+  padding: 40px;
+  box-sizing: border-box;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.completion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* Header Avatar and Badges */
+.completion-header {
+  margin-bottom: 30px;
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 20px;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.provider-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+}
+
+.completion-header h2 {
+  color: var(--text-dark);
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.completion-header p {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 440px;
+}
+
+.completion-header strong {
+  color: var(--primary-accent);
+}
+
+/* Form Styles */
+.completion-form {
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.section-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group label:not(.section-label):not(.role-option) {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+/* Role Selector Grid */
+.role-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.role-option {
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+}
+
+.role-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 8px;
+  text-align: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.role-icon {
+  font-size: 26px;
+  margin-bottom: 8px;
+  transition: transform 0.2s ease;
+}
+
+.role-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* Selected role animation */
+.role-option.selected .role-card {
+  border-color: var(--primary-accent);
+  background: rgba(220, 53, 69, 0.04);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.1);
+}
+
+.role-option.selected .role-label {
+  color: var(--primary-accent);
+}
+
+.role-option.selected .role-icon {
+  transform: scale(1.15);
+}
+
+.role-card:hover {
+  border-color: var(--text-muted);
+  transform: translateY(-2px);
+}
+
+/* Input Fields Wrapper */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 14px 14px 14px 44px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  outline: none;
+  background: white;
+  color: var(--text-dark);
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.input-wrapper input:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.col-6 {
+  flex: 1;
+}
+
+/* Validation styling */
+.error-msg {
+  font-size: 12px;
+  color: var(--primary-accent);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--primary-accent);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+  margin-top: 10px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: var(--primary-color);
+  box-shadow: 0 6px 20px rgba(114, 28, 36, 0.3);
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  background: var(--border-color);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.submit-btn .arrow {
+  transition: transform 0.2s ease;
+}
+
+.submit-btn:hover:not(:disabled) .arrow {
+  transform: translateX(4px);
+}
+
+/* Loader Styles */
+.spinner {
+  border: 4px solid rgba(220, 53, 69, 0.1);
+  border-top: 4px solid var(--primary-accent);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+  margin: 0 auto 24px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loader-card h2 {
+  color: var(--text-dark);
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.loader-card p {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin: 0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 580px) {
+  .completion-card {
+    padding: 30px 20px;
+  }
+  
+  .role-selector {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

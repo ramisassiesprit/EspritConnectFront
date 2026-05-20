@@ -1,1 +1,126 @@
-<p>oauth2-redirect works!</p>
+<div class="completion-container" *ngIf="showCompletionForm">
+  <div class="completion-card">
+    <div class="completion-header">
+      <div class="avatar-wrapper">
+        <img [src]="sessionData.avatarUrl || 'assets/default-avatar.png'" alt="Avatar" class="avatar-img" />
+        <span class="provider-badge">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="#ea4335" d="M12 5.04c1.62 0 3.08.56 4.22 1.65l3.15-3.15C17.45 1.84 14.93 1 12 1 7.37 1 3.4 3.65 1.5 7.5l3.87 3C6.3 7.5 8.9 5.04 12 5.04z"/>
+            <path fill="#4285f4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.44h6.45c-.28 1.48-1.12 2.73-2.38 3.58l3.7 2.87c2.16-1.99 3.42-4.93 3.42-8.55z"/>
+            <path fill="#fbbc05" d="M5.37 14.5c-.24-.73-.38-1.5-.38-2.3c0-.8.14-1.57.38-2.3L1.5 6.9C.54 8.82 0 10.97 0 13.2c0 2.23.54 4.38 1.5 6.3l3.87-3z"/>
+            <path fill="#34a853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.7-2.87c-1.03.69-2.34 1.1-4.26 1.1-3.1 0-5.7-2.46-6.63-5.46L1.5 15.86C3.4 19.7 7.37 23 12 23z"/>
+          </svg>
+        </span>
+      </div>
+      <h2>Finalisez votre inscription</h2>
+      <p>Bienvenue <strong>{{ sessionData.firstName }}</strong> ! Pour finaliser la création de votre compte, veuillez renseigner les informations indispensables ci-dessous.</p>
+    </div>
+
+    <form [formGroup]="completionForm" (ngSubmit)="onSubmit()" class="completion-form">
+      <!-- Role Selection -->
+      <div class="form-group">
+        <label class="section-label">Quel est votre rôle à l'ESPRIT ?</label>
+        <div class="role-selector">
+          <label class="role-option" [class.selected]="completionForm.get('role')?.value === UserRole.ETUDIANT">
+            <input type="radio" formControlName="role" [value]="UserRole.ETUDIANT" />
+            <div class="role-card">
+              <span class="role-icon">🎓</span>
+              <span class="role-label">Étudiant</span>
+            </div>
+          </label>
+          <label class="role-option" [class.selected]="completionForm.get('role')?.value === UserRole.ALUMNI">
+            <input type="radio" formControlName="role" [value]="UserRole.ALUMNI" />
+            <div class="role-card">
+              <span class="role-icon">👨‍🎓</span>
+              <span class="role-label">Ancien</span>
+            </div>
+          </label>
+          <label class="role-option" [class.selected]="completionForm.get('role')?.value === UserRole.ENSEIGNANT">
+            <input type="radio" formControlName="role" [value]="UserRole.ENSEIGNANT" />
+            <div class="role-card">
+              <span class="role-icon">🏫</span>
+              <span class="role-label">Enseignant</span>
+            </div>
+          </label>
+          <label class="role-option" [class.selected]="completionForm.get('role')?.value === UserRole.ENTREPRISE">
+            <input type="radio" formControlName="role" [value]="UserRole.ENTREPRISE" />
+            <div class="role-card">
+              <span class="role-icon">🏢</span>
+              <span class="role-label">Entreprise</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Telephone -->
+      <div class="form-group">
+        <label for="numTel">Numéro de téléphone</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📞</span>
+          <input type="tel" id="numTel" formControlName="numTel" placeholder="Ex: 55123456" />
+        </div>
+        <div class="error-msg" *ngIf="completionForm.get('numTel')?.touched && completionForm.get('numTel')?.invalid">
+          Veuillez entrer un numéro de téléphone valide (8 à 15 chiffres).
+        </div>
+      </div>
+
+      <!-- Conditional Fields for Non-Enterprise -->
+      <div class="form-group" *ngIf="completionForm.get('role')?.value !== UserRole.ENTREPRISE">
+        <label for="code">
+          {{ completionForm.get('role')?.value === UserRole.ETUDIANT ? "Code d'étudiant" : (completionForm.get('role')?.value === UserRole.ENSEIGNANT ? "Code d'enseignant" : "Code d'identification") }}
+        </label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔑</span>
+          <input type="text" id="code" formControlName="code" placeholder="Ex: 243AT1052" />
+        </div>
+        <div class="error-msg" *ngIf="completionForm.get('code')?.touched && completionForm.get('code')?.invalid">
+          Ce code d'identification est requis.
+        </div>
+      </div>
+
+      <!-- Conditional Fields for Enterprise -->
+      <div class="enterprise-fields" *ngIf="completionForm.get('role')?.value === UserRole.ENTREPRISE">
+        <div class="form-group">
+          <label for="companyName">Nom de l'entreprise</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🏢</span>
+            <input type="text" id="companyName" formControlName="companyName" placeholder="Ex: Google Tunisia" />
+          </div>
+          <div class="error-msg" *ngIf="completionForm.get('companyName')?.touched && completionForm.get('companyName')?.invalid">
+            Le nom de l'entreprise est obligatoire.
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label for="jobTitle">Titre de votre poste</label>
+            <div class="input-wrapper">
+              <span class="input-icon">💼</span>
+              <input type="text" id="jobTitle" formControlName="jobTitle" placeholder="Ex: RH Manager" />
+            </div>
+          </div>
+          <div class="form-group col-6">
+            <label for="industry">Secteur d'activité</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🌐</span>
+              <input type="text" id="industry" formControlName="industry" placeholder="Ex: Tech / IT" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn" [disabled]="completionForm.invalid">
+        Enregistrer et continuer <span class="arrow">➔</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="loader-container" *ngIf="!showCompletionForm">
+  <div class="loader-card">
+    <div class="spinner"></div>
+    <h2>Connexion en cours...</h2>
+    <p>Veuillez patienter pendant que nous sécurisons votre connexion.</p>
+  </div>
+</div>
