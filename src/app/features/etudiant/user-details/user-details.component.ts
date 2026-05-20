@@ -1,21 +1,24 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UserService } from '../../../core/services/User.service';
 import { ProfileService } from '../../../core/services/profile.service';
 import { User } from '../../../core/models/user.model';
 import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../../../core/models/profile.model';
+import { RequestHelpModalComponent } from './request-help-modal/request-help-modal.component';
+import { OfferHelpModalComponent } from './offer-help-modal/offer-help-modal.component';
 
 @Component({
   selector: 'app-user-details',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, RequestHelpModalComponent, OfferHelpModalComponent],
   templateUrl: './user-details.component.html',
   styleUrl: './user-details.component.css'
 })
 export class UserDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private userService = inject(UserService);
   private profileService = inject(ProfileService);
 
@@ -71,8 +74,64 @@ export class UserDetailsComponent implements OnInit {
       .filter(Boolean);
   }
 
+  getOfferHelpItems(): string[] {
+    return this.willingToHelps
+      .filter(h => h.offerHelp)
+      .map(h => h.offerHelp!)
+      .flatMap(s => s.split(',').map(i => i.trim()))
+      .filter(Boolean);
+  }
+
+  getSeekHelpItems(): string[] {
+    return this.willingToHelps
+      .filter(h => h.seekHelp)
+      .map(h => h.seekHelp!)
+      .flatMap(s => s.split(',').map(i => i.trim()))
+      .filter(Boolean);
+  }
+
   formatDate(date?: string): string {
     if (!date) return '';
     return new Date(date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' });
+  }
+
+  // Modals state
+  isRequestHelpModalOpen = false;
+  isOfferHelpModalOpen = false;
+
+  openRequestHelpModal() {
+    this.isRequestHelpModalOpen = true;
+  }
+
+  closeRequestHelpModal() {
+    this.isRequestHelpModalOpen = false;
+  }
+
+  handleSendRequestHelp(data: { type: string, message: string }) {
+    this.closeRequestHelpModal();
+    if (this.user) {
+      const formattedHtml = `<p><strong>Help Request: ${data.type}</strong></p><br/>${data.message}`;
+      this.router.navigate(['/etudiant/chat', this.user.id], {
+        state: { autoSendMsg: formattedHtml }
+      });
+    }
+  }
+
+  openOfferHelpModal() {
+    this.isOfferHelpModalOpen = true;
+  }
+
+  closeOfferHelpModal() {
+    this.isOfferHelpModalOpen = false;
+  }
+
+  handleSendOfferHelp(data: { type: string, message: string }) {
+    this.closeOfferHelpModal();
+    if (this.user) {
+      const formattedHtml = `<p><strong>Help Offer: ${data.type}</strong></p><br/>${data.message}`;
+      this.router.navigate(['/etudiant/chat', this.user.id], {
+        state: { autoSendMsg: formattedHtml }
+      });
+    }
   }
 }

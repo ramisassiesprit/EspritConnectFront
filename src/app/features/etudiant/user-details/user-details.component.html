@@ -207,32 +207,66 @@
     <!-- RIGHT SIDEBAR -->
     <div class="space-y-4">
 
-      <!-- Offering Mentoring Card -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <!-- Offering Help Card -->
+      <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-gray-400">
         <div class="flex items-center gap-2 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <h3 class="font-medium text-gray-800 text-lg">Offering mentoring</h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <h3 class="font-medium text-gray-800 text-lg">Offering Help</h3>
         </div>
-        <ul class="space-y-2 mb-5 text-[15px] text-gray-600" *ngIf="getOfferMentoringItems().length > 0">
-          <li *ngFor="let item of getOfferMentoringItems()">{{item}}</li>
+        <ul class="space-y-1 mb-5 text-[14px] text-gray-600" *ngIf="getOfferHelpItems().length > 0">
+          <li *ngFor="let item of getOfferHelpItems()">• {{item}}</li>
         </ul>
-        <p *ngIf="getOfferMentoringItems().length === 0" class="text-[15px] text-gray-400 italic mb-5">No mentoring offered</p>
-        <button class="w-full border border-gray-800 text-gray-800 rounded-md py-2 font-medium text-sm hover:bg-gray-50 transition-all">
-          Request mentoring
+        <p *ngIf="getOfferHelpItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">No help offered</p>
+        <button 
+          (click)="openRequestHelpModal()"
+          class="w-full bg-gray-600 text-white rounded-md py-2 font-medium text-sm hover:bg-gray-700 transition-all">
+          Request Help
+        </button>
+      </div>
+
+      <!-- Seeking Help Card -->
+      <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-gray-400">
+        <div class="flex items-center gap-2 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <h3 class="font-medium text-gray-800 text-lg">Seeking Help</h3>
+        </div>
+        <ul class="space-y-1 mb-5 text-[14px] text-gray-600" *ngIf="getSeekHelpItems().length > 0">
+          <li *ngFor="let item of getSeekHelpItems()">• {{item}}</li>
+        </ul>
+        <p *ngIf="getSeekHelpItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">Not seeking help</p>
+        <button 
+          (click)="openOfferHelpModal()"
+          class="w-full border-2 border-gray-600 text-gray-600 rounded-md py-2 font-medium text-sm hover:bg-gray-50 transition-all">
+          Offer Help
+        </button>
+      </div>
+
+      <!-- Offering Mentoring Card -->
+      <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-[#ED1C24]">
+        <div class="flex items-center gap-2 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <h3 class="font-medium text-gray-800 text-lg">Offering Mentoring</h3>
+        </div>
+        <ul class="space-y-1 mb-5 text-[14px] text-gray-600" *ngIf="getOfferMentoringItems().length > 0">
+          <li *ngFor="let item of getOfferMentoringItems()">• {{item}}</li>
+        </ul>
+        <p *ngIf="getOfferMentoringItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">No mentoring offered</p>
+        <button class="w-full bg-[#ED1C24] text-white rounded-md py-2 font-medium text-sm hover:bg-[#D31920] transition-all">
+          Request Mentoring
         </button>
       </div>
 
       <!-- Seeking Mentoring Card -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-[#ED1C24]">
         <div class="flex items-center gap-2 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <h3 class="font-medium text-gray-800 text-lg">Seeking mentoring</h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <h3 class="font-medium text-gray-800 text-lg">Seeking Mentoring</h3>
         </div>
-        <ul class="space-y-2 mb-5 text-[15px] text-gray-600" *ngIf="getSeekMentoringItems().length > 0">
-          <li *ngFor="let item of getSeekMentoringItems()">{{item}}</li>
+        <ul class="space-y-1 mb-5 text-[14px] text-gray-600" *ngIf="getSeekMentoringItems().length > 0">
+          <li *ngFor="let item of getSeekMentoringItems()">• {{item}}</li>
         </ul>
-        <p *ngIf="getSeekMentoringItems().length === 0" class="text-[15px] text-gray-400 italic mb-5">Not seeking mentoring</p>
-        <button class="w-full border border-gray-800 text-gray-800 rounded-md py-2 font-medium text-sm hover:bg-gray-50 transition-all">
+        <p *ngIf="getSeekMentoringItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">Not seeking mentoring</p>
+        <button class="w-full border-2 border-[#ED1C24] text-[#ED1C24] rounded-md py-2 font-medium text-sm hover:bg-red-50 transition-all">
           Offer Mentoring
         </button>
       </div>
@@ -263,3 +297,23 @@
     </div>
   </div>
 </div>
+
+<!-- Request Help Modal -->
+<app-request-help-modal
+  *ngIf="user"
+  [isOpen]="isRequestHelpModalOpen"
+  [user]="user"
+  [helpOptions]="getOfferHelpItems()"
+  (close)="closeRequestHelpModal()"
+  (send)="handleSendRequestHelp($event)">
+</app-request-help-modal>
+
+<!-- Offer Help Modal -->
+<app-offer-help-modal
+  *ngIf="user"
+  [isOpen]="isOfferHelpModalOpen"
+  [user]="user"
+  [helpOptions]="getSeekHelpItems()"
+  (close)="closeOfferHelpModal()"
+  (send)="handleSendOfferHelp($event)">
+</app-offer-help-modal>
