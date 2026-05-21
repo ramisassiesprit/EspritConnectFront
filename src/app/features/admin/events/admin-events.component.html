@@ -1,104 +1,188 @@
 <div class="admin-events-container">
   <div class="admin-events-header">
-    <h2>Gestion & Approbation des Événements</h2>
-    <p>Gérez et modérez les propositions d'événements créées par les utilisateurs de la plateforme.</p>
+    <h2>Gestion &amp; Statistiques des Événements</h2>
+    <p>Gérez les propositions d'événements et visualisez les indicateurs clés.</p>
   </div>
 
-  <!-- Navigation tabs -->
-  <div class="tabs-row">
-    <div class="tabs-group">
-      <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="activeTab.set('pending')">
-        En attente
-        @if (getPendingCount() > 0) {
-          <span class="badge badge-warning">{{ getPendingCount() }}</span>
-        }
-      </button>
-      <button class="tab-btn" [class.active]="activeTab() === 'approved'" (click)="activeTab.set('approved')">
-        Approuvés
-      </button>
-      <button class="tab-btn" [class.active]="activeTab() === 'all'" (click)="activeTab.set('all')">
-        Tous
-      </button>
+  <!-- Section Tabs -->
+  <div class="section-tabs mb-4">
+    <button class="tab-btn" [class.active]="activeSection() === 'stats'" (click)="activeSection.set('stats')">
+      Statistiques
+    </button>
+    <button class="tab-btn" [class.active]="activeSection() === 'events'" (click)="activeSection.set('events')">
+      Gestion des événements
+    </button>
+  </div>
+
+  <!-- STATISTICS SECTION -->
+  <ng-container *ngIf="activeSection() === 'stats'">
+    <div class="kpi-cards grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+      <div class="kpi-card p-4 bg-white rounded-lg shadow-sm">
+        <h3 class="text-sm font-medium text-gray-500">Total d'événements</h3>
+        <p class="text-2xl font-semibold">{{ adminStats?.totalEvents || 0 }}</p>
+      </div>
+      <div class="kpi-card p-4 bg-white rounded-lg shadow-sm">
+        <h3 class="text-sm font-medium text-gray-500">Taux de participation</h3>
+        <p class="text-2xl font-semibold">{{ adminStats?.participationRate | number:'1.0-1' }} %</p>
+      </div>
+      <div class="kpi-card p-4 bg-white rounded-lg shadow-sm">
+        <h3 class="text-sm font-medium text-gray-500">Taux de présence</h3>
+        <p class="text-2xl font-semibold">{{ adminStats?.attendanceRate | number:'1.0-1' }} %</p>
+      </div>
+      <div class="kpi-card p-4 bg-white rounded-lg shadow-sm">
+        <h3 class="text-sm font-medium text-gray-500">Score moyen de satisfaction</h3>
+        <p class="text-2xl font-semibold">{{ adminStats?.averageFeedbackScore | number:'1.0-2' }}/5</p>
+      </div>
+      <div class="kpi-card p-4 bg-white rounded-lg shadow-sm">
+        <h3 class="text-sm font-medium text-gray-500">Gagnants récompensés</h3>
+        <p class="text-2xl font-semibold">{{ adminStats?.totalWinners || 0 }}</p>
+      </div>
     </div>
-  </div>
 
-  <!-- Content table -->
-  <div class="table-card">
-    @if (filteredEvents.length === 0) {
-      <div class="empty-state">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-        <p>Aucun événement dans cette catégorie pour le moment.</p>
+    <!-- Top Events Table -->
+    <h3 class="text-lg font-semibold mb-3">Top 3 événements populaires</h3>
+    <table class="top-events-table mb-6">
+      <thead>
+        <tr>
+          <th>Événement</th>
+          <th>Nombre d'inscriptions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let evt of adminStats?.topPopularEvents">
+          <td>{{ evt.title }}</td>
+          <td><strong>{{ evt.registeredCount }}</strong> inscrits</td>
+        </tr>
+        <tr *ngIf="!adminStats?.topPopularEvents?.length">
+          <td colspan="2" class="text-center py-4 text-gray-500">Aucun événement populaire enregistré pour le moment.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Charts -->
+    <div class="charts-grid grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="chart-card p-4 bg-white rounded-lg shadow-sm">
+        <h4 class="font-medium mb-2">Inscriptions mensuelles</h4>
+        <canvas baseChart
+                [data]="lineChartData"
+                [options]="lineChartOptions"
+                chartType="line">
+        </canvas>
       </div>
-    } @else {
-      <div class="table-responsive">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Événement & Type</th>
-              <th>Date & Heure</th>
-              <th>Lieu</th>
-              <th>Statut</th>
-              <th class="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (event of filteredEvents; track event.id) {
-              <tr>
-                <td style="width: 80px;">
-                  <img [src]="event.coverUrl" alt="Cover" class="table-cover-img">
-                </td>
-                <td>
-                  <div class="title-cell">
-                    <span class="event-title">{{ event.title }}</span>
-                    <span class="event-type-badge">{{ getEventTypeLabel(event.eventType) }}</span>
-                  </div>
-                  <p class="event-description-text">{{ event.description }}</p>
-                </td>
-                <td>
-                  <div class="date-cell">
-                    <strong>{{ event.startAt | date:'dd MMM yyyy' }}</strong>
-                    <span>à {{ event.startAt | date:'HH:mm' }}</span>
-                  </div>
-                </td>
-                <td>
-                  <span class="location-text">{{ event.location || 'Non spécifié' }}</span>
-                </td>
-                <td>
-                  <span class="status-pill" [class]="event.status?.toLowerCase()">
-                    {{ getEventStatusLabel(event.status) }}
-                  </span>
-                </td>
-                <td class="text-right">
-                  <div class="actions-cell">
-                    @if (event.status === 'PENDING') {
-                      <button class="btn-icon btn-approve" title="Approuver" (click)="approve(event.id)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        Approuver
-                      </button>
-                      <button class="btn-icon btn-reject" title="Rejeter" (click)="reject(event.id)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                        Rejeter
-                      </button>
-                    } @else {
-                      <span class="action-done">Aucune action requise</span>
-                    }
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+      <div class="chart-card p-4 bg-white rounded-lg shadow-sm">
+        <h4 class="font-medium mb-2">Répartition par type</h4>
+        <canvas baseChart
+                [data]="pieChartData"
+                [options]="pieChartOptions"
+                chartType="pie">
+        </canvas>
       </div>
-    }
-  </div>
+      <div class="chart-card p-4 bg-white rounded-lg shadow-sm lg:col-span-2">
+        <h4 class="font-medium mb-2">Statut des événements</h4>
+        <canvas baseChart
+                [data]="barChartData"
+                [options]="barChartOptions"
+                chartType="bar">
+        </canvas>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- EVENTS MANAGEMENT SECTION -->
+  <ng-container *ngIf="activeSection() === 'events'">
+    <div class="tabs-row mb-4">
+      <div class="tabs-group">
+        <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="activeTab.set('pending')">
+          En attente
+          @if (getPendingCount() > 0) {
+            <span class="badge badge-warning">{{ getPendingCount() }}</span>
+          }
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'approved'" (click)="activeTab.set('approved')">
+          Approuvés
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="activeTab.set('completed')">
+          Terminés / Passés
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'all'" (click)="activeTab.set('all')">
+          Tous
+        </button>
+      </div>
+    </div>
+
+    <div class="table-card">
+      @if (filteredEvents().length === 0) {
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <p>Aucun événement dans cette catégorie pour le moment.</p>
+        </div>
+      } @else {
+        <div class="event-cards-grid">
+          @for (event of filteredEvents(); track event.id) {
+            <div class="admin-event-card">
+              <!-- Image & Badges -->
+              <div class="card-img-wrapper">
+                <img [src]="event.coverUrl || 'LogoEsprit.png'" alt="Cover" class="card-cover-img" />
+                <span class="card-type-tag">{{ getEventTypeLabel(event.eventType) }}</span>
+                <span class="status-pill card-status-tag" [class]="event.status?.toLowerCase()">
+                  {{ getEventStatusLabel(event.status) }}
+                </span>
+              </div>
+
+              <!-- Body -->
+              <div class="card-body">
+                <h4 class="card-title">{{ event.title }}</h4>
+                <p class="card-desc">{{ event.description }}</p>
+
+                <!-- Meta list -->
+                <div class="card-meta-list">
+                  <div class="card-meta-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <strong>{{ event.startAt | date:'dd MMM yyyy, HH:mm' }}</strong>
+                  </div>
+                  <div class="card-meta-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span>{{ event.location || 'Non spécifié' }}</span>
+                  </div>
+                </div>
+
+                <!-- Actions row -->
+                <div class="card-actions-row">
+                  @if (event.status === 'PENDING') {
+                    <button class="btn-icon btn-approve" (click)="approve(event.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      Approuver
+                    </button>
+                    <button class="btn-icon btn-reject" (click)="reject(event.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                      Rejeter
+                    </button>
+                  } @else {
+                    <span class="action-done">Aucune action requise</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </ng-container>
 </div>

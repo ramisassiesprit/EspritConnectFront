@@ -1,5 +1,5 @@
 import { Component, signal, inject, effect, HostListener, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
+import { RouterLink, RouterLinkActive, ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../core/services/auth.service';
@@ -21,6 +21,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private el = inject(ElementRef);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
+  isAdminView(): boolean {
+    return this.router.url.startsWith('/admin');
+  }
+
+  switchToUserView() {
+    this.router.navigate(['/etudiant/home']);
+  }
+
+  switchToAdminView() {
+    this.router.navigate(['/admin/users']);
+  }
 
   isLoggedIn = this.authService.isLoggedIn;
   showJoinModal = signal(false);
