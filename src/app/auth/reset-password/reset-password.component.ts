@@ -7,7 +7,7 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="reset-container">
       <div class="reset-card fade-in">
@@ -296,7 +296,7 @@ export class ResetPasswordComponent implements OnInit {
   token: string = '';
   newPassword = '';
   confirmPassword = '';
-  
+
   showPassword = signal(false);
   isLoading = signal(false);
   resetSuccess = signal(false);

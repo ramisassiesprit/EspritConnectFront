@@ -4,6 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, Users, Info, MoreVertical, ThumbsUp } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/User.service';
+import { PostService } from '../../../core/services/post.service';
+import { ReactionService } from '../../../core/services/reaction.service';
+import { CommentService } from '../../../core/services/comment.service';
+import { PostDTO, CommentDTO } from '../../../core/models/post.model';
+import { User } from '../../../core/models/user.model';
+import { JobOffer } from '../../../core/models/job.model';
+import { JobService } from '../../../core/services/job.service';
+import { RouterModule } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 interface FeedPost {
   author: string;
@@ -48,20 +57,28 @@ interface FbPost {
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, RouterModule],
   templateUrl: './feed.component.html',
   styleUrl: './feed.component.css'
 })
-export class FeedComponent implements OnInit {
+export class FeedComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private userService = inject(UserService);
+  private postService = inject(PostService);
+  private reactionService = inject(ReactionService);
+  private commentService = inject(CommentService);
+  private jobService = inject(JobService);
 
   currentUser = this.authService.currentUser;
-  
+
   isPostModalOpen = signal(false);
   activePostMenuId: string | null = null;
   searchQuery = '';
   newPostContent = '';
+
+  openCommentsPostIds: { [postId: string]: boolean } = {};
+  newCommentInputs: { [postId: string]: string } = {};
+  postComments: { [postId: string]: CommentDTO[] } = {};
 
   readonly Search = Search;
   readonly Users = Users;
@@ -81,35 +98,14 @@ export class FeedComponent implements OnInit {
     { name: 'User 9', avatar: 'https://i.pravatar.cc/150?img=9', status: 'away' }
   ];
 
-  posts: FeedPost[] = [
-    {
-      author: 'salah anez',
-      avatar: 'https://i.pravatar.cc/150?img=11',
-      date: '12 May, 2026, 20:31',
-      school: 'Esprit',
-      content: 'À la recherche d\'un stage d\'été en informatique\nÉlève ingénieur en informatique à ESPRIT Engineering School, je suis actuellement à la recherche d\'un stage d\'été et reste ouverte à des opportunités dans plusieurs ...',
-      attachment: {
-        name: 'Salah_Anez.pdf',
-        type: 'PDF Document'
-      },
-      likes: 0,
-      liked: false
-    }
-  ];
+  onlineUsers: User[] = [];
+  private refreshInterval: any;
+  posts: PostDTO[] = [];
+  allPosts: PostDTO[] = [];
+  recentJobs: JobOffer[] = [];
 
-  // Sidebar mock data
-  recentJobs: JobItem[] = [
-    { title: 'Offre de stage - Fnac Tunisie', company: 'Fnac Tunisie', location: 'Tunis', date: '22 NEW' },
-    { title: 'Offres de stage PFE rémunérées', company: 'Dada Rent a Car', location: 'Tunis', date: '22 NEW' },
-    { title: 'Stage Professionnel RH', company: 'KPS Groupe', location: 'Tunis', date: '22 NEW' }
-  ];
-
-  recentMembers: RecentMember[] = [
-    { name: 'Amine Ben Ali', avatar: 'https://i.pravatar.cc/150?img=21', role: 'Student' },
-    { name: 'Sara Mhiri', avatar: 'https://i.pravatar.cc/150?img=22', role: 'Alumni' },
-    { name: 'Youssef Saad', avatar: 'https://i.pravatar.cc/150?img=23', role: 'Student' },
-    { name: 'Leila Khemiri', avatar: 'https://i.pravatar.cc/150?img=24', role: 'Recruiter' }
-  ];
+  recentMembers: User[] = [];
+  totalUsersCount = 0;
 
   espritFbPosts: FbPost[] = [
     { title: 'ESPRIT - Open Day', excerpt: 'Rejoignez-nous pour la journée portes ouvertes...', date: '3h' },
@@ -118,14 +114,88 @@ export class FeedComponent implements OnInit {
 
   ngOnInit() {
     window.addEventListener('click', this._windowClick);
+    this.loadFeedPosts();
+    this.loadOnlineUsers();
+    this.loadRecentJobs();
+    this.loadRecentMembers();
+
+    // Refresh every 30 seconds
+    this.refreshInterval = setInterval(() => {
+      this.loadOnlineUsers();
+      this.loadRecentJobs();
+      this.loadRecentMembers();
+    }, 30000);
   }
 
   ngOnDestroy() {
     window.removeEventListener('click', this._windowClick);
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
+  }
+
+  loadOnlineUsers() {
+    this.userService.getOnlineUsers().subscribe({
+      next: (users) => {
+        this.onlineUsers = users;
+      },
+      error: (err) => {
+        console.error('Failed to load online users', err);
+      }
+    });
+  }
+
+  loadRecentJobs() {
+    this.jobService.getAllJobs().subscribe({
+      next: (offers) => {
+        this.recentJobs = offers
+          .filter(job => job.status === 'OPEN')
+          .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return dateB - dateA;
+          })
+          .slice(0, 3);
+      },
+      error: (err) => {
+        console.error('Failed to load recent jobs', err);
+      }
+    });
+  }
+
+  loadRecentMembers() {
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.totalUsersCount = users.length;
+        // Sort by registration/createdAt descending and take 12
+        this.recentMembers = users
+          .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return dateB - dateA;
+          })
+          .slice(0, 12);
+      },
+      error: (err) => {
+        console.error('Failed to load recent members', err);
+      }
+    });
   }
 
   private _windowClick = () => {
     this.activePostMenuId = null;
+  }
+
+  loadFeedPosts() {
+    this.postService.getFeedPosts().subscribe({
+      next: (data) => {
+        this.allPosts = data;  // ← save full list
+        this.posts = data;
+      },
+      error: (err) => {
+        console.error('Failed to load feed posts', err);
+      }
+    });
   }
 
   openPostModal() {
@@ -136,18 +206,137 @@ export class FeedComponent implements OnInit {
     this.isPostModalOpen.set(false);
   }
 
-  togglePostMenu(postAuthor: string, event: Event) {
+  togglePostMenu(postId: string, event: Event) {
     event.stopPropagation();
-    this.activePostMenuId = this.activePostMenuId === postAuthor ? null : postAuthor;
+    this.activePostMenuId = this.activePostMenuId === postId ? null : postId;
   }
 
   searchPosts() {
-    // Implement search logic
-    console.log('Searching for:', this.searchQuery);
+    const query = this.searchQuery.trim().toLowerCase();
+    if (!query) {
+      this.posts = this.allPosts;
+      return;
+    }
+    this.posts = this.allPosts.filter(post => {
+      const firstName = post.user?.firstName?.toLowerCase() || '';
+      const lastName = post.user?.lastName?.toLowerCase() || '';
+      const fullName = `${firstName} ${lastName}`;
+      return fullName.includes(query) || firstName.includes(query) || lastName.includes(query);
+    });
   }
 
-  toggleLike(post: FeedPost) {
-    post.liked = !post.liked;
-    post.likes = (post.likes || 0) + (post.liked ? 1 : -1);
+  selectedFiles: File[] = [];
+
+  onFilesAttached(event: any) {
+    const files: FileList = event.target.files;
+    if (!files) return;
+
+    for (let i = 0; i < files.length; i++) {
+      this.selectedFiles.push(files[i]);
+    }
+  }
+
+  removeFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  formatBytes(bytes: number, decimals = 2) {
+    if (!bytes) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  publishPost() {
+    if (!this.newPostContent.trim() && this.selectedFiles.length === 0) return;
+
+    this.postService.createPost(this.newPostContent, this.selectedFiles).subscribe({
+      next: (newPost) => {
+        this.allPosts = [newPost, ...this.allPosts]; // ← add this
+        this.posts = [newPost, ...this.posts];
+        this.newPostContent = '';
+        this.selectedFiles = [];
+        this.closePostModal();
+      },
+      error: (err) => {
+        console.error('Failed to create post', err);
+      }
+    });
+  }
+
+  toggleLike(post: PostDTO) {
+    if (post.liked) {
+      this.reactionService.unlikePost(post.id).subscribe({
+        next: () => {
+          post.liked = false;
+          post.likesCount = Math.max(0, (post.likesCount || 0) - 1);
+        },
+        error: (err) => console.error('Failed to unlike post', err)
+      });
+    } else {
+      this.reactionService.likePost(post.id, 'LIKE').subscribe({
+        next: () => {
+          post.liked = true;
+          post.likesCount = (post.likesCount || 0) + 1;
+        },
+        error: (err) => console.error('Failed to like post', err)
+      });
+    }
+  }
+
+  toggleComments(post: PostDTO) {
+    const postId = post.id;
+    this.openCommentsPostIds[postId] = !this.openCommentsPostIds[postId];
+    if (this.openCommentsPostIds[postId]) {
+      this.loadComments(postId);
+    }
+  }
+
+  loadComments(postId: string) {
+    this.commentService.getCommentsByPost(postId).subscribe({
+      next: (comments) => {
+        this.postComments[postId] = comments;
+      },
+      error: (err) => console.error('Failed to load comments', err)
+    });
+  }
+
+  submitComment(post: PostDTO) {
+    const postId = post.id;
+    const content = this.newCommentInputs[postId]?.trim();
+    if (!content) return;
+
+    this.commentService.addComment(postId, content).subscribe({
+      next: (comment) => {
+        if (!this.postComments[postId]) {
+          this.postComments[postId] = [];
+        }
+        this.postComments[postId].push(comment);
+        this.newCommentInputs[postId] = '';
+        post.commentsCount = (post.commentsCount || 0) + 1;
+      },
+      error: (err) => console.error('Failed to submit comment', err)
+    });
+  }
+
+  deleteComment(post: PostDTO, commentId: string) {
+    this.commentService.deleteComment(commentId).subscribe({
+      next: () => {
+        const postId = post.id;
+        if (this.postComments[postId]) {
+          this.postComments[postId] = this.postComments[postId].filter(c => c.id !== commentId);
+        }
+        post.commentsCount = Math.max(0, (post.commentsCount || 0) - 1);
+      },
+      error: (err) => console.error('Failed to delete comment', err)
+    });
+  }
+
+  getFullUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
+    return environment.apiUrl + (url.startsWith('/') ? url.substring(1) : url);
   }
 }

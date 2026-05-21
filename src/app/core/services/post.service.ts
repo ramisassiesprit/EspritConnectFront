@@ -11,6 +11,27 @@ export class PostService {
   private readonly apiUrl = `${environment.apiUrl}api/posts`;
   private http = inject(HttpClient);
 
+  getFeedPosts(): Observable<PostDTO[]> {
+    return this.http.get<PostDTO[]>(this.apiUrl);
+  }
+
+  createPost(content: string, files?: File[], mediaUrl?: string, postType?: string): Observable<PostDTO> {
+    const formData = new FormData();
+    formData.append('content', content);
+    if (mediaUrl) {
+      formData.append('mediaUrl', mediaUrl);
+    }
+    if (postType) {
+      formData.append('postType', postType);
+    }
+    if (files && files.length > 0) {
+      files.forEach(file => {
+        formData.append('files', file);
+      });
+    }
+    return this.http.post<PostDTO>(this.apiUrl, formData);
+  }
+
   getGroupPosts(groupId: string): Observable<PostDTO[]> {
     return this.http.get<PostDTO[]>(`${this.apiUrl}/group/${encodeURIComponent(groupId)}`);
   }

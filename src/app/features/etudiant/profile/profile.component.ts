@@ -41,7 +41,12 @@ export class ProfileComponent implements OnInit {
   experiences: WorkExperience[] = [];
   educations: OtherEducation[] = [];
   skills: Skill[] = [];
-  helps: WillingToHelp[] = [];
+  helps: WillingToHelp[] = [{
+    offerHelp: '',
+    seekHelp: '',
+    offerMentor: '',
+    seekMentor: ''
+  }];
   isEditingHelp: boolean = false;
 
   newExperience: WorkExperience = this.resetExperience();
