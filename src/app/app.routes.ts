@@ -5,6 +5,7 @@ import { AuthService } from './core/services/auth.service';
 import { UserRole } from './core/models/user-role.enum';
 import { etudiantGuard } from './core/guards/etudiant.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { entrepriseGuard } from './core/guards/entreprise.guard';
 
 export const routes: Routes = [
   {
@@ -261,10 +262,39 @@ export const routes: Routes = [
   },
   {
     path: 'entreprise',
+    canActivate: [entrepriseGuard],
     loadComponent: () =>
       import('./features/entreprise/entreprise-shell/entreprise-shell.component').then(
         (m) => m.EntrepriseShellComponent,
       ),
+    children: [
+      {
+        path: '',
+        redirectTo: 'jobs',
+        pathMatch: 'full',
+      },
+      {
+        path: 'jobs',
+        loadComponent: () =>
+          import('./features/admin/jobs/admin-jobs.component').then(
+            (m) => m.AdminJobsComponent,
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/etudiant/profile/profile.component').then(
+            (m) => m.ProfileComponent,
+          ),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import(
+            './features/etudiant/mentoring/MentorSettings/mentoringSettings.component'
+          ).then((m) => m.MentoringSettingsComponent),
+      }
+    ]
   },
   {
     path: 'admin',

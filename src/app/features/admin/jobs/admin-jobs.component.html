@@ -1,16 +1,16 @@
 <div class="admin-jobs">
   <header class="admin-jobs__header">
     <div>
-      <h1>Jobs Management</h1>
-      <p>Create and manage job offers, then review applications.</p>
+      <h1>{{ isAdminMode ? 'Jobs Approval' : 'Jobs Management' }}</h1>
+      <p>{{ isAdminMode ? 'Review pending job offers submitted by companies.' : 'Create and manage your job offers, then review applications.' }}</p>
     </div>
-    <button class="btn btn--primary" (click)="startCreate()">+ New Job</button>
+    <button class="btn btn--primary" *ngIf="isCompanyMode" (click)="startCreate()">+ New Job</button>
   </header>
 
   <p class="alert alert--ok" *ngIf="message">{{ message }}</p>
   <p class="alert alert--error" *ngIf="error">{{ error }}</p>
 
-  <section class="panel" *ngIf="showCreateForm">
+  <section class="panel" *ngIf="showCreateForm && isCompanyMode">
     <h2>{{ editingJobId ? 'Edit Job Offer' : 'Create Job Offer' }}</h2>
 
     <div class="form-grid">
@@ -21,7 +21,13 @@
 
       <label>
         Company
-        <input [(ngModel)]="form.company" type="text" placeholder="Company name" />
+        <input
+          class="input--locked"
+          [ngModel]="form.company || 'Taken from your company account'"
+          type="text"
+          readonly
+          placeholder="Taken from your company account"
+        />
       </label>
 
       <label>
@@ -59,7 +65,7 @@
       <label>
         Status
         <select [(ngModel)]="form.status">
-          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+          <option value="PENDING">PENDING</option>
         </select>
       </label>
 
@@ -101,12 +107,12 @@
   <div class="layout">
     <section class="panel">
       <div class="panel__top">
-        <h2>All Jobs</h2>
+        <h2>{{ isAdminMode ? 'Pending Jobs' : 'My Jobs' }}</h2>
         <input [(ngModel)]="search" type="text" placeholder="Search by title, company, location" />
       </div>
 
       <p *ngIf="loading">Loading jobs...</p>
-      <p *ngIf="!loading && filteredJobs.length === 0">No jobs found.</p>
+      <p *ngIf="!loading && filteredJobs.length === 0">{{ isAdminMode ? 'No pending jobs.' : 'No jobs found.' }}</p>
 
       <div class="job-list" *ngIf="!loading && filteredJobs.length > 0">
         <article class="job-item" *ngFor="let job of filteredJobs" [class.active]="selectedJobId === job.id">
@@ -116,8 +122,14 @@
             <small>{{ job.contractType || 'N/A' }} · {{ job.status }}</small>
           </div>
           <div class="job-item__actions">
-            <button class="btn btn--small btn--ghost" (click)="startEdit(job)">Edit</button>
-            <button class="btn btn--small btn--danger" (click)="deleteJob(job)">Delete</button>
+            <ng-container *ngIf="isCompanyMode; else adminModerationActions">
+              <button class="btn btn--small btn--ghost" (click)="startEdit(job)">Edit</button>
+              <button class="btn btn--small btn--danger" (click)="deleteJob(job)">Delete</button>
+            </ng-container>
+            <ng-template #adminModerationActions>
+              <button class="btn btn--small btn--primary" (click)="approveJob(job)">Approve</button>
+              <button class="btn btn--small btn--danger" (click)="rejectJob(job)">Reject</button>
+            </ng-template>
           </div>
         </article>
       </div>

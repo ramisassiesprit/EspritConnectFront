@@ -8,7 +8,10 @@ import {
   JobOffer,
   JobStatus
 } from '../../../core/models/job.model';
+import { UserRole } from '../../../core/models/user-role.enum';
+import { AuthService } from '../../../core/services/auth.service';
 import { JobService } from '../../../core/services/job.service';
+import { UserService } from '../../../core/services/User.service';
 
 @Component({
   selector: 'app-admin-jobs',
@@ -35,16 +38,38 @@ export class AdminJobsComponent implements OnInit {
   selectedImageFile: File | null = null;
 
   readonly contractTypes: ContractType[] = ['CDI', 'CDD', 'INTERNSHIP', 'FREELANCE', 'PART_TIME', 'VOLUNTEER'];
-  readonly statuses: JobStatus[] = ['OPEN', 'CLOSED', 'DRAFT', 'EXPIRED'];
+  readonly statuses: JobStatus[] = ['PENDING', 'OPEN', 'CLOSED', 'REJECTED', 'DRAFT', 'EXPIRED'];
   readonly applicationStatuses: ApplicationStatus[] = ['PENDING', 'REVIEWED', 'SHORTLISTED', 'REJECTED', 'ACCEPTED'];
 
   form: JobOffer = this.emptyJob();
   private map: any = null;
   private marker: any = null;
 
-  constructor(private readonly jobService: JobService) {}
+  currentRole: UserRole | null = null;
+  companyAccountName = '';
+
+  constructor(
+    private readonly jobService: JobService,
+    private readonly authService: AuthService,
+    private readonly userService: UserService
+  ) {}
 
   ngOnInit(): void {
+    this.currentRole = this.authService.currentUser()?.role || null;
+    if (this.currentRole === UserRole.ENTREPRISE) {
+      this.userService.getCurrentUser().subscribe({
+        next: (user) => {
+          const fromProfile = user.companyName?.trim();
+          const fallback = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
+          this.companyAccountName = fromProfile || fallback || 'Entreprise';
+          this.form.company = this.companyAccountName;
+        },
+        error: () => {
+          this.companyAccountName = 'Entreprise';
+          this.form.company = this.companyAccountName;
+        }
+      });
+    }
     this.loadJobs();
   }
 
@@ -74,9 +99,13 @@ export class AdminJobsComponent implements OnInit {
   }
 
   startCreate(): void {
+    if (!this.isCompanyMode) {
+      return;
+    }
     this.showCreateForm = true;
     this.editingJobId = '';
     this.form = this.emptyJob();
+    this.form.company = this.companyAccountName || this.form.company;
     this.selectedImageFile = null;
     this.message = '';
     this.error = '';
@@ -84,6 +113,9 @@ export class AdminJobsComponent implements OnInit {
   }
 
   startEdit(job: JobOffer): void {
+    if (!this.isCompanyMode) {
+      return;
+    }
     this.showCreateForm = true;
     this.editingJobId = job.id || '';
     this.form = {
@@ -105,6 +137,10 @@ export class AdminJobsComponent implements OnInit {
   }
 
   saveJob(): void {
+    if (!this.isCompanyMode) {
+      this.error = 'Only company accounts can create or edit jobs.';
+      return;
+    }
     this.message = '';
     this.error = '';
 
@@ -117,14 +153,13 @@ export class AdminJobsComponent implements OnInit {
     this.saving = true;
     const payload: JobOffer = {
       title: this.form.title.trim(),
-      company: this.form.company?.trim() || undefined,
       industry: this.form.industry?.trim() || undefined,
       location: this.form.location?.trim() || undefined,
       contractType: this.form.contractType,
       experienceLevel: this.form.experienceLevel?.trim() || undefined,
       description: this.form.description?.trim() || undefined,
       deadline: this.form.deadline ? this.form.deadline : undefined,
-      status: this.form.status || 'OPEN',
+      status: this.form.status || 'PENDING',
       applyUrl: this.form.applyUrl?.trim() || undefined,
       attachmentUrl: this.form.attachmentUrl?.trim() || undefined,
       latitude: this.form.latitude != null ? Number(this.form.latitude) : undefined,
@@ -171,6 +206,10 @@ export class AdminJobsComponent implements OnInit {
   }
 
   deleteJob(job: JobOffer): void {
+    if (!this.isCompanyMode) {
+      this.error = 'Only company accounts can delete jobs.';
+      return;
+    }
     if (!job.id) {
       return;
     }
@@ -211,6 +250,36 @@ export class AdminJobsComponent implements OnInit {
       },
       error: (err) => {
         this.error = err?.error?.message || 'Unable to update application status.';
+      }
+    });
+  }
+
+  approveJob(job: JobOffer): void {
+    if (!job.id || !this.isAdminMode) {
+      return;
+    }
+    this.jobService.approveJob(job.id).subscribe({
+      next: () => {
+        this.message = 'Job approved.';
+        this.loadJobs();
+      },
+      error: (err) => {
+        this.error = err?.error?.message || 'Unable to approve job.';
+      }
+    });
+  }
+
+  rejectJob(job: JobOffer): void {
+    if (!job.id || !this.isAdminMode) {
+      return;
+    }
+    this.jobService.rejectJob(job.id).subscribe({
+      next: () => {
+        this.message = 'Job rejected.';
+        this.loadJobs();
+      },
+      error: (err) => {
+        this.error = err?.error?.message || 'Unable to reject job.';
       }
     });
   }
@@ -269,7 +338,10 @@ export class AdminJobsComponent implements OnInit {
 
   private loadJobs(): void {
     this.loading = true;
-    this.jobService.getAllJobs().subscribe({
+    const loader$ = this.isAdminMode
+      ? this.jobService.getPendingJobs()
+      : this.jobService.getMyJobs();
+    loader$.subscribe({
       next: (jobs) => {
         this.jobs = jobs;
         this.loading = false;
@@ -307,7 +379,7 @@ export class AdminJobsComponent implements OnInit {
     return {
       title: '',
       description: '',
-      company: '',
+      company: this.companyAccountName || '',
       industry: '',
       location: '',
       latitude: undefined,
@@ -317,8 +389,16 @@ export class AdminJobsComponent implements OnInit {
       deadline: undefined,
       applyUrl: '',
       attachmentUrl: '',
-      status: 'OPEN'
+      status: 'PENDING'
     };
+  }
+
+  get isAdminMode(): boolean {
+    return this.currentRole === UserRole.ADMIN;
+  }
+
+  get isCompanyMode(): boolean {
+    return this.currentRole === UserRole.ENTREPRISE;
   }
 
   private extractApiError(err: any): string {

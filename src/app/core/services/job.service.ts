@@ -19,6 +19,10 @@ export class JobService {
     return this.http.get<JobOffer[]>(`${this.jobsUrl}/mine`);
   }
 
+  getPendingJobs(): Observable<JobOffer[]> {
+    return this.http.get<JobOffer[]>(`${this.jobsUrl}/pending`);
+  }
+
   getJobById(jobId: string): Observable<JobOffer> {
     return this.http.get<JobOffer>(`${this.jobsUrl}/${jobId}`);
   }
@@ -39,6 +43,14 @@ export class JobService {
 
   deleteJob(jobId: string): Observable<void> {
     return this.http.delete<void>(`${this.jobsUrl}/${jobId}`);
+  }
+
+  approveJob(jobId: string): Observable<JobOffer> {
+    return this.http.patch<JobOffer>(`${this.jobsUrl}/${jobId}/approve`, {});
+  }
+
+  rejectJob(jobId: string): Observable<JobOffer> {
+    return this.http.patch<JobOffer>(`${this.jobsUrl}/${jobId}/reject`, {});
   }
 
   apply(jobApplication: JobApplication): Observable<JobApplication> {

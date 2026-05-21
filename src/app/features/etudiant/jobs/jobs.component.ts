@@ -232,7 +232,7 @@ export class JobsComponent implements OnInit {
     this.loading = true;
     this.jobService.getAllJobs().subscribe({
       next: (jobs) => {
-        this.jobs = jobs.filter((j) => j.status === 'OPEN' || j.status === 'DRAFT');
+        this.jobs = jobs.filter((j) => j.status === 'OPEN');
         this.loading = false;
       },
       error: () => {

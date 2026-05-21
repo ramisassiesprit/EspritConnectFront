@@ -118,6 +118,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return `${this.homeLink}/profile`;
   }
 
+  get settingsLink() {
+    return `${this.homeLink}/settings`;
+  }
+
   get initials() {
     const user = this.currentUser();
     if (!user) return '??';

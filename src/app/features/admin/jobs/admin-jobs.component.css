@@ -73,6 +73,17 @@ input, select, textarea {
   font-size: 14px;
 }
 
+.input--locked {
+  background: #eef1f5;
+  border-color: #d5dce4;
+  color: #5f7085;
+  cursor: not-allowed;
+}
+
+.input--locked::placeholder {
+  color: #7f8fa3;
+}
+
 textarea {
   resize: vertical;
 }

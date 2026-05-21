@@ -1,5 +1,5 @@
 export type ContractType = 'CDI' | 'CDD' | 'INTERNSHIP' | 'FREELANCE' | 'PART_TIME' | 'VOLUNTEER';
-export type JobStatus = 'OPEN' | 'CLOSED' | 'DRAFT' | 'EXPIRED';
+export type JobStatus = 'PENDING' | 'OPEN' | 'CLOSED' | 'REJECTED' | 'DRAFT' | 'EXPIRED';
 export type ApplicationStatus = 'PENDING' | 'REVIEWED' | 'SHORTLISTED' | 'REJECTED' | 'ACCEPTED';
 
 export interface JobOffer {
