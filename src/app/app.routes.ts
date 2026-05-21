@@ -285,6 +285,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'jobs/new',
+        loadComponent: () =>
+          import('./features/admin/jobs/admin-jobs.component').then(
+            (m) => m.AdminJobsComponent,
+          ),
+      },
+      {
         path: 'jobs/:id/applicants',
         loadComponent: () =>
           import('./features/entreprise/job-applicants/job-applicants.component').then(

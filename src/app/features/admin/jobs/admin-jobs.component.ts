@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   ApplicationStatus,
   ContractType,
@@ -39,7 +39,6 @@ export class AdminJobsComponent implements OnInit {
   selectedImageFile: File | null = null;
 
   readonly contractTypes: ContractType[] = ['CDI', 'CDD', 'INTERNSHIP', 'FREELANCE', 'PART_TIME', 'VOLUNTEER'];
-  readonly statuses: JobStatus[] = ['PENDING', 'OPEN', 'CLOSED', 'REJECTED', 'DRAFT', 'EXPIRED'];
   readonly applicationStatuses: ApplicationStatus[] = ['PENDING', 'REVIEWED', 'SHORTLISTED', 'REJECTED', 'ACCEPTED'];
 
   form: JobOffer = this.emptyJob();
@@ -53,7 +52,8 @@ export class AdminJobsComponent implements OnInit {
     private readonly jobService: JobService,
     private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -73,6 +73,10 @@ export class AdminJobsComponent implements OnInit {
       });
     }
     this.loadJobs();
+
+    if (this.isCompanyMode && this.isCreateRoute()) {
+      this.startCreate();
+    }
   }
 
   ngOnDestroy(): void {
@@ -89,6 +93,81 @@ export class AdminJobsComponent implements OnInit {
       || (job.company || '').toLowerCase().includes(q)
       || (job.location || '').toLowerCase().includes(q)
     );
+  }
+
+  get jobStatusStats(): { label: string; value: number }[] {
+    const counts: Record<string, number> = {};
+    for (const job of this.jobs) {
+      const key = job.status || 'UNKNOWN';
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    return Object.entries(counts).map(([label, value]) => ({ label, value }));
+  }
+
+  get contractTypeStats(): { label: string; value: number }[] {
+    const counts: Record<string, number> = {};
+    for (const job of this.jobs) {
+      const key = job.contractType || 'N/A';
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    return Object.entries(counts).map(([label, value]) => ({ label, value }));
+  }
+
+  get recentJobsTrend(): { label: string; value: number }[] {
+    const now = new Date();
+    const keys: { key: string; label: string }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = d.toLocaleString('en-US', { month: 'short' });
+      keys.push({ key, label });
+    }
+
+    const counts: Record<string, number> = {};
+    for (const job of this.jobs) {
+      if (!job.createdAt) continue;
+      const d = new Date(job.createdAt);
+      if (Number.isNaN(d.getTime())) continue;
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      counts[key] = (counts[key] || 0) + 1;
+    }
+
+    return keys.map((k) => ({ label: k.label, value: counts[k.key] || 0 }));
+  }
+
+  get applicationStatusStats(): { label: string; value: number }[] {
+    const counts: Record<string, number> = {};
+    for (const app of this.applications) {
+      const key = app.status || 'PENDING';
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    return Object.entries(counts).map(([label, value]) => ({ label, value }));
+  }
+
+  maxStatValue(stats: { value: number }[]): number {
+    return Math.max(1, ...stats.map((s) => s.value));
+  }
+
+  totalStatValue(stats: { value: number }[]): number {
+    return stats.reduce((sum, s) => sum + s.value, 0);
+  }
+
+  donutBackground(stats: { label: string; value: number }[], palette: string[]): string {
+    const total = this.totalStatValue(stats);
+    if (total <= 0) {
+      return 'conic-gradient(#e2e8f0 0 360deg)';
+    }
+    let current = 0;
+    const segments: string[] = [];
+    stats.forEach((item, idx) => {
+      const angle = (item.value / total) * 360;
+      const start = current;
+      const end = current + angle;
+      const color = palette[idx % palette.length];
+      segments.push(`${color} ${start}deg ${end}deg`);
+      current = end;
+    });
+    return `conic-gradient(${segments.join(', ')})`;
   }
 
   selectJob(job: JobOffer): void {
@@ -125,6 +204,13 @@ export class AdminJobsComponent implements OnInit {
     setTimeout(() => this.initMap(), 0);
   }
 
+  openCreatePage(): void {
+    if (!this.isCompanyMode) {
+      return;
+    }
+    this.router.navigate(['/entreprise/jobs/new']);
+  }
+
   startEdit(job: JobOffer): void {
     if (!this.isCompanyMode) {
       return;
@@ -142,6 +228,10 @@ export class AdminJobsComponent implements OnInit {
   }
 
   cancelForm(): void {
+    if (this.isCompanyMode && this.isCreateRoute()) {
+      this.router.navigate(['/entreprise/jobs']);
+      return;
+    }
     this.showCreateForm = false;
     this.editingJobId = '';
     this.form = this.emptyJob();
@@ -193,6 +283,10 @@ export class AdminJobsComponent implements OnInit {
           this.form = this.emptyJob();
           this.selectedImageFile = null;
           this.destroyMap();
+          if (this.isCompanyMode && this.isCreateRoute()) {
+            this.router.navigate(['/entreprise/jobs']);
+            return;
+          }
           this.loadJobs();
         };
 
@@ -352,7 +446,7 @@ export class AdminJobsComponent implements OnInit {
   private loadJobs(): void {
     this.loading = true;
     const loader$ = this.isAdminMode
-      ? this.jobService.getPendingJobs()
+      ? this.jobService.getAllJobs()
       : this.jobService.getMyJobs();
     loader$.subscribe({
       next: (jobs) => {
@@ -414,12 +508,31 @@ export class AdminJobsComponent implements OnInit {
     return this.currentRole === UserRole.ENTREPRISE;
   }
 
+  get isCreateMode(): boolean {
+    return this.isCompanyMode && this.isCreateRoute();
+  }
+
   applicantDisplayName(application: JobApplication): string {
     const name = `${application.applicantFirstName || ''} ${application.applicantLastName || ''}`.trim();
     if (name) {
       return name;
     }
     return application.applicantId || 'Unknown';
+  }
+
+  jobStatusClass(status?: JobStatus): string {
+    switch (status) {
+      case 'OPEN':
+        return 'job-status job-status--open';
+      case 'PENDING':
+        return 'job-status job-status--pending';
+      case 'REJECTED':
+        return 'job-status job-status--rejected';
+      case 'CLOSED':
+        return 'job-status job-status--closed';
+      default:
+        return 'job-status';
+    }
   }
 
   private extractApiError(err: any): string {
@@ -443,6 +556,10 @@ export class AdminJobsComponent implements OnInit {
       }
     }
     return '';
+  }
+
+  private isCreateRoute(): boolean {
+    return this.route.snapshot.routeConfig?.path === 'jobs/new';
   }
 
   private initMap(): void {

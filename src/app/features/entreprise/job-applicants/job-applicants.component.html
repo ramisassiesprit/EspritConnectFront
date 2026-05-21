@@ -18,7 +18,11 @@
         <h3>{{ applicantDisplayName(app) }}</h3>
         <label>
           Status
-          <select [ngModel]="app.status || 'PENDING'" (ngModelChange)="updateApplicationStatus(app, $event)">
+          <select
+            [ngClass]="statusClass(app.status || 'PENDING')"
+            [ngModel]="app.status || 'PENDING'"
+            (ngModelChange)="updateApplicationStatus(app, $event)"
+          >
             <option *ngFor="let status of applicationStatuses" [value]="status">{{ status }}</option>
           </select>
         </label>

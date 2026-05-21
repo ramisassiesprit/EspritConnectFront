@@ -54,6 +54,22 @@ export class JobApplicantsComponent implements OnInit {
     });
   }
 
+  statusClass(status?: ApplicationStatus | null): string {
+    switch (status) {
+      case 'ACCEPTED':
+        return 'status-accepted';
+      case 'REJECTED':
+        return 'status-rejected';
+      case 'SHORTLISTED':
+        return 'status-shortlisted';
+      case 'REVIEWED':
+        return 'status-reviewed';
+      case 'PENDING':
+      default:
+        return 'status-pending';
+    }
+  }
+
   private load(jobId: string): void {
     this.loading = true;
     this.error = '';
@@ -78,4 +94,3 @@ export class JobApplicantsComponent implements OnInit {
     });
   }
 }
-
