@@ -81,7 +81,9 @@ export class AuthService {
 
   refreshToken(): Observable<AuthResponse> {
     // Note: on n'utilise pas l'intercepteur pour cette requête car le token actuel est expiré
-    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, {}, { withCredentials: true }).pipe(
+    const session = this.currentUser();
+    const body = session?.refreshToken ? { refreshToken: session.refreshToken } : {};
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, body, { withCredentials: true }).pipe(
       tap(response => {
         const session: UserSession = {
           token: response.accessToken,

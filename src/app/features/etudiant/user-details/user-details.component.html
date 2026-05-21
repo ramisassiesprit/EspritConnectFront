@@ -251,7 +251,7 @@
           <li *ngFor="let item of getOfferMentoringItems()">• {{item}}</li>
         </ul>
         <p *ngIf="getOfferMentoringItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">No mentoring offered</p>
-        <button class="w-full bg-[#ED1C24] text-white rounded-md py-2 font-medium text-sm hover:bg-[#D31920] transition-all">
+        <button *ngIf="getOfferMentoringItems().length > 0" (click)="requestMentoring()" class="w-full bg-[#ED1C24] text-white rounded-md py-2 font-medium text-sm hover:bg-[#D31920] transition-all">
           Request Mentoring
         </button>
       </div>
@@ -266,7 +266,7 @@
           <li *ngFor="let item of getSeekMentoringItems()">• {{item}}</li>
         </ul>
         <p *ngIf="getSeekMentoringItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">Not seeking mentoring</p>
-        <button class="w-full border-2 border-[#ED1C24] text-[#ED1C24] rounded-md py-2 font-medium text-sm hover:bg-red-50 transition-all">
+        <button *ngIf="getSeekMentoringItems().length > 0" (click)="offerMentoring()" class="w-full border-2 border-[#ED1C24] text-[#ED1C24] rounded-md py-2 font-medium text-sm hover:bg-red-50 transition-all">
           Offer Mentoring
         </button>
       </div>

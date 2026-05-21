@@ -7,6 +7,7 @@ import { UserService } from '../core/services/User.service';
 import { User } from '../core/models/user.model';
 import { NotificationService } from '../core/services/notification.service';
 import { Notification } from '../core/models/notification.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -45,6 +46,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   currentUser = signal<User | null>(null);
   notifications = signal<Notification[]>([]);
   private pollInterval: any;
+  private liveNotificationSub?: Subscription;
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
@@ -66,29 +68,56 @@ export class NavbarComponent implements OnInit, OnDestroy {
     effect(() => {
       if (this.isLoggedIn()) {
         this.userService.getCurrentUser().subscribe({
-          next: (user) => this.currentUser.set(user),
+          next: (user) => {
+            this.currentUser.set(user);
+            this.loadNotifications();
+            this.connectNotificationStream(user.id);
+            this.startNotificationPolling();
+          },
           error: (err) => console.error('Failed to fetch user profile', err)
         });
-        this.loadNotifications();
       } else {
         this.currentUser.set(null);
         this.notifications.set([]);
         this.notifCount.set(0);
+        this.disconnectNotificationStream();
+        this.stopNotificationPolling();
       }
     });
   }
 
   ngOnInit() {
-    if (this.isLoggedIn()) {
-      this.loadNotifications();
-      this.pollInterval = setInterval(() => this.loadNotifications(), 10000);
-    }
   }
 
   ngOnDestroy() {
+    this.disconnectNotificationStream();
+    this.stopNotificationPolling();
+  }
+
+  private startNotificationPolling() {
+    this.stopNotificationPolling();
+    this.pollInterval = setInterval(() => this.loadNotifications(), 10000);
+  }
+
+  private stopNotificationPolling() {
     if (this.pollInterval) {
       clearInterval(this.pollInterval);
+      this.pollInterval = null;
     }
+  }
+
+  private connectNotificationStream(userId: string) {
+    this.disconnectNotificationStream();
+    this.notificationService.connectToNotifications(userId);
+    this.liveNotificationSub = this.notificationService.getLiveNotifications().subscribe(() => {
+      this.loadNotifications();
+    });
+  }
+
+  private disconnectNotificationStream() {
+    this.liveNotificationSub?.unsubscribe();
+    this.liveNotificationSub = undefined;
+    this.notificationService.disconnectNotifications();
   }
 
   loadNotifications() {
@@ -115,6 +144,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.notificationService.markAsRead(notif.id).subscribe(() => {
       this.loadNotifications();
     });
+  }
+
+  getNotificationLink(notif: Notification): string | null {
+    if (notif.targetType === 'EVENT') {
+      return '/etudiant/events';
+    }
+
+    if (notif.targetType === 'MENTORSHIP_REQUEST') {
+      return '/etudiant/mentoring/relations';
+    }
+
+    if (notif.type === 'MENTORING_REQUEST' || notif.type === 'MENTORING_ACCEPTED' || notif.type === 'MENTORING_REJECTED') {
+      return '/etudiant/mentoring/relations';
+    }
+
+    return null;
   }
 
   markAllNotificationsAsRead() {

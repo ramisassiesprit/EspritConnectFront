@@ -8,6 +8,7 @@ import { User } from '../../../core/models/user.model';
 import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../../../core/models/profile.model';
 import { RequestHelpModalComponent } from './request-help-modal/request-help-modal.component';
 import { OfferHelpModalComponent } from './offer-help-modal/offer-help-modal.component';
+import { MentorshipService } from '../../../core/services/mentorship.service';
 
 @Component({
   selector: 'app-user-details',
@@ -21,6 +22,7 @@ export class UserDetailsComponent implements OnInit {
   private router = inject(Router);
   private userService = inject(UserService);
   private profileService = inject(ProfileService);
+  private mentorshipService = inject(MentorshipService);
 
   user?: User;
   espritProfile?: EspritProfile;
@@ -133,5 +135,34 @@ export class UserDetailsComponent implements OnInit {
         state: { autoSendMsg: formattedHtml }
       });
     }
+  }
+
+  requestMentoring() {
+    if (!this.user) return;
+    this.mentorshipService.createRequest(this.user.id)
+      .subscribe({
+        next: () => {
+          // navigate to mentoring relations where requests appear
+          this.router.navigate(['/etudiant/mentoring/relations']);
+        },
+        error: (err) => {
+          console.error('Failed to create mentoring request', err);
+          alert(err?.error?.message || 'Failed to send mentoring request');
+        }
+      });
+  }
+
+  offerMentoring() {
+    if (!this.user) return;
+    this.mentorshipService.createOffer(this.user.id)
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/etudiant/mentoring/relations']);
+        },
+        error: (err) => {
+          console.error('Failed to create mentoring offer', err);
+          alert(err?.error?.message || 'Failed to send mentoring offer');
+        }
+      });
   }
 }

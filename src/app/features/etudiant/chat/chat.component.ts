@@ -100,6 +100,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.receiverId) {
       this.userService.getUserById(this.receiverId).subscribe(user => {
         this.receiver = user;
+        // If navigation requested to start a video call, show placeholder behavior
+        const startVideo = (history.state && history.state.startVideo) ? true : false;
+        if (startVideo) {
+          setTimeout(() => {
+            alert('Starting video call with ' + (this.receiver?.firstName || 'user'));
+          }, 500);
+        }
       });
     }
   }

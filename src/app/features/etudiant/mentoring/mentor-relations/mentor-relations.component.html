@@ -1,7 +1,5 @@
 <div class="h-full min-h-[calc(100vh-100px)]">
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-    
-    <!-- Tabs -->
     <div class="flex items-center px-4 pt-2 border-b border-gray-100">
       <button 
         (click)="setTab('current')"
@@ -33,22 +31,58 @@
     </div>
   </div>
 
-  <!-- Content Area Placeholder -->
   <div class="mt-6">
-    <div *ngIf="activeTab === 'current'" class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
-      No current active mentor relationships found.
-    </div>
-    
-    <div *ngIf="activeTab === 'declined'" class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
-      No declined requests.
-    </div>
-    
-    <div *ngIf="activeTab === 'canceled'" class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
-      No canceled relationships.
-    </div>
-    
-    <div *ngIf="activeTab === 'past'" class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
-      No past mentoring sessions.
-    </div>
+    @if (isLoading) {
+      <div class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
+        Loading mentoring requests...
+      </div>
+    } @else {
+      @if (getTabRequests(activeTab).length === 0) {
+        <div class="p-8 text-center text-gray-400 bg-white rounded-2xl shadow-sm border border-gray-100">
+          @if (activeTab === 'current') {
+            No current mentoring requests or active relationships.
+          } @else if (activeTab === 'declined') {
+            No declined requests.
+          } @else if (activeTab === 'canceled') {
+            No canceled relationships.
+          } @else {
+            No past mentoring sessions.
+          }
+        </div>
+      } @else {
+        <div class="grid gap-4">
+          @for (request of getTabRequests(activeTab); track request.id) {
+            <div class="p-5 bg-white rounded-2xl shadow-sm border border-gray-100">
+              <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">{{ request.status }}</p>
+                  <h3 class="mt-1 text-lg font-bold text-gray-900">
+                    {{ getDisplayName(request) }}
+                  </h3>
+                  <p class="mt-2 text-sm text-gray-600 max-w-3xl">{{ request.message || 'No message provided.' }}</p>
+                  <p class="mt-3 text-xs text-gray-400">Requested at {{ request.requestedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+
+                @if (canRespond(request)) {
+                  <div class="flex gap-2">
+                    <button class="px-4 py-2 rounded-full bg-[#ED1C24] text-white text-sm font-semibold" (click)="respond(request, 'ACCEPTED')">Accept</button>
+                    <button class="px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-semibold" (click)="respond(request, 'REJECTED')">Decline</button>
+                  </div>
+                }
+                @if (request.status === 'ACCEPTED') {
+                  <div class="flex gap-2 items-center">
+                    <button class="px-4 py-2 rounded-full bg-[#0B74FF] text-white text-sm font-semibold" (click)="openChat(request)">Chat</button>
+                    <button class="px-4 py-2 rounded-full bg-[#10B981] text-white text-sm font-semibold" (click)="startCall(request)">Call</button>
+                    @if (canEnd(request)) {
+                      <button class="px-4 py-2 rounded-full bg-gray-800 text-white text-sm font-semibold" (click)="endMentorship(request)">End Mentorship</button>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
   </div>
 </div>
