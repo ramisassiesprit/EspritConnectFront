@@ -43,38 +43,51 @@
       <div class="spinner"></div>
       <p>Loading groups…</p>
     </div>
+    
+    <div class="groups-tabs">
+      <nav>
+        <button type="button" class="tab-link" [class.active]="activeTab === 'your'" (click)="setActiveTab('your')">Your Groups</button>
+        <button type="button" class="tab-link" [class.active]="activeTab === 'requests'" (click)="setActiveTab('requests')">Requests</button>
+      </nav>
+    </div>
 
     <div *ngIf="error" class="groups-error">
       <lucide-icon [img]="Info" class="error-icon"></lucide-icon>
       <p>{{ error }}</p>
     </div>
 
-    <!-- Your Groups Section -->
+    <!-- Your Groups / Requests Section (tab switch) -->
     <section class="groups-section-card" *ngIf="!loading && !error">
-      <h2 class="section-title">Your Groups</h2>
-      
-      <div *ngIf="!filteredJoinedGroups.length" class="empty-state">
-        <p>{{ selectedLabel || searchQuery ? 'No groups match your search.' : 'You are not a member of any groups yet.' }}</p>
-      </div>
+      <ng-container *ngIf="activeTab === 'your'">
+        <h2 class="section-title">Your Groups</h2>
 
-      <div class="your-groups-grid" *ngIf="filteredJoinedGroups.length">
-          <article *ngFor="let group of filteredJoinedGroups" class="your-group-card" (click)="navigateToGroupFeed(group.id)">
-            <img [src]="group.logoUrl" [alt]="group.groupName" class="your-group-img">
-            <div class="your-group-info">
-              <span class="your-group-name">{{ group.groupName }}</span>
-            </div>
-            
-            <!-- Management Buttons for Owners -->
-            <div class="group-management-overlay" *ngIf="isOwner(group)">
-              <button class="mgmt-btn edit" (click)="editGroup($event, group)" title="Edit">
-                <lucide-icon [img]="Edit" size="14"></lucide-icon>
-              </button>
-              <button class="mgmt-btn delete" (click)="deleteGroup($event, group)" title="Delete">
-                <lucide-icon [img]="Trash" size="14"></lucide-icon>
-              </button>
-            </div>
-          </article>
-      </div>
+        <div *ngIf="!filteredJoinedGroups.length" class="empty-state">
+          <p>{{ selectedLabel || searchQuery ? 'No groups match your search.' : 'You are not a member of any groups yet.' }}</p>
+        </div>
+
+        <div class="your-groups-grid" *ngIf="filteredJoinedGroups.length">
+            <article *ngFor="let group of filteredJoinedGroups" class="your-group-card" (click)="navigateToGroupFeed(group.id)">
+              <img [src]="group.logoUrl" [alt]="group.groupName" class="your-group-img">
+              <div class="your-group-info">
+                <span class="your-group-name">{{ group.groupName }}</span>
+              </div>
+              
+              <!-- Management Buttons for Owners -->
+              <div class="group-management-overlay" *ngIf="isOwner(group)">
+                <button class="mgmt-btn edit" (click)="editGroup($event, group)" title="Edit">
+                  <lucide-icon [img]="Edit" size="14"></lucide-icon>
+                </button>
+                <button class="mgmt-btn delete" (click)="deleteGroup($event, group)" title="Delete">
+                  <lucide-icon [img]="Trash" size="14"></lucide-icon>
+                </button>
+              </div>
+            </article>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="activeTab === 'requests'">
+        <app-group-requests></app-group-requests>
+      </ng-container>
     </section>
 
     <!-- Suggested Groups Section -->
@@ -100,7 +113,7 @@
                 <span>{{ group.membersCount || 0 }} members</span>
               </div>
             </div>
-            <p class="group-list-desc">{{ group.description }}</p>
+            <p class="group-list-desc" [innerHTML]="group.description || 'No description provided.'"></p>
             <div class="group-list-labels" *ngIf="group.labels">
               <span *ngFor="let label of group.labels.split(',')" class="list-label-tag">{{ label.trim() }}</span>
             </div>
@@ -127,4 +140,4 @@
   </ng-container>
 
   <router-outlet></router-outlet>
-</div>
+</div>

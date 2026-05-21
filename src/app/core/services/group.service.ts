@@ -50,8 +50,8 @@ export class GroupService {
     return this.http.post<Group>(`${this.apiUrl}/with-files`, formData);
   }
 
-  joinGroup(groupId: string, userId: string): Observable<Group> {
-    return this.http.post<Group>(`${this.apiUrl}/${encodeURIComponent(groupId)}/join`, { userId })
+  joinGroup(groupId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${encodeURIComponent(groupId)}/join`, null)
       .pipe(tap(() => this.membershipChanged.next()));
   }
 
@@ -108,6 +108,16 @@ export class GroupService {
 
   removeMember(groupId: string, userId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${encodeURIComponent(groupId)}/members/${encodeURIComponent(userId)}`)
+      .pipe(tap(() => this.membershipChanged.next()));
+  }
+
+  approveMember(groupId: string, userId: string) {
+    return this.http.post<any>(`${this.apiUrl}/${encodeURIComponent(groupId)}/members/${encodeURIComponent(userId)}/approve`, {})
+      .pipe(tap(() => this.membershipChanged.next()));
+  }
+
+  rejectMember(groupId: string, userId: string) {
+    return this.http.post<void>(`${this.apiUrl}/${encodeURIComponent(groupId)}/members/${encodeURIComponent(userId)}/reject`, {})
       .pipe(tap(() => this.membershipChanged.next()));
   }
 

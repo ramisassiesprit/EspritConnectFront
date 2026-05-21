@@ -1,0 +1,33 @@
+.requests-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.requests-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+.group-requests-card {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.group-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.group-logo { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
+.group-name { font-weight: 700; }
+.group-meta { font-size: 13px; color: #6b7280; }
+.no-requests { color: #6b7280; font-size: 14px; padding: 12px 0; }
+.request-item { display:flex; justify-content:space-between; align-items:center; padding: 10px 0; border-top: 1px solid #f3f4f6; }
+.request-left { display:flex; gap:12px; align-items:center; }
+.avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; }
+.name { font-weight:600; }
+.email { font-size:13px; color:#6b7280; }
+.request-actions { display:flex; gap:8px; }
+.btn-approve { background:#ecfdf5; color:#065f46; border:1px solid #bbf7d0; padding:6px 10px; border-radius:8px; font-weight:600; }
+.btn-reject { background:#fff1f2; color:#991b1b; border:1px solid #fecaca; padding:6px 10px; border-radius:8px; font-weight:600; }

@@ -1,312 +1,223 @@
-<div class="feed-layout">
-    
-    <!-- MAIN CONTENT (Left) -->
-    <div class="feed-main">
-        
-        <!-- SEARCH SECTION -->
-        <div class="search-section">
-            <div class="gw-feed-block gw-search-card">
-                <div class="search-container">
-                    <h1 class="no-margin">My Feed</h1>
-                    <div class="search-wrapper">
-                        <lucide-icon [name]="Search" class="h-5 w-5 text-gray-400"></lucide-icon>
-                        <input type="text" placeholder="Search Feed" maxlength="100" autocomplete="off" />
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CREATE POST CARD -->
-        <div class="create-post-card">
-            <div class="create-post-content">
-                <div class="profile-image">
-                    <img src="https://i.pravatar.cc/150?img=12" alt="">
-                </div>
-                <div class="post-input-wrapper" (click)="openPostModal()">
-                    <input type="text" placeholder="What's on your mind, youssef?" readonly>
-                </div>
-            </div>
-        </div>
-
-        <!-- WHO'S ONLINE SECTION -->
-        <div class="online-section">
-            <div class="online-card">
-                <div class="online-header">
-                    <div class="online-title">
-                        <span class="online-dot"></span>
-                        <span class="title-main">Who's online</span>
-                        <span class="title-sep">•</span>
-                        <span class="title-sub">See who's been online recently</span>
-                    </div>
-                    <a href="#" class="see-all">SEE ALL LIVE MEMBERS <lucide-icon [name]="ChevronRight" class="h-4 w-4"></lucide-icon></a>
-                </div>
-
-                <div class="online-members-list">
-                    <div *ngFor="let member of onlineMembers" class="member-item">
-                        <div class="member-avatar">
-                            <img [src]="member.avatar" [alt]="member.name">
-                            <span class="status-indicator" [class.online]="member.status === 'online'" [class.away]="member.status === 'away'"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- POSTS LIST -->
-        <div class="posts-container">
-            <div *ngFor="let post of posts; let i = index" class="post-card">
-                <!-- Post Header -->
-                <div class="post-header">
-                    <div class="post-user-info">
-                        <div class="post-avatar">
-                            <img [src]="post.avatar" [alt]="post.author">
-                        </div>
-                        <div class="post-meta">
-                            <div class="post-author-row">
-                                <span class="post-author-name">{{ post.author }}</span>
-                                <span class="meta-dot">•</span>
-                                <div class="badge-icons">
-                                    <span class="badge-item purple">👥</span>
-                                    <span class="badge-item yellow">🚩</span>
-                                </div>
-                            </div>
-                            <p class="post-school">{{ post.school }}</p>
-                            <p class="post-date">{{ post.date }}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="post-options-wrapper">
-                        <button class="post-more-btn" (click)="togglePostMenu(i, $event)">
-                            <lucide-icon [name]="MoreVertical" class="h-5 w-5"></lucide-icon>
-                        </button>
-                        
-                        <!-- Dropdown Menu -->
-                        <div class="post-menu-dropdown" *ngIf="activePostMenuId() === i" (click)="$event.stopPropagation()">
-                            <button class="menu-item">Report content as inappropriate</button>
-                            <button class="menu-item">Copy Link</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Post Content -->
-                <div class="post-content">
-                    <div class="content-text-wrapper">
-                        <div class="content-accent-line"></div>
-                        <div class="content-text">
-                            {{ post.content }}
-                            <a href="#" class="read-more">Read more</a>
-                        </div>
-                    </div>
-
-                    <!-- Attachment -->
-                    <div *ngIf="post.attachment" class="post-attachment">
-                        <div class="attachment-icon">
-                            <lucide-icon [name]="FileText" class="h-8 w-8 text-gray-400"></lucide-icon>
-                        </div>
-                        <div class="attachment-info">
-                            <p class="file-name">{{ post.attachment.name }}</p>
-                            <p class="file-type">{{ post.attachment.type }}</p>
-                        </div>
-                        <button class="download-btn">
-                            <lucide-icon [name]="Download" class="h-6 w-6"></lucide-icon>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Post Actions -->
-                <div class="post-footer-actions">
-                    <div class="post-action-wrapper" (mouseenter)="showReactions(i)" (mouseleave)="hideReactions()">
-                        <!-- DEFAULT LIKE OR SELECTED REACTION -->
-                        <button class="post-action-btn" [style.color]="post.selectedReaction?.color || '#4b4b4b'">
-                            <span *ngIf="!post.selectedReaction">
-                                <lucide-icon [name]="ThumbsUp" class="h-5 w-5"></lucide-icon>
-                            </span>
-                            <span *ngIf="post.selectedReaction" class="selected-icon">
-                                {{ post.selectedReaction.icon }}
-                            </span>
-                            <span>{{ post.selectedReaction?.label || 'Like' }}</span>
-                        </button>
-                        
-                        <!-- Reaction Bar -->
-                        <div class="reaction-bar" *ngIf="activeReactionPostId() === i">
-                            <div *ngFor="let reaction of reactions" 
-                                 class="reaction-item" 
-                                 (click)="onReaction(i, reaction)"
-                                 [title]="reaction.label">
-                                <span class="reaction-icon">{{ reaction.icon }}</span>
-                                <span class="reaction-label">{{ reaction.label }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Post Comment Box -->
-                <div class="post-comment-section">
-                    
-                    <!-- SIMPLE VIEW (Default) -->
-                    <div class="comment-simple-view" *ngIf="activeCommentPostId() !== i" (click)="setActiveComment(i)">
-                        <div class="comment-avatar-small">
-                            <img src="https://i.pravatar.cc/150?img=12" alt="User">
-                        </div>
-                        <div class="comment-simple-input">
-                            <span>Write a comment...</span>
-                        </div>
-                    </div>
-
-                    <!-- EXPANDED VIEW (On Focus) -->
-                    <div class="comment-expanded-view" *ngIf="activeCommentPostId() === i">
-                        <div class="comment-input-row">
-                            <div class="comment-avatar">
-                                <img src="https://i.pravatar.cc/150?img=12" alt="User">
-                            </div>
-                            <div class="comment-input-container">
-                                <label class="comment-label">Write a comment...*</label>
-                                <div class="comment-input-field-wrapper">
-                                    <input type="text" maxlength="4000" placeholder="" #commentInput autofocus>
-                                    <div class="comment-actions-inline">
-                                        <button class="comment-icon-btn red">
-                                            <lucide-icon [name]="Smile" class="h-6 w-6"></lucide-icon>
-                                        </button>
-                                        <button class="comment-icon-btn dark" (click)="clearActiveComment()">
-                                            <lucide-icon [name]="XIcon" class="h-6 w-6"></lucide-icon>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="comment-footer">
-                                    <span class="comment-counter"><span class="red-text">{{ commentInput.value.length }}</span> / 4000</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+<div class="content-layout">
+  <!-- Left Column -->
+  <div class="main-column">
+    <!-- My Feed Header -->
+    <div class="section-card feed-header-card">
+      <h2>My Feed</h2>
+      <div class="mini-search">
+        <lucide-icon [img]="Search" size="16"></lucide-icon>
+        <input type="text" placeholder="Search Feed" [(ngModel)]="searchQuery" (input)="searchPosts()">
+      </div>
     </div>
 
-    <!-- SIDEBAR (Right) -->
-    <div class="feed-sidebar">
-        
-        <!-- RECENT JOBS SECTION -->
-        <div class="jobs-section">
-            <div class="jobs-card">
-                <div class="jobs-header">
-                    <div class="new-badge grey">
-                        <span class="badge-count">34</span>
-                        <span class="badge-text">NEW</span>
-                    </div>
-                    <h3 class="jobs-title">Recent jobs</h3>
-                </div>
-
-                <div class="jobs-list">
-                    <div *ngFor="let job of recentJobs" class="job-item">
-                        <div class="company-logo">
-                            <img [src]="job.logo" [alt]="job.company">
-                        </div>
-                        <div class="job-info">
-                            <h4 class="job-item-title">{{ job.title }}</h4>
-                            <p class="company-name">{{ job.company }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="jobs-footer">
-                    <a routerLink="/etudiant/jobs" class="view-jobs-link">VIEW JOBS</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- RECENT MEMBERS SECTION -->
-        <div class="members-section">
-            <div class="members-card">
-                <div class="members-header">
-                    <div class="new-badge grey">
-                        <span class="badge-count">676</span>
-                        <span class="badge-text">NEW</span>
-                    </div>
-                    <h3 class="members-title">Recent members</h3>
-                </div>
-
-                <div class="members-grid">
-                    <div *ngFor="let member of recentMembers" class="member-grid-item">
-                        <img [src]="member.avatar" alt="Member">
-                    </div>
-                </div>
-
-                <div class="members-footer">
-                    <a href="#" class="view-members-link">VIEW MEMBERS</a>
-                </div>
-            </div>
-        </div>
-
+    <!-- Post Creator trigger -->
+    <div class="section-card creator-card">
+      <img [src]="currentUser()?.avatarUrl" *ngIf="currentUser()?.avatarUrl" class="creator-avatar" alt="Avatar"
+        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+      <div class="creator-avatar" *ngIf="!currentUser()?.avatarUrl"
+        style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af; width: 40px; height: 40px;">
+        <i class="bi bi-person-fill" style="font-size: 20px; line-height: 1;"></i>
+      </div>
+      <div class="creator-input-wrapper">
+        <input type="text" [placeholder]="'What\'s on your mind, ' + (currentUser()?.firstName || 'User') + '?'"
+          [(ngModel)]="newPostContent" (click)="openPostModal()" readonly style="cursor: pointer;">
+      </div>
     </div>
 
+    <!-- Who's Online -->
+    <div class="section-card online-card">
+      <div class="online-header">
+        <div class="online-title">
+          <span class="dot-green"></span>
+          <p>Who's online <span class="subtitle">· See who's been online recently</span></p>
+        </div>
+        <a href="#" class="see-all-link">SEE ALL LIVE MEMBERS ›</a>
+      </div>
+
+      <!-- Live list with avatars -->
+      <div class="online-list">
+        <div *ngIf="onlineMembers.length === 0"
+          style="padding: 10px; font-size: 13px; color: #65676b; font-style: italic;">
+          No members currently online
+        </div>
+        <div *ngFor="let member of onlineMembers | slice:0:9"
+          style="display: flex; align-items: center; gap: 8px; background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 20px; padding: 6px 12px; transition: all 0.2s; cursor: pointer;"
+          onmouseover="this.style.backgroundColor='#f3f4f6'; this.style.borderColor='#e5e7eb'"
+          onmouseout="this.style.backgroundColor='#f9fafb'; this.style.borderColor='#f3f4f6'"
+          [title]="member.name">
+
+          <div style="position: relative; width: 28px; height: 28px; flex-shrink: 0;">
+            <img [src]="member.avatar" *ngIf="member.avatar"
+              style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Avatar">
+            <div *ngIf="!member.avatar"
+              style="display: flex; align-items: center; justify-content: center; background-color: #e5e7eb; border-radius: 50%; color: #9ca3af; width: 100%; height: 100%;">
+              <i class="bi bi-person-fill" style="font-size: 14px; line-height: 1;"></i>
+            </div>
+            <span
+              style="position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px; border-radius: 50%; border: 1px solid white;"
+              [style.backgroundColor]="member.status === 'online' ? '#31a24c' : '#f7b928'">
+            </span>
+          </div>
+
+          <span style="font-size: 13px; font-weight: 600; color: #1c1e21; white-space: nowrap;">
+            {{ member.name }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed Posts -->
+    <div class="posts-list">
+      <article *ngFor="let post of posts" class="section-card post-card">
+        <div class="post-header">
+          <div class="post-meta">
+            <img [src]="post.avatar" *ngIf="post.avatar" class="post-author-img"
+              style="object-fit: cover; width: 40px; height: 40px; border-radius: 50%;" alt="Avatar">
+            <div class="post-author-img" *ngIf="!post.avatar"
+              style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af; width: 40px; height: 40px;">
+              <i class="bi bi-person-fill" style="font-size: 20px; line-height: 1;"></i>
+            </div>
+
+            <div class="post-author-details">
+              <div class="name-row">
+                <span class="author-name">{{ post.author }}</span>
+                <span class="author-badges">
+                  <span class="badge-p">
+                    <lucide-icon [img]="Users" size="12"></lucide-icon>
+                  </span>
+                  <span class="badge-y">
+                    <lucide-icon [img]="Info" size="12"></lucide-icon>
+                  </span>
+                </span>
+              </div>
+              <p class="author-sub">{{ post.school }}</p>
+              <p class="post-date">{{ post.date }}</p>
+            </div>
+          </div>
+          <div class="dropdown-wrapper" style="position: relative; display: inline-block;">
+            <button class="btn-more" (click)="togglePostMenu(post.author, $event)">
+              <lucide-icon [img]="MoreVertical" size="18"></lucide-icon>
+            </button>
+            <div *ngIf="activePostMenuId === post.author" class="dropdown-menu-custom" style="position: absolute; right: 0; top: 32px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 50; min-width: 140px; display: flex; flex-direction: column; overflow: hidden; padding: 4px 0;">
+              <button class="dropdown-item-custom" style="background: none; border: none; padding: 10px 16px; font-size: 13px; text-align: left; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #374151; transition: background 0.2s; width: 100%;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                <i class="bi bi-exclamation-circle" style="color: #4b5563;"></i> Report
+              </button>
+              <button class="dropdown-item-custom" style="background: none; border: none; padding: 10px 16px; font-size: 13px; text-align: left; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #374151; transition: background 0.2s; width: 100%;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                <i class="bi bi-link-45deg"></i> Copy Link
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Post Content Block -->
+        <div class="post-body">
+          <p class="post-text">{{ post.content }}</p>
+
+          <!-- Combo 2: Attached Files Download Cards -->
+          <div *ngIf="post.attachment" class="post-attached-files">
+            <div class="post-file-card">
+              <div class="file-icon-box">
+                <i class="bi bi-file-earmark-arrow-down-fill"></i>
+              </div>
+              <div class="file-info">
+                <span class="file-name">{{ post.attachment.name }}</span>
+                <span class="file-size">{{ post.attachment.type }}</span>
+              </div>
+              <button class="btn-download-file">
+                <i class="bi bi-download"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-footer" style="display: flex; flex-direction: column; gap: 12px; padding: 12px 16px;">
+          <div class="post-actions" style="display: flex; gap: 16px; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">
+            <button class="action-btn" (click)="toggleLike(post)" style="background: none; border: none; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #4b5563; font-size: 13.5px; padding: 6px 12px; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+              <lucide-icon [img]="ThumbsUp" size="16" [style.color]="post.liked ? '#ef4444' : '#4b5563'"></lucide-icon>
+              <span>{{ post.likes || 0 }} Like{{ (post.likes || 0) > 1 ? 's' : '' }}</span>
+            </button>
+            <button class="action-btn" style="background: none; border: none; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #4b5563; font-size: 13.5px; padding: 6px 12px; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+              <i class="bi bi-chat-left-text" style="color: #4b5563;"></i>
+              <span>Comment</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Right Column (Sidebar) -->
+  <div class="side-column">
+    <!-- Recent Jobs -->
+    <div class="section-card sidebar-card">
+      <div class="sidebar-header">
+        <h3>Recent jobs</h3>
+        <span class="badge-count">22 NEW</span>
+      </div>
+      <div class="sidebar-body">
+        <div *ngFor="let job of recentJobs" class="job-item">
+          <div class="job-info">
+            <div class="job-title">{{ job.title }}</div>
+            <div class="job-company">{{ job.company }} · <span class="job-location">{{ job.location }}</span></div>
+          </div>
+          <div class="job-date">{{ job.date }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Members -->
+    <div class="section-card sidebar-card">
+      <div class="sidebar-header">
+        <h3>Recent members</h3>
+        <a href="#" class="see-all-link">VIEW MEMBERS</a>
+      </div>
+      <div class="sidebar-body member-grid">
+        <div *ngFor="let m of recentMembers" class="member-item" title="{{ m.name }}">
+          <img *ngIf="m.avatar" [src]="m.avatar" alt="avatar">
+          <div class="member-name">{{ m.name }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Esprit Facebook Posts -->
+    <div class="section-card sidebar-card">
+      <div class="sidebar-header">
+        <h3>Esprit Facebook</h3>
+        <a href="#" class="see-all-link">VIEW PAGE</a>
+      </div>
+      <div class="sidebar-body fb-posts">
+        <div *ngFor="let fb of espritFbPosts" class="fb-post">
+          <div class="fb-post-title">{{ fb.title }}</div>
+          <div class="fb-post-excerpt">{{ fb.excerpt }}</div>
+          <div class="fb-post-date">{{ fb.date }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- MODAL (Outside layout for fixed positioning) -->
-<div class="post-modal-overlay" [class.active]="isPostModalOpen()" (click)="closePostModal()">
-    <div class="post-modal" (click)="$event.stopPropagation()">
-        <!-- CLOSE -->
-        <button class="close-modal" (click)="closePostModal()">
-            &times;
-        </button>
-
-        <!-- HEADER -->
-        <div class="post-modal-header">
-            <div class="modal-profile">
-                <img src="https://i.pravatar.cc/150?img=12" alt="">
-            </div>
-            <input type="text" placeholder="What's on your mind, youssef?">
+<!-- POST MODAL -->
+<div *ngIf="isPostModalOpen()" class="modal-overlay" (click)="closePostModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="modal-author">
+        <img [src]="currentUser()?.avatarUrl" *ngIf="currentUser()?.avatarUrl" class="modal-avatar" alt="Avatar">
+        <div class="modal-avatar" *ngIf="!currentUser()?.avatarUrl"
+          style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af;">
+          <i class="bi bi-person-fill" style="font-size: 20px; line-height: 1;"></i>
         </div>
-
-        <!-- EDITOR -->
-        <div class="editor-container">
-            <div class="editor-toolbar">
-                <button><b>B</b></button>
-                <button><i>I</i></button>
-                <button><u>U</u></button>
-                <div class="toolbar-divider"></div>
-                <button>↶</button>
-                <button>↷</button>
-                <div class="toolbar-divider"></div>
-                <button>☰</button>
-                <button class="active">☰</button>
-                <button>☰</button>
-                <button>☰</button>
-                <div class="toolbar-divider"></div>
-                <button>≣</button>
-                <button>≣</button>
-                <div class="toolbar-divider"></div>
-                <button>•</button>
-                <button>1.</button>
-                <div class="toolbar-divider"></div>
-                <button>🔗</button>
-                <button>☺</button>
-            </div>
-            <textarea maxlength="4000"></textarea>
-            <div class="text-counter">
-                <span>0</span> / 4000
-            </div>
-        </div>
-
-        <!-- ACTIONS -->
-        <div class="post-actions">
-            <button class="action-btn">
-                <span>🏷</span> Tag
-            </button>
-            <div class="action-line"></div>
-            <button class="action-btn">
-                <span>🖼</span> Upload media
-            </button>
-            <div class="action-line"></div>
-            <button class="action-btn">
-                <span>📎</span> Attach files
-            </button>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="post-footer">
-            <button class="post-btn">POST</button>
-        </div>
+        <span class="modal-title">What's on your mind, {{ currentUser()?.firstName }}?</span>
+      </div>
+      <button class="modal-close" (click)="closePostModal()">✕</button>
     </div>
+    <!-- Modal Content -->
+    <div class="modal-body">
+      <textarea [(ngModel)]="newPostContent" placeholder="Share your thoughts..." style="width: 100%; min-height: 150px; padding: 16px; border: none; outline: none; font-size: 15px; resize: vertical;"></textarea>
+      <div style="display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid #e5e7eb;">
+        <button (click)="closePostModal()" style="flex: 1; padding: 10px; border: 1px solid #e5e7eb; background: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='white'">Cancel</button>
+        <button style="flex: 1; padding: 10px; border: none; background: #ef4444; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#dc2626'" onmouseout="this.style.backgroundColor='#ef4444'">Post</button>
+      </div>
+    </div>
+  </div>
 </div>

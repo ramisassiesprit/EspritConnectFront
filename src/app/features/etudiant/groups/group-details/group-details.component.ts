@@ -1,9 +1,11 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GroupService } from '../../../../core/services/group.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { UserService } from '../../../../core/services/User.service';
 import { Group } from '../../../../core/models/group.model';
 import { LucideAngularModule, ChevronDown, Info, Search, Users } from 'lucide-angular';
 
@@ -19,6 +21,8 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private groupService = inject(GroupService);
   private authService = inject(AuthService);
+  private userService = inject(UserService);
+  private sanitizer = inject(DomSanitizer);
 
   groupId = '';
   group: Group | null = null;
@@ -27,6 +31,10 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
   currentUser = this.authService.currentUser;
   isGroupMember = false;
   isMemberLoading = false;
+  isRequestPending = false;
+  owner: any = null;
+  showFullDescription = false;
+  descriptionLimit = 360; // characters before truncation
   private membershipSub?: Subscription;
 
   readonly ChevronDown = ChevronDown;
@@ -46,6 +54,27 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
     this.membershipSub = this.groupService.membershipChanged$.subscribe(() => {
       this.checkMembership();
     });
+  }
+
+  stripHtml(html: string): string {
+    return html ? html.replace(/<[^>]*>/g, '') : '';
+  }
+
+  getDescriptionHtml(): SafeHtml {
+    const raw = this.group?.description || '';
+    const text = this.stripHtml(raw).trim();
+    if (this.showFullDescription || text.length <= this.descriptionLimit) {
+      // show full description (escape is handled by sanitizer)
+      return this.sanitizer.bypassSecurityTrustHtml(raw || 'No description provided.');
+    }
+
+    const truncated = text.slice(0, this.descriptionLimit).trim() + '...';
+    const html = `<p>${truncated}</p>`;
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+  toggleDescription() {
+    this.showFullDescription = !this.showFullDescription;
   }
 
   ngOnDestroy() {
@@ -68,6 +97,13 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
     this.groupService.getGroupById(this.groupId).subscribe({
       next: (groupData) => {
         this.group = this.processGroupUrls(groupData);
+        // load owner details for display when user is not a member
+        if (this.group?.creatorId) {
+          this.userService.getUserById(this.group.creatorId).subscribe({
+            next: u => this.owner = u,
+            error: () => this.owner = null
+          });
+        }
         this.checkMembership();
         this.groupLoading = false;
       },
@@ -93,10 +129,18 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
     if (!userId) return;
 
     this.isMemberLoading = true;
-    this.groupService.joinGroup(this.groupId, userId).subscribe({
-      next: (updatedGroup) => {
-        this.group = updatedGroup;
-        this.isGroupMember = true;
+    this.groupService.joinGroup(this.groupId).subscribe({
+      next: (memberRes) => {
+        // memberRes is GroupMemberDTO with possible status
+        if (memberRes?.status === 'PENDING') {
+          this.isRequestPending = true;
+          this.isGroupMember = false;
+        } else if (memberRes?.status === 'APPROVED') {
+          this.isGroupMember = true;
+          this.isRequestPending = false;
+          // refresh group to get updated counts
+          this.loadGroup();
+        }
         this.isMemberLoading = false;
       },
       error: (error) => {

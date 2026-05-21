@@ -1,0 +1,38 @@
+<div class="requests-page">
+  <h2 class="requests-title">Pending Membership Requests</h2>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <ng-container *ngIf="!loading && ownerGroups.length === 0">
+    <p class="muted">You don't own any groups or there are no pending requests.</p>
+  </ng-container>
+
+  <div *ngFor="let g of ownerGroups" class="group-requests-card">
+    <div class="group-header">
+      <img [src]="g.logoUrl || 'assets/default-logo.png'" alt="logo" class="group-logo">
+      <div>
+        <div class="group-name">{{ g.groupName }}</div>
+        <div class="group-meta">{{ pendingByGroup[g.id]?.length || 0 }} pending</div>
+      </div>
+    </div>
+
+    <div *ngIf="(pendingByGroup[g.id] || []).length === 0" class="no-requests">No pending requests</div>
+
+    <ul *ngIf="(pendingByGroup[g.id] || []).length">
+      <li *ngFor="let m of pendingByGroup[g.id]" class="request-item">
+        <div class="request-left">
+          <img [src]="m.avatarUrl || 'assets/default-avatar.png'" class="avatar">
+          <div>
+            <div class="name">{{ m.firstName }} {{ m.lastName }}</div>
+            <div class="email">{{ m.email }}</div>
+          </div>
+        </div>
+        <div class="request-actions">
+          <button class="btn-approve" (click)="approve(g.id, m.userId || m.id)">Approve</button>
+          <button class="btn-reject" (click)="reject(g.id, m.userId || m.id)">Reject</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

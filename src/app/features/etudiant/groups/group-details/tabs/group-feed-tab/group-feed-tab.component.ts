@@ -37,6 +37,7 @@ interface GroupMember {
   lastName: string;
   avatarUrl: string;
   isOnline?: boolean;
+  membershipStatus?: string; // e.g. 'PENDING', 'APPROVED'
 }
 
 @Component({
@@ -278,7 +279,8 @@ export class GroupFeedTabComponent implements OnInit, OnDestroy {
           firstName: m.firstName || m.userFullName?.split(' ')[0] || '',
           lastName: m.lastName || m.userFullName?.split(' ')[1] || '',
           avatarUrl: m.avatarUrl || '',
-          isOnline: m.isOnline || false
+          isOnline: m.isOnline || false,
+          membershipStatus: m.status || m.membershipStatus || m.memberStatus || undefined
         }));
       },
       error: (err) => {
@@ -312,7 +314,8 @@ export class GroupFeedTabComponent implements OnInit, OnDestroy {
             firstName: m.firstName || m.userFullName?.split(' ')[0] || '',
             lastName: m.lastName || m.userFullName?.split(' ')[1] || '',
             avatarUrl: m.avatarUrl || '',
-            isOnline: m.isOnline || false
+            isOnline: m.isOnline || false,
+            membershipStatus: m.status || m.membershipStatus || m.memberStatus || undefined
           }));
         }
       });
@@ -414,8 +417,28 @@ export class GroupFeedTabComponent implements OnInit, OnDestroy {
     const targetUser = this.selectedUserForInvite;
     this.groupService.addMember(this.groupId, targetUser.id).subscribe({
       next: (res) => {
-        this.inviteMessage = `Successfully invited ${targetUser.firstName} ${targetUser.lastName}!`;
-        this.inviteMessageType = 'success';
+        // Backend may return membership object or status field to indicate pending vs approved
+        const status = res?.status || res?.membershipStatus || res?.memberStatus || (res?.membership ? res.membership.status : undefined);
+        if (status === 'PENDING') {
+          this.inviteMessage = `Waiting for the admin to approve ${targetUser.firstName} ${targetUser.lastName}.`;
+          this.inviteMessageType = 'success';
+
+          // Add a temporary pending member to the UI so inviter sees the pending state
+          const already = this.onlineMembers.some(m => m.id === targetUser.id);
+          if (!already) {
+            this.onlineMembers = [{
+              id: targetUser.id,
+              firstName: targetUser.firstName,
+              lastName: targetUser.lastName,
+              avatarUrl: targetUser.avatarUrl || '',
+              isOnline: false,
+              membershipStatus: 'PENDING'
+            }, ...this.onlineMembers];
+          }
+        } else {
+          this.inviteMessage = `Successfully invited ${targetUser.firstName} ${targetUser.lastName}!`;
+          this.inviteMessageType = 'success';
+        }
         this.clearSelectedUser();
 
         setTimeout(() => {

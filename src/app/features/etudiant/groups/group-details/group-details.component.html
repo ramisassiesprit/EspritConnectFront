@@ -20,17 +20,27 @@
         </div>
         <div class="header-right">
           <div class="membership-status">
-            <span class="status-badge" [class.joined]="isGroupMember" (click)="isGroupMember ? exitGroup() : joinGroup()">
-              <lucide-icon [img]="ChevronDown" size="14" class="badge-arrow"></lucide-icon>
-              {{ isGroupMember ? 'Joined' : 'Join' }}
-            </span>
+            <ng-container>
+              <span *ngIf="isGroupMember" class="status-badge joined" (click)="exitGroup()">
+                <lucide-icon [img]="ChevronDown" size="14" class="badge-arrow"></lucide-icon>
+                Joined
+              </span>
+              <span *ngIf="!isGroupMember && isRequestPending" class="status-badge pending">
+                <lucide-icon [img]="ChevronDown" size="14" class="badge-arrow"></lucide-icon>
+                Request sent
+              </span>
+              <span *ngIf="!isGroupMember && !isRequestPending" class="status-badge joinable" (click)="joinGroup()">
+                <lucide-icon [img]="ChevronDown" size="14" class="badge-arrow"></lucide-icon>
+                Join
+              </span>
+            </ng-container>
             <button class="icon-btn-info">
               <lucide-icon [img]="Info" size="18"></lucide-icon>
             </button>
           </div>
         </div>
       </div>
-      <div class="header-tabs">
+      <div class="header-tabs" *ngIf="isGroupMember">
         <a class="tab-item" routerLink="feed" routerLinkActive="active">FEED</a>
         <a class="tab-item" routerLink="members" routerLinkActive="active">MEMBERS</a>
         <a class="tab-item" routerLink="photos-albums" routerLinkActive="active">PHOTOS</a>
@@ -38,7 +48,38 @@
       </div>
     </div>
 
-    <!-- Subroute content -->
-    <router-outlet></router-outlet>
+    <!-- If user is a member show tabs' subroutes, otherwise show description + owner only -->
+    <ng-container *ngIf="isGroupMember; else notMemberView">
+      <router-outlet></router-outlet>
+    </ng-container>
+
+    <ng-template #notMemberView>
+      <div class="not-member-layout">
+        <div class="not-member-left">
+          <div class="section-card">
+            <h3 class="section-title">Description</h3>
+            <div class="section-body" [innerHTML]="getDescriptionHtml()"></div>
+            <button *ngIf="group?.description && (stripHtml(group.description).length > descriptionLimit)" class="read-more-btn" (click)="toggleDescription()">
+              {{ showFullDescription ? 'Read less' : 'Read more' }}
+            </button>
+          </div>
+        </div>
+        <div class="not-member-right">
+          <div class="section-card owner-card">
+            <h4 class="owner-title">Administrators</h4>
+            <div *ngIf="owner; else ownerPlaceholder" class="owner-details">
+              <img [src]="owner.avatarUrl || 'assets/default-avatar.png'" alt="Owner" class="owner-avatar">
+              <div>
+                <div class="owner-name">{{ owner.firstName }} {{ owner.lastName }}</div>
+                <div class="owner-role">{{ owner.institution || owner.jobTitle || '' }}</div>
+              </div>
+            </div>
+            <ng-template #ownerPlaceholder>
+              <p class="text-sm text-gray-500">Owner information not available</p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div>

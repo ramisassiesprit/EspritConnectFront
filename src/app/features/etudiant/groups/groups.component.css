@@ -232,6 +232,7 @@
 
 .group-list-details {
   flex: 1;
+  min-width: 0; /* allow content to shrink and wrap instead of pushing siblings */
 }
 
 .group-list-header {
@@ -260,6 +261,12 @@
   font-size: 14px;
   margin: 0 0 12px 0;
   line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* show 3 lines */
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  white-space: pre-wrap; /* preserve spacing/newlines */
 }
 
 .group-list-labels {
@@ -290,6 +297,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 0 0 120px; /* fixed width so actions stay in place */
+  justify-content: flex-end;
 }
 
 .mgmt-btn {
@@ -364,4 +373,26 @@
     align-items: flex-start;
     gap: 12px;
   }
+}
+
+/* Tabs */
+.groups-tabs {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.tab-link {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.tab-link.active {
+  background-color: #ef4444;
+  color: #fff;
 }

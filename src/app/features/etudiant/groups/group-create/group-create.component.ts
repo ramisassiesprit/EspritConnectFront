@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GroupService } from '../../../../core/services/group.service';
 import { UserService } from '../../../../core/services/User.service';
 import { GroupCreateRequest, GroupPrivacy } from '../../../../core/models/group.model';
+import { forkJoin } from 'rxjs';
 import { User } from '../../../../core/models/user.model';
 import { QuillModule } from 'ngx-quill';
 
@@ -298,11 +299,12 @@ export class GroupCreateComponent implements OnInit {
     this.isSearchingUsers = true;
     this.userService.getDirectoryUsers().subscribe({
       next: (users) => {
-        const term = this.userSearchTerm.toLowerCase();
-        this.foundUsers = users.filter(u => 
-          u.firstName.toLowerCase().includes(term) || 
-          u.lastName.toLowerCase().includes(term)
-        ).slice(0, 5);
+        const term = this.userSearchTerm.toLowerCase().trim();
+        // Match against full name to support searching by full name
+        this.foundUsers = users.filter(u => {
+          const full = ((u.firstName || '') + ' ' + (u.lastName || '')).toLowerCase();
+          return full.includes(term) || (u.firstName || '').toLowerCase().includes(term) || (u.lastName || '').toLowerCase().includes(term);
+        }).slice(0, 8);
         this.isSearchingUsers = false;
       },
       error: () => {
@@ -400,9 +402,24 @@ export class GroupCreateComponent implements OnInit {
 
     if (this.isEditMode && this.editGroupId) {
       this.groupService.updateGroup(this.editGroupId, payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
-        next: () => {
-          Swal.fire('Group updated successfully!');
-          this.router.navigate(['/etudiant/groups']);
+        next: (group) => {
+          if (this.addedMembers.length) {
+            const calls = this.addedMembers.map(m => this.groupService.addMember(group.id, m.id));
+            forkJoin(calls).subscribe({
+              next: () => {
+                Swal.fire('Group updated. Added members have been invited/added.');
+                this.router.navigate(['/etudiant/groups']);
+              },
+              error: (err) => {
+                console.error('Group updated but adding members failed:', err);
+                Swal.fire('Group updated, but adding some members failed.');
+                this.router.navigate(['/etudiant/groups']);
+              }
+            });
+          } else {
+            Swal.fire('Group updated successfully!');
+            this.router.navigate(['/etudiant/groups']);
+          }
         },
         error: (err) => {
           console.error('Group update failed:', err);
@@ -412,9 +429,33 @@ export class GroupCreateComponent implements OnInit {
       });
     } else {
       this.groupService.createGroupWithFiles(payload, this.logoFile || undefined, this.bannerFile || undefined).subscribe({
-        next: () => {
-          Swal.fire('Group created successfully! Your group is pending admin approval.');
-          this.router.navigate(['/etudiant/groups']);
+        next: (group) => {
+          // If there are members added, call members API so backend can set appropriate member status (pending for PRIVATE groups)
+          if (this.addedMembers.length) {
+            const calls = this.addedMembers.map(m => this.groupService.addMember(group.id, m.id));
+            forkJoin(calls).subscribe({
+              next: () => {
+                if (payload.privacy === 'PRIVATE') {
+                  Swal.fire('Group created. Added members will be pending approval by group admins.');
+                } else {
+                  Swal.fire('Group created and members added successfully.');
+                }
+                this.router.navigate(['/etudiant/groups']);
+              },
+              error: (err) => {
+                console.error('Group created but adding members failed:', err);
+                Swal.fire('Group created, but adding some members failed.');
+                this.router.navigate(['/etudiant/groups']);
+              }
+            });
+          } else {
+            if (payload.privacy === 'PRIVATE') {
+              Swal.fire('Group created. Members will need admin approval to join.');
+            } else {
+              Swal.fire('Group created successfully!');
+            }
+            this.router.navigate(['/etudiant/groups']);
+          }
         },
         error: (err) => {
           console.error('Group creation failed:', err);

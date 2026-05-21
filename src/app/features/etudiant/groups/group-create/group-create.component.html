@@ -377,11 +377,21 @@
             <div style="position: relative;">
               <input type="text" class="underline-input" placeholder="Search users..." [(ngModel)]="userSearchTerm"
                 [ngModelOptions]="{standalone: true}" (input)="searchUsers()">
-              <div class="dropdown-menu" *ngIf="foundUsers.length > 0" style="width: 100%;">
+              <div class="dropdown-menu" *ngIf="isSearchingUsers" style="width: 100%;">
+                <div class="checkbox-item">Searching...</div>
+              </div>
+              <div class="dropdown-menu" *ngIf="!isSearchingUsers && foundUsers.length > 0" style="width: 100%;">
                 <div class="checkbox-item" *ngFor="let user of foundUsers" (click)="addMember(user)">
                   <span>{{ user.firstName }} {{ user.lastName }}</span>
+                  <div class="text-muted" style="font-size: 12px; margin-left: 8px;">{{ user.email }}</div>
                 </div>
               </div>
+              <div class="dropdown-menu" *ngIf="!isSearchingUsers && userSearchTerm.length >= 2 && foundUsers.length === 0" style="width: 100%;">
+                <div class="checkbox-item">No users found</div>
+              </div>
+            </div>
+            <div *ngIf="groupForm.get('privacy')?.value === 'PRIVATE'" style="margin-top:8px; font-size:13px; color:#92400e; background:#fff7ed; padding:8px; border-radius:6px; border:1px solid #fcd34d;">
+              Members added to a private group will be set to pending and must be approved by the group owner/admin.
             </div>
             <div class="tags-display" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
               <div *ngFor="let member of addedMembers" class="tag-pill"

@@ -88,6 +88,18 @@
   color: #ef4444;
 }
 
+.status-badge.joinable {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(239,68,68,0.12);
+}
+
+.status-badge.pending {
+  background: #fff7ed;
+  color: #92400e;
+  border: 1px solid rgba(245,158,11,0.12);
+}
+
 .icon-btn-info {
   background: #f0f2f5;
   border: none;
@@ -148,3 +160,98 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Not-member layout */
+.not-member-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-top: 18px;
+}
+
+/* Fixed column layout: left column flexible but allowed to shrink, right column fixed width */
+.not-member-left {
+  flex: 1 1 auto;
+  min-width: 0; /* allow flex child to shrink instead of overflowing */
+}
+
+.not-member-right {
+  flex: 0 0 320px;
+  max-width: 320px;
+}
+
+.section-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.section-title {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.section-body {
+  margin: 0;
+  color: #374151;
+  line-height: 1.6;
+  font-size: 14px;
+  overflow-wrap: anywhere; /* break long words/URLs */
+  word-break: break-word;
+  white-space: pre-wrap; /* preserve line breaks and wrap */
+}
+
+.owner-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.owner-details {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.owner-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(17,24,39,0.06);
+}
+
+.owner-name {
+  font-weight: 700;
+  color: #111827;
+}
+
+.owner-role {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Make join button prominent on small screens */
+@media (max-width: 900px) {
+  .not-member-layout { flex-direction: column; }
+  .not-member-right { flex-basis: auto; max-width: none; flex: 1 1 auto; }
+  .header-main { margin-top: -20px; }
+}
+
+.read-more-btn {
+  margin-top: 12px;
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.read-more-btn:focus { outline: none; }

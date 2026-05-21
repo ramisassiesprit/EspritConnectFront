@@ -172,6 +172,10 @@ export const routes: Routes = [
             loadComponent: () => import('./features/etudiant/groups/group-create/group-create.component').then(m => m.GroupCreateComponent)
           },
           {
+            path: 'requests',
+            loadComponent: () => import('./features/etudiant/groups/group-requests/group-requests.component').then(m => m.GroupRequestsComponent)
+          },
+          {
             path: 'edit/:id',
             loadComponent: () => import('./features/etudiant/groups/group-update/group-update.component').then(m => m.GroupUpdateComponent)
           },

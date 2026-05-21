@@ -15,6 +15,7 @@ interface GroupMember {
   avatarUrl: string;
   isOnline?: boolean;
   role: string;
+  membershipStatus?: string;
 }
 
 @Component({
@@ -32,6 +33,8 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
   groupId = '';
   onlineMembers: GroupMember[] = [];
   filteredMembers: GroupMember[] = [];
+  currentUserId: string | null = null;
+  groupCreatorId: string | null = null;
 
   // Filters & Sorting state
   searchQuery = '';
@@ -56,6 +59,17 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
     this.route.parent?.paramMap.subscribe(params => {
       this.groupId = params.get('id') || '';
       if (this.groupId) {
+        const cu = this.authService.currentUser();
+        if (cu) {
+          this.currentUserId = cu.userId;
+        }
+
+        // load group to detect owner
+        this.groupService.getGroupById(this.groupId).subscribe({
+          next: g => this.groupCreatorId = g.creatorId ?? null,
+          error: () => this.groupCreatorId = null
+        });
+
         this.loadMembers();
         this.connectWebSocket();
       }
@@ -71,7 +85,8 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
           lastName: m.lastName || m.userFullName?.split(' ')[1] || '',
           avatarUrl: m.avatarUrl || '',
           isOnline: m.isOnline || false,
-          role: m.userRole || 'ETUDIANT'
+          role: m.userRole || 'ETUDIANT',
+          membershipStatus: m.status || 'APPROVED'
         }));
         this.applyFiltersAndSorting();
       },
@@ -104,7 +119,8 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
             lastName: m.lastName || m.userFullName?.split(' ')[1] || '',
             avatarUrl: m.avatarUrl || '',
             isOnline: m.isOnline || false,
-            role: m.userRole || 'ETUDIANT'
+            role: m.userRole || 'ETUDIANT',
+            membershipStatus: m.status || 'APPROVED'
           }));
           this.applyFiltersAndSorting();
         }
@@ -170,5 +186,28 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.disconnectWebSocket();
+  }
+
+  approveMember(userId: string) {
+    this.groupService.approveMember(this.groupId, userId).subscribe({
+      next: () => {
+        // server broadcasts updated members via STOMP; but reload to be safe
+        this.loadMembers();
+      },
+      error: (err) => console.error('Failed to approve member', err)
+    });
+  }
+
+  rejectMember(userId: string) {
+    this.groupService.rejectMember(this.groupId, userId).subscribe({
+      next: () => {
+        this.loadMembers();
+      },
+      error: (err) => console.error('Failed to reject member', err)
+    });
+  }
+
+  isCurrentUserAdmin(): boolean {
+    return !!this.onlineMembers.find(m => m.id === this.currentUserId && m.role === 'ADMIN');
   }
 }

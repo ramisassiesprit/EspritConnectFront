@@ -8,15 +8,17 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Group } from '../../../core/models/group.model';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, Users, Plus, ChevronLeft, ChevronRight, LogOut, Info, UserPlus, Trash, Edit } from 'lucide-angular';
+import { GroupRequestsComponent } from './group-requests/group-requests.component';
 
 @Component({
   selector: 'app-groups',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
-    FormsModule, 
-    LucideAngularModule
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    LucideAngularModule,
+    GroupRequestsComponent
   ],
   templateUrl: './groups.component.html',
   styleUrls: ['./groups.component.css']
@@ -37,6 +39,7 @@ export class GroupsComponent implements OnInit {
   isCreateRoute = false;
   isEditRoute = false;
   isFeedRoute = false;
+  activeTab: 'your' | 'requests' = 'your';
   private membershipSub?: Subscription;
 
   readonly Search = Search;
@@ -180,6 +183,16 @@ export class GroupsComponent implements OnInit {
                        url.includes('/members') || 
                        url.includes('/photos-albums') || 
                        url.includes('/events');
+    // sync tab when route explicitly points to requests
+    if (url.includes('/etudiant/groups/requests')) {
+      this.activeTab = 'requests';
+    } else if (!this.isFeedRoute && !this.isCreateRoute && !this.isEditRoute) {
+      this.activeTab = 'your';
+    }
+  }
+
+  setActiveTab(tab: 'your' | 'requests') {
+    this.activeTab = tab;
   }
 
   navigateToGroupFeed(groupId: string | number | undefined) {
@@ -219,7 +232,7 @@ export class GroupsComponent implements OnInit {
     const userId = this.authService.currentUser()?.userId;
     if (!userId || !groupId) return;
 
-    this.groupService.joinGroup(groupId.toString(), userId).subscribe({
+    this.groupService.joinGroup(groupId.toString()).subscribe({
       next: () => {
         // Service will trigger membershipChanged$
       },
