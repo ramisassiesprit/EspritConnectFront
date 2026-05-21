@@ -61,7 +61,6 @@
 }
 :host ::ng-deep .format-content a {
   text-decoration: underline;
-}
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

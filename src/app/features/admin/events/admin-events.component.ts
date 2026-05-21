@@ -233,7 +233,7 @@ export class AdminEventsComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Oui, approuver',
       cancelButtonText: 'Annuler'
-    }).then(result => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         this.eventService.approveEvent(eventId).subscribe({
           next: () => {
@@ -260,7 +260,7 @@ export class AdminEventsComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Oui, rejeter',
       cancelButtonText: 'Annuler'
-    }).then(result => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         this.eventService.rejectEvent(eventId).subscribe({
           next: () => {

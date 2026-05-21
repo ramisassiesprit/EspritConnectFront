@@ -18,7 +18,7 @@ export class GroupRequestsComponent implements OnInit {
 
   loading = false;
   ownerGroups: any[] = [];
-  pendingByGroup: Record<string, any[]> = {};
+  pendingByGroup: Record<string, any[] | undefined> = {};
   error = '';
 
   readonly Users = Users;

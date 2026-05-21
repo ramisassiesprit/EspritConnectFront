@@ -327,7 +327,7 @@
           <i class="bi bi-life-preserver icon-red"></i>
           <span class="help-title">Willing to help</span>
         </div>
-        <p class="help-text">{{ helps[0]?.offerHelp || 'Non disponible' }}</p>
+        <p class="help-text">{{ helps[0].offerHelp || 'Non disponible' }}</p>
       </div>
       <div class="help-divider"></div>
       <div class="help-section">
@@ -335,26 +335,26 @@
           <i class="bi bi-life-preserver icon-red"></i>
           <span class="help-title">Seeking help</span>
         </div>
-        <p class="help-text">{{ helps[0]?.seekHelp || 'Non disponible' }}</p>
+        <p class="help-text">{{ helps[0].seekHelp || 'Non disponible' }}</p>
       </div>
     </div>
 
     <!-- Offering mentoring -->
-    <div class="card" *ngIf="helps[0]?.offerMentor">
+    <div class="card" *ngIf="helps[0].offerMentor">
       <div class="help-row mb-2">
         <i class="bi bi-person-video3 icon-gray"></i>
         <span class="help-title text-gray-600">Offering mentoring</span>
       </div>
-      <p class="help-text">{{ helps[0]?.offerMentor }}</p>
+      <p class="help-text">{{ helps[0].offerMentor }}</p>
     </div>
 
     <!-- Seeking mentoring -->
-    <div class="card" *ngIf="helps[0]?.seekMentor">
+    <div class="card" *ngIf="helps[0].seekMentor">
       <div class="help-row mb-2">
         <i class="bi bi-person-video3 icon-gray"></i>
         <span class="help-title text-gray-600">Seeking mentoring</span>
       </div>
-      <p class="help-text">{{ helps[0]?.seekMentor }}</p>
+      <p class="help-text">{{ helps[0].seekMentor }}</p>
     </div>
 
     <!-- Contact information -->
