@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   ApplicationStatus,
   ContractType,
@@ -51,7 +52,8 @@ export class AdminJobsComponent implements OnInit {
   constructor(
     private readonly jobService: JobService,
     private readonly authService: AuthService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +98,17 @@ export class AdminJobsComponent implements OnInit {
     this.selectedJobId = job.id;
     this.selectedJob = job;
     this.loadApplications(job.id);
+  }
+
+  viewApplicants(job: JobOffer): void {
+    if (!job.id) {
+      return;
+    }
+    if (this.isCompanyMode) {
+      this.router.navigate(['/entreprise/jobs', job.id, 'applicants']);
+      return;
+    }
+    this.selectJob(job);
   }
 
   startCreate(): void {
@@ -399,6 +412,14 @@ export class AdminJobsComponent implements OnInit {
 
   get isCompanyMode(): boolean {
     return this.currentRole === UserRole.ENTREPRISE;
+  }
+
+  applicantDisplayName(application: JobApplication): string {
+    const name = `${application.applicantFirstName || ''} ${application.applicantLastName || ''}`.trim();
+    if (name) {
+      return name;
+    }
+    return application.applicantId || 'Unknown';
   }
 
   private extractApiError(err: any): string {

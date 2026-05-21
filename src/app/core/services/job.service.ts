@@ -57,6 +57,12 @@ export class JobService {
     return this.http.post<JobApplication>(this.applicationsUrl, jobApplication);
   }
 
+  uploadApplicationCv(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.applicationsUrl}/upload-cv`, formData, { responseType: 'text' });
+  }
+
   getMyApplications(): Observable<JobApplication[]> {
     return this.http.get<JobApplication[]>(`${this.applicationsUrl}/mine`);
   }

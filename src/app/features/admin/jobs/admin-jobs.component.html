@@ -123,6 +123,7 @@
           </div>
           <div class="job-item__actions">
             <ng-container *ngIf="isCompanyMode; else adminModerationActions">
+              <button class="btn btn--small btn--primary" (click)="viewApplicants(job)">View Applicants</button>
               <button class="btn btn--small btn--ghost" (click)="startEdit(job)">Edit</button>
               <button class="btn btn--small btn--danger" (click)="deleteJob(job)">Delete</button>
             </ng-container>
@@ -135,18 +136,36 @@
       </div>
     </section>
 
-    <section class="panel">
-      <h2>Applications</h2>
-      <p *ngIf="!selectedJob">Select a job to view applications.</p>
+    <section class="panel" *ngIf="isAdminMode">
+      <h2>Applicants</h2>
+      <p *ngIf="!selectedJob">Click "View Applicants" on a job to open its applications.</p>
       <p *ngIf="selectedJob && applications.length === 0">No applications for this job yet.</p>
+      <p *ngIf="selectedJob" class="app-context">
+        Showing applications for: <strong>{{ selectedJob.title }}</strong> ({{ selectedJob.company || 'N/A' }})
+      </p>
 
       <div class="apps" *ngIf="selectedJob && applications.length > 0">
         <article class="app-item" *ngFor="let app of applications">
-          <div>
-            <h4>Applicant: {{ app.applicantId || 'Unknown' }}</h4>
-            <p>Applied: {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-            <p>CV: {{ app.cvUrl || 'N/A' }}</p>
-            <p>Cover letter: {{ app.coverLetterUrl || 'N/A' }}</p>
+          <div class="app-content">
+            <h4 class="app-name">{{ applicantDisplayName(app) }}</h4>
+            <p><strong>Email:</strong> {{ app.applicantEmail || 'N/A' }}</p>
+            <p><strong>Phone:</strong> {{ app.applicantNumTel || 'N/A' }}</p>
+            <p><strong>Current title:</strong> {{ app.applicantJobTitle || 'N/A' }}</p>
+            <p><strong>Industry / Function:</strong> {{ app.applicantIndustry || 'N/A' }} / {{ app.applicantJobFunction || 'N/A' }}</p>
+            <p><strong>Education:</strong> {{ app.applicantDegree || 'N/A' }} - {{ app.applicantProgram || 'N/A' }} ({{ app.applicantGraduationYear || 'N/A' }})</p>
+            <p><strong>Applied:</strong> {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="app-cv-line">
+              CV:
+              <a *ngIf="app.cvUrl" [href]="app.cvUrl" target="_blank" rel="noopener noreferrer">Open CV</a>
+              <span *ngIf="!app.cvUrl">N/A</span>
+            </p>
+            <p><strong>Cover letter:</strong></p>
+            <p class="cover-letter-text">{{ app.coverLetterUrl || 'N/A' }}</p>
+            <p class="app-link-line">
+              <strong>LinkedIn:</strong>
+              <a *ngIf="app.applicantLinkedinUrl" [href]="app.applicantLinkedinUrl" target="_blank" rel="noopener noreferrer">Profile</a>
+              <span *ngIf="!app.applicantLinkedinUrl">N/A</span>
+            </p>
           </div>
 
           <label>

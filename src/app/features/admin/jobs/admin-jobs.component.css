@@ -204,12 +204,13 @@ textarea {
 }
 
 .app-item {
-  background: #ececec;
-  border-radius: 12px;
-  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #dbe2ea;
+  border-radius: 14px;
+  padding: 14px;
   display: grid;
   grid-template-columns: 1fr 180px;
-  gap: 10px;
+  gap: 14px;
 }
 
 .app-item h4 {
@@ -217,8 +218,38 @@ textarea {
 }
 
 .app-item p {
-  margin: 2px 0;
+  margin: 4px 0;
   color: #526376;
+}
+
+.app-context {
+  margin: 0 0 10px;
+  color: #526376;
+}
+
+.app-content {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.app-name {
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.app-cv-line,
+.app-link-line {
+  margin-top: 6px;
+}
+
+.cover-letter-text {
+  white-space: pre-wrap;
+  line-height: 1.45;
+  background: #ffffff;
+  border: 1px solid #e5ebf1;
+  border-radius: 8px;
+  padding: 8px 10px;
 }
 
 .alert {
