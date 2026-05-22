@@ -3,9 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  ApplicationStatus,
   ContractType,
-  JobApplication,
   JobOffer,
   JobStatus
 } from '../../../core/models/job.model';
@@ -23,9 +21,6 @@ import { UserService } from '../../../core/services/User.service';
 })
 export class AdminJobsComponent implements OnInit {
   jobs: JobOffer[] = [];
-  selectedJobId = '';
-  selectedJob: JobOffer | null = null;
-  applications: JobApplication[] = [];
 
   loading = false;
   saving = false;
@@ -39,8 +34,6 @@ export class AdminJobsComponent implements OnInit {
   selectedImageFile: File | null = null;
 
   readonly contractTypes: ContractType[] = ['CDI', 'CDD', 'INTERNSHIP', 'FREELANCE', 'PART_TIME', 'VOLUNTEER'];
-  readonly applicationStatuses: ApplicationStatus[] = ['PENDING', 'REVIEWED', 'SHORTLISTED', 'REJECTED', 'ACCEPTED'];
-
   form: JobOffer = this.emptyJob();
   private map: any = null;
   private marker: any = null;
@@ -135,15 +128,6 @@ export class AdminJobsComponent implements OnInit {
     return keys.map((k) => ({ label: k.label, value: counts[k.key] || 0 }));
   }
 
-  get applicationStatusStats(): { label: string; value: number }[] {
-    const counts: Record<string, number> = {};
-    for (const app of this.applications) {
-      const key = app.status || 'PENDING';
-      counts[key] = (counts[key] || 0) + 1;
-    }
-    return Object.entries(counts).map(([label, value]) => ({ label, value }));
-  }
-
   maxStatValue(stats: { value: number }[]): number {
     return Math.max(1, ...stats.map((s) => s.value));
   }
@@ -174,9 +158,10 @@ export class AdminJobsComponent implements OnInit {
     if (!job.id) {
       return;
     }
-    this.selectedJobId = job.id;
-    this.selectedJob = job;
-    this.loadApplications(job.id);
+    if (this.isAdminMode) {
+      this.router.navigate(['/admin/jobs', job.id, 'applicants']);
+      return;
+    }
   }
 
   viewApplicants(job: JobOffer): void {
@@ -187,7 +172,7 @@ export class AdminJobsComponent implements OnInit {
       this.router.navigate(['/entreprise/jobs', job.id, 'applicants']);
       return;
     }
-    this.selectJob(job);
+    this.router.navigate(['/admin/jobs', job.id, 'applicants']);
   }
 
   startCreate(): void {
@@ -313,8 +298,8 @@ export class AdminJobsComponent implements OnInit {
   }
 
   deleteJob(job: JobOffer): void {
-    if (!this.isCompanyMode) {
-      this.error = 'Only company accounts can delete jobs.';
+    if (!this.isCompanyMode && !this.isAdminMode) {
+      this.error = 'Only company and admin accounts can delete jobs.';
       return;
     }
     if (!job.id) {
@@ -329,34 +314,11 @@ export class AdminJobsComponent implements OnInit {
 
     this.jobService.deleteJob(job.id).subscribe({
       next: () => {
-        if (this.selectedJobId === job.id) {
-          this.selectedJobId = '';
-          this.selectedJob = null;
-          this.applications = [];
-        }
         this.message = 'Job deleted successfully.';
         this.loadJobs();
       },
       error: (err) => {
         this.error = err?.error?.message || 'Unable to delete job.';
-      }
-    });
-  }
-
-  updateApplicationStatus(application: JobApplication, status: ApplicationStatus): void {
-    if (!application.id) {
-      return;
-    }
-
-    this.jobService.updateApplicationStatus(application.id, status).subscribe({
-      next: (updated) => {
-        this.applications = this.applications.map((item) =>
-          item.id === updated.id ? updated : item
-        );
-        this.message = 'Application status updated.';
-      },
-      error: (err) => {
-        this.error = err?.error?.message || 'Unable to update application status.';
       }
     });
   }
@@ -452,32 +414,10 @@ export class AdminJobsComponent implements OnInit {
       next: (jobs) => {
         this.jobs = jobs;
         this.loading = false;
-        if (this.selectedJobId) {
-          const match = jobs.find((j) => j.id === this.selectedJobId);
-          if (match) {
-            this.selectedJob = match;
-            this.loadApplications(this.selectedJobId);
-          } else {
-            this.selectedJobId = '';
-            this.selectedJob = null;
-            this.applications = [];
-          }
-        }
       },
       error: (err) => {
         this.loading = false;
         this.error = err?.error?.message || 'Unable to load jobs.';
-      }
-    });
-  }
-
-  private loadApplications(jobId: string): void {
-    this.jobService.getApplicationsByOffer(jobId).subscribe({
-      next: (apps) => {
-        this.applications = apps;
-      },
-      error: () => {
-        this.applications = [];
       }
     });
   }
@@ -510,14 +450,6 @@ export class AdminJobsComponent implements OnInit {
 
   get isCreateMode(): boolean {
     return this.isCompanyMode && this.isCreateRoute();
-  }
-
-  applicantDisplayName(application: JobApplication): string {
-    const name = `${application.applicantFirstName || ''} ${application.applicantLastName || ''}`.trim();
-    if (name) {
-      return name;
-    }
-    return application.applicantId || 'Unknown';
   }
 
   jobStatusClass(status?: JobStatus): string {

@@ -30,7 +30,7 @@
         <div class="job-card-meta">
           <span>Posted {{ job.createdAt | date:'dd/MM/yyyy' }}</span>
           <span>{{ job.location || 'Location N/A' }}</span>
-          <span class="applied-chip" *ngIf="hasApplied(job.id)">
+          <span class="applied-chip" [ngClass]="applicationStateClass(job.id)" *ngIf="hasApplied(job.id)">
             Applied - {{ applicationStatusLabel(job.id) }}
           </span>
         </div>

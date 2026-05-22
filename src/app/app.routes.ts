@@ -368,6 +368,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'jobs/:id/applicants',
+        loadComponent: () =>
+          import('./features/entreprise/job-applicants/job-applicants.component').then(
+            (m) => m.JobApplicantsComponent,
+          ),
+      },
+      {
         path: 'events',
         loadComponent: () =>
           import('./features/admin/events/admin-events.component').then(

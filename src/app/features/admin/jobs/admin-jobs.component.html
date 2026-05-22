@@ -145,7 +145,7 @@
       <p *ngIf="!loading && filteredJobs.length === 0">{{ isAdminMode ? 'No jobs found.' : 'No jobs found.' }}</p>
 
       <div class="job-list" *ngIf="!loading && filteredJobs.length > 0">
-        <article class="job-item" *ngFor="let job of filteredJobs" [class.active]="selectedJobId === job.id">
+        <article class="job-item" *ngFor="let job of filteredJobs">
           <div class="job-item__main" (click)="selectJob(job)">
             <h3>{{ job.title }}</h3>
             <p>{{ job.company || 'N/A' }} · {{ job.location || 'N/A' }}</p>
@@ -157,11 +157,12 @@
           </div>
           <div class="job-item__actions">
             <ng-container *ngIf="isCompanyMode; else adminModerationActions">
-              <button class="btn btn--small btn--primary" (click)="viewApplicants(job)">View Applicants</button>
+              <button class="btn btn--small btn--primary" *ngIf="job.status !== 'PENDING'" (click)="viewApplicants(job)">View Applicants</button>
               <button class="btn btn--small btn--ghost" (click)="startEdit(job)">Edit</button>
               <button class="btn btn--small btn--danger" (click)="deleteJob(job)">Delete</button>
             </ng-container>
             <ng-template #adminModerationActions>
+              <button class="btn btn--small btn--primary" *ngIf="job.status !== 'PENDING'" (click)="viewApplicants(job)">View Applicants</button>
               <ng-container *ngIf="job.status === 'PENDING'; else noModerationNeeded">
                 <button class="btn btn--small btn--primary" (click)="approveJob(job)">Approve</button>
                 <button class="btn btn--small btn--danger" (click)="rejectJob(job)">Reject</button>
@@ -173,63 +174,6 @@
             </ng-template>
           </div>
         </article>
-      </div>
-    </section>
-
-    <section class="panel applicants-panel" *ngIf="isAdminMode">
-      <h2>Applicants</h2>
-      <p *ngIf="!selectedJob">Click a job from the left list to view its applications.</p>
-      <p *ngIf="selectedJob && applications.length === 0">No applications for this job yet.</p>
-      <p *ngIf="selectedJob" class="app-context">
-        Showing applications for: <strong>{{ selectedJob.title }}</strong> ({{ selectedJob.company || 'N/A' }})
-      </p>
-
-      <div class="apps" *ngIf="selectedJob && applications.length > 0">
-        <article class="app-item" *ngFor="let app of applications">
-          <div class="app-content">
-            <h4 class="app-name">{{ applicantDisplayName(app) }}</h4>
-            <p><strong>Email:</strong> {{ app.applicantEmail || 'N/A' }}</p>
-            <p><strong>Phone:</strong> {{ app.applicantNumTel || 'N/A' }}</p>
-            <p><strong>Current title:</strong> {{ app.applicantJobTitle || 'N/A' }}</p>
-            <p><strong>Industry / Function:</strong> {{ app.applicantIndustry || 'N/A' }} / {{ app.applicantJobFunction || 'N/A' }}</p>
-            <p><strong>Education:</strong> {{ app.applicantDegree || 'N/A' }} - {{ app.applicantProgram || 'N/A' }} ({{ app.applicantGraduationYear || 'N/A' }})</p>
-            <p><strong>Applied:</strong> {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-            <p class="app-cv-line">
-              CV:
-              <a *ngIf="app.cvUrl" [href]="app.cvUrl" target="_blank" rel="noopener noreferrer">Open CV</a>
-              <span *ngIf="!app.cvUrl">N/A</span>
-            </p>
-            <p><strong>Cover letter:</strong></p>
-            <p class="cover-letter-text">{{ app.coverLetterUrl || 'N/A' }}</p>
-            <p class="app-link-line">
-              <strong>LinkedIn:</strong>
-              <a *ngIf="app.applicantLinkedinUrl" [href]="app.applicantLinkedinUrl" target="_blank" rel="noopener noreferrer">Profile</a>
-              <span *ngIf="!app.applicantLinkedinUrl">N/A</span>
-            </p>
-          </div>
-
-          <label>
-            Status
-            <select
-              [ngModel]="app.status || 'PENDING'"
-              (ngModelChange)="updateApplicationStatus(app, $event)"
-            >
-              <option *ngFor="let status of applicationStatuses" [value]="status">{{ status }}</option>
-            </select>
-          </label>
-        </article>
-      </div>
-
-      <div class="chart-card chart-card--inside" *ngIf="selectedJob">
-        <h3>Application Status Distribution</h3>
-        <div class="mini-bars" *ngIf="applicationStatusStats.length; else noAppStats">
-          <div class="bar-row" *ngFor="let s of applicationStatusStats">
-            <span class="bar-label">{{ s.label }}</span>
-            <div class="bar-track"><div class="bar-fill bar-fill--violet" [style.width.%]="(s.value / maxStatValue(applicationStatusStats)) * 100"></div></div>
-            <span class="bar-val">{{ s.value }}</span>
-          </div>
-        </div>
-        <ng-template #noAppStats><p class="chart-empty">No applications yet.</p></ng-template>
       </div>
     </section>
   </div>
