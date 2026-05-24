@@ -1,13 +1,13 @@
-<div class="min-h-screen bg-gray-50/50 py-8 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-5xl mx-auto space-y-6">
+<div class="min-h-screen bg-gray-50/50 py-8 px-4">
+  <div class="mx-auto space-y-6">
 
     <!-- Loading / Error States -->
-    <div *ngIf="loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl  sm border border-gray-100">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
       <p class="text-gray-500 font-medium text-lg">Loading group details...</p>
     </div>
 
-    <div *ngIf="error" class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl shadow-sm">
+    <div *ngIf="error" class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl  sm">
       <div class="flex items-center">
         <svg class="h-6 w-6 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
         <p class="text-red-700 font-medium text-lg">{{ error }}</p>
@@ -15,7 +15,7 @@
     </div>
 
     <!-- Main Group Card -->
-    <div *ngIf="group" class="bg-white rounded-3xl shadow-xl shadow-indigo-100/20 overflow-hidden border border-gray-100/50">
+    <div *ngIf="group" class="bg-white rounded-3xl  xl  indigo-100/20 overflow-hidden border border-gray-100/50">
       
       <!-- Banner -->
       <div class="relative h-64 sm:h-80 w-full bg-gradient-to-r from-indigo-500 to-purple-600 group">
@@ -24,7 +24,7 @@
         
         <!-- Actions Overlay -->
         <div class="absolute top-6 right-6 flex items-center gap-3">
-          <button (click)="edit()" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold rounded-xl transition-all border border-white/20 shadow-lg flex items-center gap-2">
+          <button (click)="edit()" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold rounded-xl transition-all border border-white/20  lg flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
             Edit Group
           </button>
@@ -39,36 +39,21 @@
           
           <!-- Logo -->
           <div class="relative group">
-            <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl border-4 border-white shadow-xl bg-white overflow-hidden relative z-10 flex-shrink-0">
+            <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white  xl bg-white overflow-hidden relative z-10 flex-shrink-0">
               <img *ngIf="group.logoUrl" [src]="getImageUrl(group.logoUrl)" alt="logo" class="w-full h-full object-cover" />
               <div *ngIf="!group.logoUrl" class="w-full h-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-500 text-5xl font-bold">
                 {{ group.groupName?.charAt(0) || 'G' }}
               </div>
             </div>
             <!-- Decorative shadow -->
-            <div class="absolute inset-0 rounded-2xl bg-indigo-500/20 blur-xl z-0 transform group-hover:scale-110 transition-transform duration-500"></div>
-          </div>
-
-          <!-- Meta Info -->
-          <div class="flex-1 pb-2">
-            <div class="flex flex-wrap items-center gap-3 mb-2">
-              <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full shadow-sm" [ngClass]="{'bg-green-100 text-green-700': group.status === 'APPROVED', 'bg-yellow-100 text-yellow-700': group.status === 'PENDING', 'bg-gray-100 text-gray-700': group.status !== 'APPROVED' && group.status !== 'PENDING'}">
-                {{ group.status || 'UNKNOWN' }}
-              </span>
-              <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full shadow-sm">
-                {{ group.privacy }}
-              </span>
-            </div>
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">{{ group.groupName }}</h1>
-          </div>
-
+                     </div>
           <!-- Admin Actions -->
-          <div class="flex flex-wrap items-center gap-3 pb-2 sm:ml-auto">
-            <button (click)="approve()" class="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-sm shadow-green-500/30 transition-all flex items-center gap-2">
+          <!-- <div class="flex flex-wrap items-center gap-3 pb-2 sm:ml-auto">
+            <button (click)="approve()" class="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl  sm  green-500/30 transition-all flex items-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
               Approve
             </button>
-            <button (click)="reject()" class="px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-xl shadow-sm shadow-yellow-500/30 transition-all flex items-center gap-2">
+            <button (click)="reject()" class="px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-xl  sm  yellow-500/30 transition-all flex items-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
               Reject
             </button>
@@ -76,9 +61,10 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               Delete
             </button>
-          </div>
+          </div> -->
         </div>
 
+        
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
           
           <!-- Left Column (Description & Details) -->
@@ -88,11 +74,25 @@
                 <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 About this Group
               </h3>
+              
+          <!-- Meta Info -->
+          <div class="flex-1 p-6">
+            <div class="flex flex-wrap items-center gap-3 ">
+              <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full  sm" [ngClass]="{'bg-green-100 text-green-700': group.status === 'APPROVED', 'bg-yellow-100 text-yellow-700': group.status === 'PENDING', 'bg-gray-100 text-gray-700': group.status !== 'APPROVED' && group.status !== 'PENDING'}">
+                {{ group.status || 'UNKNOWN' }}
+              </span>
+              <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full  sm">
+                {{ group.privacy }}
+              </span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{{ group.groupName }}</h1>
+          </div>
+
               <div class="prose prose-indigo max-w-none text-gray-600 bg-gray-50/50 p-6 rounded-2xl border border-gray-100" [innerHTML]="group.description"></div>
             </section>
 
             <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-start gap-4">
+              <div class="bg-white p-5 rounded-2xl  sm border border-gray-100 flex items-start gap-4">
                 <div class="p-3 bg-indigo-50 rounded-xl text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg></div>
                 <div>
                   <p class="text-sm text-gray-500 font-medium">Website</p>
@@ -101,7 +101,7 @@
                 </div>
               </div>
               
-              <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-start gap-4">
+              <div class="bg-white p-5 rounded-2xl  sm border border-gray-100 flex items-start gap-4">
                 <div class="p-3 bg-purple-50 rounded-xl text-purple-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
                 <div>
                   <p class="text-sm text-gray-500 font-medium">Location</p>
@@ -109,7 +109,7 @@
                 </div>
               </div>
 
-              <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-start gap-4">
+              <div class="bg-white p-5 rounded-2xl  sm border border-gray-100 flex items-start gap-4">
                 <div class="p-3 bg-blue-50 rounded-xl text-blue-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div>
                 <div>
                   <p class="text-sm text-gray-500 font-medium">Affiliation</p>
@@ -117,7 +117,7 @@
                 </div>
               </div>
 
-              <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-start gap-4">
+              <div class="bg-white p-5 rounded-2xl  sm border border-gray-100 flex items-start gap-4">
                 <div class="p-3 bg-teal-50 rounded-xl text-teal-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></div>
                 <div>
                   <p class="text-sm text-gray-500 font-medium">Created</p>
@@ -131,7 +131,7 @@
           <div class="space-y-6">
             
             <!-- Owner Card -->
-            <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
+            <section class="bg-white p-6 rounded-2xl  sm border border-gray-100 relative overflow-hidden">
               <div class="absolute top-0 right-0 p-4 opacity-5">
                 <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
               </div>
@@ -155,7 +155,7 @@
             </section>
 
             <!-- Members List -->
-            <section class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col max-h-[500px]">
+            <section class="bg-white rounded-2xl  sm border border-gray-100 flex flex-col max-h-[500px]">
               <div class="p-5 border-b border-gray-100 flex items-center justify-between">
                 <h3 class="text-lg font-bold text-gray-900">Members</h3>
                 <span class="bg-gray-100 text-gray-600 py-1 px-3 rounded-full text-xs font-bold">{{ members.length }}</span>
@@ -163,8 +163,8 @@
               <div class="overflow-y-auto p-2 flex-1">
                 <ul class="space-y-1">
                   <li *ngFor="let m of members" class="group/item flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-colors">
-                    <img *ngIf="m.avatarUrl" [src]="m.avatarUrl" alt="avatar" class="w-10 h-10 rounded-full object-cover shadow-sm" />
-                    <div *ngIf="!m.avatarUrl" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-sm shadow-sm">
+                    <img *ngIf="m.avatarUrl" [src]="m.avatarUrl" alt="avatar" class="w-10 h-10 rounded-full object-cover  sm" />
+                    <div *ngIf="!m.avatarUrl" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-sm  sm">
                       {{ m.firstName?.charAt(0) }}{{ m.lastName?.charAt(0) }}
                     </div>
                     <div class="flex-1 min-w-0">

@@ -86,8 +86,12 @@ export class GroupsComponent implements OnInit {
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: ({ joined, all }) => {
-          this.joinedGroups = joined.map(g => this.processGroupUrls(g));
-          this.allGroups = all.map(g => this.processGroupUrls(g));
+          this.joinedGroups = joined
+            .filter(g => g.status === 'APPROVED')
+            .map(g => this.processGroupUrls(g));
+          this.allGroups = all
+            .filter(g => g.status === 'APPROVED')
+            .map(g => this.processGroupUrls(g));
           this.extractLabels();
         },
         error: () => this.error = 'Failed to load groups. Please refresh the page.'
@@ -260,6 +264,7 @@ export class GroupsComponent implements OnInit {
       }
     });
   }
+  
 
   private processGroupUrls(group: Group): Group {
     const baseUrl = 'http://localhost:8086/EspritConnect/';

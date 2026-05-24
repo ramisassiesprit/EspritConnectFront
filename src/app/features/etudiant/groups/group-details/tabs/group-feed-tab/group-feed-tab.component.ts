@@ -274,14 +274,16 @@ export class GroupFeedTabComponent implements OnInit, OnDestroy {
   loadOnlineMembers() {
     this.groupService.getGroupMembers(this.groupId).subscribe({
       next: (data) => {
-        this.onlineMembers = data.map(m => ({
-          id: m.userId,
-          firstName: m.firstName || m.userFullName?.split(' ')[0] || '',
-          lastName: m.lastName || m.userFullName?.split(' ')[1] || '',
-          avatarUrl: m.avatarUrl || '',
-          isOnline: m.isOnline || false,
-          membershipStatus: m.status || m.membershipStatus || m.memberStatus || undefined
-        }));
+        this.onlineMembers = data
+          .filter((m: any) => (m.status || m.membershipStatus || m.memberStatus) !== 'PENDING')
+          .map((m: any) => ({
+            id: m.userId,
+            firstName: m.firstName || m.userFullName?.split(' ')[0] || '',
+            lastName: m.lastName || m.userFullName?.split(' ')[1] || '',
+            avatarUrl: m.avatarUrl || '',
+            isOnline: m.isOnline || false,
+            membershipStatus: m.status || m.membershipStatus || m.memberStatus || undefined
+          }));
       },
       error: (err) => {
         console.error('Failed to load group members for feed initially', err);
@@ -309,14 +311,16 @@ export class GroupFeedTabComponent implements OnInit, OnDestroy {
       this.stompClient.subscribe(`/topic/group/${this.groupId}/members`, (message: { body: string }) => {
         if (message.body) {
           const data = JSON.parse(message.body);
-          this.onlineMembers = data.map((m: any) => ({
-            id: m.userId,
-            firstName: m.firstName || m.userFullName?.split(' ')[0] || '',
-            lastName: m.lastName || m.userFullName?.split(' ')[1] || '',
-            avatarUrl: m.avatarUrl || '',
-            isOnline: m.isOnline || false,
-            membershipStatus: m.status || m.membershipStatus || m.memberStatus || undefined
-          }));
+          this.onlineMembers = data
+            .filter((m: any) => (m.status || m.membershipStatus || m.memberStatus) !== 'PENDING')
+            .map((m: any) => ({
+              id: m.userId,
+              firstName: m.firstName || m.userFullName?.split(' ')[0] || '',
+              lastName: m.lastName || m.userFullName?.split(' ')[1] || '',
+              avatarUrl: m.avatarUrl || '',
+              isOnline: m.isOnline || false,
+              membershipStatus: m.status || m.membershipStatus || m.memberStatus || undefined
+            }));
         }
       });
 

@@ -51,8 +51,13 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Only call checkMembership when membership changes from OTHER sources (like admin approval via WebSocket)
+    // Don't rely on this after joinGroup() since we already set the state there
     this.membershipSub = this.groupService.membershipChanged$.subscribe(() => {
-      this.checkMembership();
+      // Only refresh if we were already a pending member (to detect approval)
+      if (this.isRequestPending) {
+        this.checkMembership();
+      }
     });
   }
 
@@ -86,7 +91,27 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
     if (!userId || !this.groupId) return;
 
     this.groupService.getUserGroups(userId).subscribe(groups => {
-      this.isGroupMember = groups.some(g => g.id.toString() === this.groupId.toString());
+      const userGroupMembership = groups.find(g => g.id.toString() === this.groupId.toString());
+      
+      if (userGroupMembership) {
+        // Check the membership status (cast to any to access runtime properties)
+        const status = (userGroupMembership as any).status || (userGroupMembership as any).membershipStatus;
+        
+        // Only change state if we have an explicit status
+        if (status === 'PENDING') {
+          this.isRequestPending = true;
+          this.isGroupMember = false;
+        } else if (status === 'APPROVED') {
+          this.isGroupMember = true;
+          this.isRequestPending = false;
+        }
+        // If status is undefined/null and we're already pending, don't change it
+        // This preserves the pending state until explicitly confirmed
+      } else {
+        // User is not in the group at all
+        this.isGroupMember = false;
+        this.isRequestPending = false;
+      }
     });
   }
 
@@ -115,6 +140,12 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+    get initials() {
+    const user = this.currentUser();
+    if (!user) return '??';
+    return `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase();
+  }
+  
   private processGroupUrls(group: Group): Group {
     const baseUrl = 'http://localhost:8086/EspritConnect/';
     return {
@@ -160,6 +191,7 @@ export class GroupDetailsComponent implements OnInit, OnDestroy {
     this.groupService.exitGroup(this.groupId, userId).subscribe({
       next: () => {
         this.isGroupMember = false;
+        this.isRequestPending = false;
         this.isMemberLoading = false;
       },
       error: (error) => {
