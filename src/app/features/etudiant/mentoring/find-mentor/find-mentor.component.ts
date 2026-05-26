@@ -1,12 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
+import { MentorMatch, MentorshipService } from '../../../../core/services/mentorship.service';
 import { UserService } from '../../../../core/services/User.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { catchError } from 'rxjs/operators';
-import { of, forkJoin, switchMap, map } from 'rxjs';
+import { forkJoin, map, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-find-mentor',
@@ -19,8 +20,11 @@ export class FindMentorComponent implements OnInit {
   categories: { name: string, count: number, users: any[] }[] = [];
   selectedCategory: any = null;
   filteredUsers: any[] = [];
-  
-  // Filters
+
+  recommendations: MentorMatch[] = [];
+  suggestedMentors: MentorMatch[] = [];
+  isSuggestionsLoading = true;
+
   searchQuery = '';
   filterFirstName = '';
   filterLastName = '';
@@ -28,10 +32,48 @@ export class FindMentorComponent implements OnInit {
   
   isLoading = true;
   
+  private authService = inject(AuthService);
+  private mentorshipService = inject(MentorshipService);
   private userService = inject(UserService);
   private profileService = inject(ProfileService);
 
   ngOnInit() {
+    this.loadMentorsBySpeciality();
+    this.loadSuggestions();
+  }
+
+  private loadSuggestions() {
+    const userId = this.authService.currentUser()?.userId;
+
+    if (!userId) {
+      this.recommendations = [];
+      this.suggestedMentors = [];
+      this.isSuggestionsLoading = false;
+      return;
+    }
+
+    this.mentorshipService.getRecommendedMentors(userId).subscribe({
+      next: (recommendations) => {
+        this.recommendations = recommendations ?? [];
+        const ranked = [...this.recommendations]
+          .filter(match => (match.matchPercentage ?? 0) > 0)
+          .sort((a, b) => (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0))
+          .slice(0, 10);
+
+        this.suggestedMentors = ranked;
+
+        this.isSuggestionsLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to load mentor recommendations', error);
+        this.recommendations = [];
+        this.suggestedMentors = [];
+        this.isSuggestionsLoading = false;
+      }
+    });
+  }
+
+  private loadMentorsBySpeciality() {
     this.userService.getAllUsers().pipe(
       switchMap(users => {
         const mentorChecks = users.map(u => 
@@ -48,7 +90,7 @@ export class FindMentorComponent implements OnInit {
       switchMap((checks: any) => {
         const mentors = checks.filter((c: any) => c.isMentor);
         if (mentors.length === 0) return of([]);
-        
+
         const profileReqs = mentors.map((m: any) => 
           this.profileService.getEspritProfileByUserId(m.user.id).pipe(
             catchError(() => of(null)),
@@ -117,5 +159,10 @@ export class FindMentorComponent implements OnInit {
       return match;
     });
   }
+
+  resetFilters() {
+    this.backToCategories();
+  }
+
 }
 

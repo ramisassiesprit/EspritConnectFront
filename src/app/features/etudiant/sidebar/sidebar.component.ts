@@ -1,7 +1,7 @@
-import { Component, inject, OnInit, effect } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject, OnInit, OnDestroy, effect } from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { GroupService } from '../../../core/services/group.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Group } from '../../../core/models/group.model';
@@ -28,12 +28,14 @@ interface NavItem {
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   private groupService = inject(GroupService);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   joinedGroups: Group[] = [];
   private membershipSub?: Subscription;
+  private routerEventsSub?: Subscription;
 
   navItems: NavItem[] = [
     { label: 'Home', icon: 'home', route: '/etudiant/home' },
@@ -105,6 +107,11 @@ export class SidebarComponent implements OnInit {
         this.loadJoinedGroups(session.userId);
       }
     });
+
+    this.syncOpenState(this.router.url);
+    this.routerEventsSub = this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(event => this.syncOpenState(event.urlAfterRedirects));
   }
 
   ngOnInit() {
@@ -118,6 +125,7 @@ export class SidebarComponent implements OnInit {
 
   ngOnDestroy() {
     this.membershipSub?.unsubscribe();
+    this.routerEventsSub?.unsubscribe();
   }
 
   private loadJoinedGroups(userId: string) {
@@ -137,6 +145,26 @@ export class SidebarComponent implements OnInit {
         route: `/etudiant/groups/${group.id}/feed`
       }))
       : [];
+
+    this.syncOpenState(this.router.url);
+  }
+
+  private syncOpenState(url: string) {
+    const normalizedUrl = url.split('?')[0].split('#')[0];
+
+    this.navItems.forEach(item => {
+      if (!item.subItems?.length) {
+        return;
+      }
+
+      const isBaseRouteActive =
+        normalizedUrl === item.route || normalizedUrl.startsWith(`${item.route}/`);
+      const isSubRouteActive = item.subItems.some(
+        subItem => normalizedUrl === subItem.route || normalizedUrl.startsWith(`${subItem.route}/`)
+      );
+
+      item.isOpen = isBaseRouteActive || isSubRouteActive;
+    });
   }
 
   toggleItem(item: NavItem) {
