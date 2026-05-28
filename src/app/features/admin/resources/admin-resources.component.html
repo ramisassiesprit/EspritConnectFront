@@ -13,92 +13,161 @@
   </div>
 
   <section class="card">
-    <h2>Create New Folder</h2>
-    <div class="grid-2">
-      <input type="text" [(ngModel)]="folderName" placeholder="Folder name" />
-      <div>
-        <input type="file" accept="image/*" (change)="onCreateCoverSelected($event)" />
-        <small>{{ createCoverFileName || 'No image selected' }}</small>
+    <h2>Resources Analytics</h2>
+    <div class="kpi-row">
+      <div class="kpi-box">
+        <span class="kpi-label">Total Folders</span>
+        <span class="kpi-value">{{ folders.length }}</span>
+      </div>
+      <div class="kpi-box">
+        <span class="kpi-label">Total Files</span>
+        <span class="kpi-value">{{ totalFilesCount }}</span>
+      </div>
+      <div class="kpi-box">
+        <span class="kpi-label">Selected Folder Files</span>
+        <span class="kpi-value">{{ selectedFolderDetails?.files?.length || 0 }}</span>
       </div>
     </div>
-    <button class="btn-primary" (click)="createFolder()">Create folder</button>
-  </section>
 
-  <section class="card" *ngIf="selectedFolderDetails">
-    <h2>Edit Folder</h2>
-    <div class="grid-2">
-      <input type="text" [(ngModel)]="editFolderName" placeholder="Folder name" />
-      <div>
-        <input type="file" accept="image/*" (change)="onEditCoverSelected($event)" />
-        <small>{{ editCoverFileName || 'No image selected' }}</small>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Top Folders by File Count</h3>
+        <div class="mini-bars" *ngIf="folderSizeStats.length; else noFolderSizes">
+          <div class="bar-row" *ngFor="let s of folderSizeStats">
+            <span class="bar-label">{{ s.label }}</span>
+            <div class="bar-track"><div class="bar-fill" [style.width.%]="(s.value / maxStatValue(folderSizeStats)) * 100"></div></div>
+            <span class="bar-val">{{ s.value }}</span>
+          </div>
+        </div>
+        <ng-template #noFolderSizes><p class="chart-empty">No folders yet.</p></ng-template>
+      </div>
+
+      <div class="chart-card">
+        <h3>Folder Creation Trend (6 months)</h3>
+        <div class="mini-bars">
+          <div class="bar-row" *ngFor="let s of folderTrendStats">
+            <span class="bar-label">{{ s.label }}</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--teal" [style.width.%]="(s.value / maxStatValue(folderTrendStats)) * 100"></div></div>
+            <span class="bar-val">{{ s.value }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card" *ngIf="selectedFolderDetails">
+        <h3>Selected Folder File Types</h3>
+        <div class="donut-wrap" *ngIf="selectedFolderFileTypeStats.length; else noTypeStats">
+          <div
+            class="donut"
+            [style.background]="donutBackground(selectedFolderFileTypeStats, ['#8b5cf6','#06b6d4','#f59e0b','#22c55e','#ef4444','#3b82f6'])"
+          >
+            <div class="donut-center">{{ totalStatValue(selectedFolderFileTypeStats) }}</div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-row" *ngFor="let s of selectedFolderFileTypeStats; let i = index">
+              <span class="dot" [style.background]="['#8b5cf6','#06b6d4','#f59e0b','#22c55e','#ef4444','#3b82f6'][i % 6]"></span>
+              <span class="legend-label">{{ s.label }}</span>
+              <span class="legend-value">{{ s.value }}</span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noTypeStats><p class="chart-empty">No files in selected folder.</p></ng-template>
       </div>
     </div>
-    <button class="btn-secondary" (click)="updateFolder()">Save changes</button>
   </section>
 
-  <section class="card">
-    <h2>Upload File</h2>
-    <div class="grid-2">
-      <select [(ngModel)]="selectedFolderId" (change)="loadFolderDetails(selectedFolderId)">
-        <option value="">Select folder</option>
-        <option *ngFor="let folder of folders" [value]="folder.id">{{ folder.name }}</option>
-      </select>
-      <input type="file" (change)="onFileSelected($event)" />
-    </div>
-    <button class="btn-primary" (click)="submitUpload()">Upload file</button>
-  </section>
-
-  <section class="card">
-    <div class="section-title">
-      <h2>Folders</h2>
-      <button class="btn-secondary" (click)="loadFolders()">Refresh</button>
-    </div>
-
-    <p *ngIf="loading">Loading folders...</p>
-
-    <div class="folder-list" *ngIf="!loading">
-      <article class="folder-row" *ngFor="let folder of pagedFolders">
-        <div class="folder-info" (click)="loadFolderDetails(folder.id)">
-          <h3>{{ folder.name }}</h3>
-          <p>{{ folder.itemsCount }} item(s) · Updated {{ folder.updatedAt | date:'mediumDate' }}</p>
+  <div class="resources-workspace">
+    <div class="resources-actions">
+      <section class="card">
+        <h2>Create New Folder</h2>
+        <div class="grid-2">
+          <input type="text" [(ngModel)]="folderName" placeholder="Folder name" />
+          <div>
+            <input type="file" accept="image/*" (change)="onCreateCoverSelected($event)" />
+            <small>{{ createCoverFileName || 'No image selected' }}</small>
+          </div>
         </div>
-        <button class="btn-danger" (click)="deleteFolder(folder.id)">Delete</button>
-      </article>
-    </div>
+        <button class="btn-primary" (click)="createFolder()">Create folder</button>
+      </section>
 
-    <div class="pager" *ngIf="folderTotalPages > 1">
-      <button class="btn-secondary" (click)="prevFolderPage()" [disabled]="folderPage === 1">Prev</button>
-      <span>Page {{ folderPage }} / {{ folderTotalPages }}</span>
-      <button class="btn-secondary" (click)="nextFolderPage()" [disabled]="folderPage === folderTotalPages">Next</button>
-    </div>
-  </section>
-
-  <section class="card" *ngIf="selectedFolderDetails">
-    <h2>Files in "{{ selectedFolderDetails.name }}"</h2>
-
-    <div class="file-list" *ngIf="selectedFolderDetails.files.length > 0; else emptyFiles">
-      <article class="file-row" *ngFor="let file of pagedFiles">
-        <div>
-          <h3>{{ file.name }}</h3>
-          <p>{{ file.updatedAt | date:'medium' }}</p>
+      <section class="card" *ngIf="selectedFolderDetails">
+        <h2>Edit Folder</h2>
+        <div class="grid-2">
+          <input type="text" [(ngModel)]="editFolderName" placeholder="Folder name" />
+          <div>
+            <input type="file" accept="image/*" (change)="onEditCoverSelected($event)" />
+            <small>{{ editCoverFileName || 'No image selected' }}</small>
+          </div>
         </div>
-        <div class="actions">
-          <button class="btn-secondary" (click)="previewFile(file)">Preview</button>
-          <button class="btn-primary" (click)="downloadFile(file)">Download</button>
-          <button class="btn-danger" (click)="deleteFile(file.id)">Delete</button>
+        <button class="btn-secondary" (click)="updateFolder()">Save changes</button>
+      </section>
+
+      <section class="card">
+        <h2>Upload File</h2>
+        <div class="grid-2">
+          <select [(ngModel)]="selectedFolderId" (change)="loadFolderDetails(selectedFolderId)">
+            <option value="">Select folder</option>
+            <option *ngFor="let folder of folders" [value]="folder.id">{{ folder.name }}</option>
+          </select>
+          <input type="file" (change)="onFileSelected($event)" />
         </div>
-      </article>
+        <button class="btn-primary" (click)="submitUpload()">Upload file</button>
+      </section>
     </div>
 
-    <div class="pager" *ngIf="fileTotalPages > 1">
-      <button class="btn-secondary" (click)="prevFilePage()" [disabled]="filePage === 1">Prev</button>
-      <span>Page {{ filePage }} / {{ fileTotalPages }}</span>
-      <button class="btn-secondary" (click)="nextFilePage()" [disabled]="filePage === fileTotalPages">Next</button>
-    </div>
+    <div class="resources-browser">
+      <section class="card">
+        <div class="section-title">
+          <h2>Folders</h2>
+          <button class="btn-secondary" (click)="loadFolders()">Refresh</button>
+        </div>
 
-    <ng-template #emptyFiles>
-      <p>No files in this folder.</p>
-    </ng-template>
-  </section>
+        <p *ngIf="loading">Loading folders...</p>
+
+        <div class="folder-list" *ngIf="!loading">
+          <article class="folder-row" *ngFor="let folder of pagedFolders">
+            <div class="folder-info" (click)="loadFolderDetails(folder.id)">
+              <h3>{{ folder.name }}</h3>
+              <p>{{ folder.itemsCount }} item(s) · Updated {{ folder.updatedAt | date:'mediumDate' }}</p>
+            </div>
+            <button class="btn-danger" (click)="deleteFolder(folder.id)">Delete</button>
+          </article>
+        </div>
+
+        <div class="pager" *ngIf="folderTotalPages > 1">
+          <button class="btn-secondary" (click)="prevFolderPage()" [disabled]="folderPage === 1">Prev</button>
+          <span>Page {{ folderPage }} / {{ folderTotalPages }}</span>
+          <button class="btn-secondary" (click)="nextFolderPage()" [disabled]="folderPage === folderTotalPages">Next</button>
+        </div>
+      </section>
+
+      <section class="card" *ngIf="selectedFolderDetails">
+        <h2>Files in "{{ selectedFolderDetails.name }}"</h2>
+
+        <div class="file-list" *ngIf="selectedFolderDetails.files.length > 0; else emptyFiles">
+          <article class="file-row" *ngFor="let file of pagedFiles">
+            <div>
+              <h3>{{ file.name }}</h3>
+              <p>{{ file.updatedAt | date:'medium' }}</p>
+            </div>
+            <div class="actions">
+              <button class="btn-secondary" (click)="previewFile(file)">Preview</button>
+              <button class="btn-primary" (click)="downloadFile(file)">Download</button>
+              <button class="btn-danger" (click)="deleteFile(file.id)">Delete</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="pager" *ngIf="fileTotalPages > 1">
+          <button class="btn-secondary" (click)="prevFilePage()" [disabled]="filePage === 1">Prev</button>
+          <span>Page {{ filePage }} / {{ fileTotalPages }}</span>
+          <button class="btn-secondary" (click)="nextFilePage()" [disabled]="filePage === fileTotalPages">Next</button>
+        </div>
+
+        <ng-template #emptyFiles>
+          <p>No files in this folder.</p>
+        </ng-template>
+      </section>
+    </div>
+  </div>
 </div>
 

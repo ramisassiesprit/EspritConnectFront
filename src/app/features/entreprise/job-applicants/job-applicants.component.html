@@ -1,0 +1,85 @@
+<section class="applicants-page">
+  <div class="page-head">
+    <a [routerLink]="backRoute" class="back-link">Back to jobs</a>
+    <div class="page-head__title-row">
+      <h2>Applicants</h2>
+      <span class="count-badge" *ngIf="!loading && !error">{{ applications.length }} total</span>
+    </div>
+    <p class="job-context" *ngIf="job">{{ job.title }} - {{ job.company || 'N/A' }}</p>
+  </div>
+
+  <p class="state" *ngIf="loading">Loading applicants...</p>
+  <p class="state error" *ngIf="error">{{ error }}</p>
+  <p class="state" *ngIf="!loading && !error && applications.length === 0">No applications for this job yet.</p>
+
+  <div class="applicant-list" *ngIf="!loading && !error && applications.length > 0">
+    <article class="applicant-card" *ngFor="let app of applications">
+      <header class="applicant-card__top">
+        <h3>{{ applicantDisplayName(app) }}</h3>
+        <label>
+          Status
+          <select
+            [ngClass]="statusClass(app.status || 'PENDING')"
+            [ngModel]="app.status || 'PENDING'"
+            (ngModelChange)="updateApplicationStatus(app, $event)"
+          >
+            <option *ngFor="let status of applicationStatuses" [value]="status">{{ status }}</option>
+          </select>
+        </label>
+      </header>
+
+      <div class="applicant-grid">
+        <p><strong>Email:</strong> {{ app.applicantEmail || 'N/A' }}</p>
+        <p><strong>Phone:</strong> {{ app.applicantNumTel || 'N/A' }}</p>
+        <p><strong>Current title:</strong> {{ app.applicantJobTitle || 'N/A' }}</p>
+        <p><strong>Industry / Function:</strong> {{ app.applicantIndustry || 'N/A' }} / {{ app.applicantJobFunction || 'N/A' }}</p>
+        <p><strong>Education:</strong> {{ app.applicantDegree || 'N/A' }} - {{ app.applicantProgram || 'N/A' }} ({{ app.applicantGraduationYear || 'N/A' }})</p>
+        <p><strong>Applied:</strong> {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <div class="line">
+        <strong>CV:</strong>
+        <a
+          class="action-link"
+          *ngIf="app.cvUrl"
+          [href]="app.cvUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open CV
+        </a>
+        <span *ngIf="!app.cvUrl">N/A</span>
+      </div>
+      <div class="line">
+        <strong>LinkedIn:</strong>
+        <a
+          class="action-link"
+          *ngIf="app.applicantLinkedinUrl"
+          [href]="app.applicantLinkedinUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View profile
+        </a>
+        <span *ngIf="!app.applicantLinkedinUrl">N/A</span>
+      </div>
+      <div class="line">
+        <strong>GitHub:</strong>
+        <a
+          class="action-link"
+          *ngIf="app.applicantGithubUrl"
+          [href]="app.applicantGithubUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View profile
+        </a>
+        <span *ngIf="!app.applicantGithubUrl">N/A</span>
+      </div>
+      <div class="cover-letter">
+        <strong>Cover letter</strong>
+        <p>{{ app.coverLetterUrl || 'N/A' }}</p>
+      </div>
+    </article>
+  </div>
+</section>

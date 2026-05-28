@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { JobOffer } from '../../../core/models/job.model';
+import { JobApplication, JobOffer } from '../../../core/models/job.model';
 import { JobService } from '../../../core/services/job.service';
 import { environment } from '../../../../environments/environment';
 
@@ -17,10 +17,14 @@ import { environment } from '../../../../environments/environment';
 export class JobsComponent implements OnInit {
   jobs: JobOffer[] = [];
   selectedJob: JobOffer | null = null;
+  myApplicationsByJobId: Record<string, JobApplication> = {};
 
   loading = false;
+  applying = false;
   error = '';
   message = '';
+  cvFile: File | null = null;
+  coverLetterText = '';
 
   search = '';
   filterCompany = '';
@@ -74,6 +78,7 @@ export class JobsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadMyApplications();
     this.loadJobs();
 
     this.route.paramMap.subscribe((params) => {
@@ -213,6 +218,107 @@ export class JobsComponent implements OnInit {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
+  getApplicationForJob(jobId?: string): JobApplication | null {
+    if (!jobId) {
+      return null;
+    }
+    return this.myApplicationsByJobId[jobId] || null;
+  }
+
+  hasApplied(jobId?: string): boolean {
+    return !!this.getApplicationForJob(jobId);
+  }
+
+  applicationStatusLabel(jobId?: string): string {
+    const app = this.getApplicationForJob(jobId);
+    return app?.status || 'PENDING';
+  }
+
+  applicationStateClass(jobId?: string): string {
+    const status = this.applicationStatusLabel(jobId);
+    switch (status) {
+      case 'ACCEPTED':
+        return 'state-accepted';
+      case 'REJECTED':
+        return 'state-rejected';
+      case 'SHORTLISTED':
+        return 'state-shortlisted';
+      case 'REVIEWED':
+        return 'state-reviewed';
+      case 'PENDING':
+      default:
+        return 'state-pending';
+    }
+  }
+
+  applicationStatusMessage(jobId?: string): string {
+    const status = this.applicationStatusLabel(jobId);
+    switch (status) {
+      case 'ACCEPTED':
+        return 'Congratulations. The company accepted your application and will contact you with next steps.';
+      case 'REJECTED':
+        return 'The company has closed this application. You can still apply to other opportunities.';
+      case 'SHORTLISTED':
+        return 'Great progress. You are shortlisted and may be contacted soon for the next stage.';
+      case 'REVIEWED':
+        return 'Your application was reviewed. The company is now deciding on the next step.';
+      case 'PENDING':
+      default:
+        return 'Your application is submitted and waiting for the company review.';
+    }
+  }
+
+  onCvSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files.length > 0 ? input.files[0] : null;
+    this.cvFile = file;
+  }
+
+  submitOnPlatform(): void {
+    if (!this.selectedJob?.id) {
+      this.error = 'No job selected.';
+      return;
+    }
+    if (this.hasApplied(this.selectedJob.id)) {
+      this.error = `You already applied to this job. Current status: ${this.applicationStatusLabel(this.selectedJob.id)}.`;
+      return;
+    }
+    if (!this.cvFile) {
+      this.error = 'Please attach your CV before submitting.';
+      return;
+    }
+
+    this.applying = true;
+    this.error = '';
+    this.message = '';
+
+    this.jobService.uploadApplicationCv(this.cvFile).subscribe({
+      next: (cvUrl) => {
+        this.jobService.apply({
+          jobOfferId: this.selectedJob!.id!,
+          cvUrl,
+          coverLetterUrl: this.coverLetterText?.trim() || undefined
+        }).subscribe({
+          next: () => {
+            this.applying = false;
+            this.cvFile = null;
+            this.coverLetterText = '';
+            this.message = 'Application submitted on platform. Company can now review your profile and CV.';
+            this.loadMyApplications();
+          },
+          error: (err) => {
+            this.applying = false;
+            this.error = err?.error?.message || 'Unable to submit your application.';
+          }
+        });
+      },
+      error: (err) => {
+        this.applying = false;
+        this.error = err?.error?.message || 'Unable to upload CV.';
+      }
+    });
+  }
+
   resolveImageUrl(url?: string): string {
     if (!url || !url.trim()) {
       return 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=200&h=200&fit=crop';
@@ -242,11 +348,31 @@ export class JobsComponent implements OnInit {
     });
   }
 
+  private loadMyApplications(): void {
+    this.jobService.getMyApplications().subscribe({
+      next: (applications) => {
+        const nextMap: Record<string, JobApplication> = {};
+        for (const app of applications) {
+          if (app.jobOfferId) {
+            nextMap[app.jobOfferId] = app;
+          }
+        }
+        this.myApplicationsByJobId = nextMap;
+      },
+      error: () => {
+        this.myApplicationsByJobId = {};
+      }
+    });
+  }
+
   private loadJobDetails(jobId: string): void {
     this.loading = true;
     this.jobService.getJobById(jobId).subscribe({
       next: (job) => {
         this.selectedJob = job;
+        this.cvFile = null;
+        this.coverLetterText = '';
+        this.message = '';
         this.error = '';
         this.loading = false;
       },

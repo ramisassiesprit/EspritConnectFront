@@ -4,30 +4,67 @@
       <h1>{{ isAdminMode ? 'Jobs Approval' : 'Jobs Management' }}</h1>
       <p>{{ isAdminMode ? 'Review pending job offers submitted by companies.' : 'Create and manage your job offers, then review applications.' }}</p>
     </div>
-    <button class="btn btn--primary" *ngIf="isCompanyMode" (click)="startCreate()">+ New Job</button>
+    <button class="btn btn--primary" *ngIf="isCompanyMode && !isCreateMode" (click)="openCreatePage()">+ New Job</button>
   </header>
 
   <p class="alert alert--ok" *ngIf="message">{{ message }}</p>
   <p class="alert alert--error" *ngIf="error">{{ error }}</p>
 
-  <section class="panel" *ngIf="showCreateForm && isCompanyMode">
+  <section class="panel panel--overview" *ngIf="!isCreateMode">
+    <h2>Jobs Analytics</h2>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>By Status</h3>
+        <div class="donut-wrap" *ngIf="jobStatusStats.length; else noJobStatus">
+          <div
+            class="donut"
+            [style.background]="donutBackground(jobStatusStats, ['#ef4444','#22c55e','#f59e0b','#3b82f6','#8b5cf6','#06b6d4'])"
+          >
+            <div class="donut-center">{{ totalStatValue(jobStatusStats) }}</div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-row" *ngFor="let s of jobStatusStats; let i = index">
+              <span class="dot" [style.background]="['#ef4444','#22c55e','#f59e0b','#3b82f6','#8b5cf6','#06b6d4'][i % 6]"></span>
+              <span class="legend-label">{{ s.label }}</span>
+              <span class="legend-value">{{ s.value }}</span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noJobStatus><p class="chart-empty">No data yet.</p></ng-template>
+      </div>
+
+      <div class="chart-card">
+        <h3>By Contract Type</h3>
+        <div class="mini-bars" *ngIf="contractTypeStats.length; else noContract">
+          <div class="bar-row" *ngFor="let s of contractTypeStats">
+            <span class="bar-label">{{ s.label }}</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--orange" [style.width.%]="(s.value / maxStatValue(contractTypeStats)) * 100"></div></div>
+            <span class="bar-val">{{ s.value }}</span>
+          </div>
+        </div>
+        <ng-template #noContract><p class="chart-empty">No data yet.</p></ng-template>
+      </div>
+
+      <div class="chart-card">
+        <h3>Last 6 Months</h3>
+        <div class="mini-bars" *ngIf="recentJobsTrend.length">
+          <div class="bar-row" *ngFor="let s of recentJobsTrend">
+            <span class="bar-label">{{ s.label }}</span>
+            <div class="bar-track"><div class="bar-fill bar-fill--teal" [style.width.%]="(s.value / maxStatValue(recentJobsTrend)) * 100"></div></div>
+            <span class="bar-val">{{ s.value }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel panel--form" *ngIf="showCreateForm && isCompanyMode">
     <h2>{{ editingJobId ? 'Edit Job Offer' : 'Create Job Offer' }}</h2>
 
     <div class="form-grid">
       <label>
         Title
         <input [(ngModel)]="form.title" type="text" placeholder="Job title" />
-      </label>
-
-      <label>
-        Company
-        <input
-          class="input--locked"
-          [ngModel]="form.company || 'Taken from your company account'"
-          type="text"
-          readonly
-          placeholder="Taken from your company account"
-        />
       </label>
 
       <label>
@@ -59,13 +96,6 @@
         Contract type
         <select [(ngModel)]="form.contractType">
           <option *ngFor="let type of contractTypes" [value]="type">{{ type }}</option>
-        </select>
-      </label>
-
-      <label>
-        Status
-        <select [(ngModel)]="form.status">
-          <option value="PENDING">PENDING</option>
         </select>
       </label>
 
@@ -104,60 +134,45 @@
     </div>
   </section>
 
-  <div class="layout">
-    <section class="panel">
+  <div class="layout jobs-workspace" *ngIf="!isCreateMode">
+    <section class="panel jobs-list-panel">
       <div class="panel__top">
-        <h2>{{ isAdminMode ? 'Pending Jobs' : 'My Jobs' }}</h2>
+        <h2>{{ isAdminMode ? 'All Jobs' : 'My Jobs' }}</h2>
         <input [(ngModel)]="search" type="text" placeholder="Search by title, company, location" />
       </div>
 
       <p *ngIf="loading">Loading jobs...</p>
-      <p *ngIf="!loading && filteredJobs.length === 0">{{ isAdminMode ? 'No pending jobs.' : 'No jobs found.' }}</p>
+      <p *ngIf="!loading && filteredJobs.length === 0">{{ isAdminMode ? 'No jobs found.' : 'No jobs found.' }}</p>
 
       <div class="job-list" *ngIf="!loading && filteredJobs.length > 0">
-        <article class="job-item" *ngFor="let job of filteredJobs" [class.active]="selectedJobId === job.id">
+        <article class="job-item" *ngFor="let job of filteredJobs">
           <div class="job-item__main" (click)="selectJob(job)">
             <h3>{{ job.title }}</h3>
             <p>{{ job.company || 'N/A' }} · {{ job.location || 'N/A' }}</p>
-            <small>{{ job.contractType || 'N/A' }} · {{ job.status }}</small>
+            <small class="job-meta-line">
+              <span>{{ job.contractType || 'N/A' }}</span>
+              <span class="meta-sep">·</span>
+              <span [ngClass]="jobStatusClass(job.status)">{{ job.status }}</span>
+            </small>
           </div>
           <div class="job-item__actions">
             <ng-container *ngIf="isCompanyMode; else adminModerationActions">
+              <button class="btn btn--small btn--primary" *ngIf="job.status !== 'PENDING'" (click)="viewApplicants(job)">View Applicants</button>
               <button class="btn btn--small btn--ghost" (click)="startEdit(job)">Edit</button>
               <button class="btn btn--small btn--danger" (click)="deleteJob(job)">Delete</button>
             </ng-container>
             <ng-template #adminModerationActions>
-              <button class="btn btn--small btn--primary" (click)="approveJob(job)">Approve</button>
-              <button class="btn btn--small btn--danger" (click)="rejectJob(job)">Reject</button>
+              <button class="btn btn--small btn--primary" *ngIf="job.status !== 'PENDING'" (click)="viewApplicants(job)">View Applicants</button>
+              <ng-container *ngIf="job.status === 'PENDING'; else noModerationNeeded">
+                <button class="btn btn--small btn--primary" (click)="approveJob(job)">Approve</button>
+                <button class="btn btn--small btn--danger" (click)="rejectJob(job)">Reject</button>
+                <button class="btn btn--small btn--danger" (click)="deleteJob(job)">Delete</button>
+              </ng-container>
+              <ng-template #noModerationNeeded>
+                <button class="btn btn--small btn--danger" (click)="deleteJob(job)">Delete</button>
+              </ng-template>
             </ng-template>
           </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h2>Applications</h2>
-      <p *ngIf="!selectedJob">Select a job to view applications.</p>
-      <p *ngIf="selectedJob && applications.length === 0">No applications for this job yet.</p>
-
-      <div class="apps" *ngIf="selectedJob && applications.length > 0">
-        <article class="app-item" *ngFor="let app of applications">
-          <div>
-            <h4>Applicant: {{ app.applicantId || 'Unknown' }}</h4>
-            <p>Applied: {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-            <p>CV: {{ app.cvUrl || 'N/A' }}</p>
-            <p>Cover letter: {{ app.coverLetterUrl || 'N/A' }}</p>
-          </div>
-
-          <label>
-            Status
-            <select
-              [ngModel]="app.status || 'PENDING'"
-              (ngModelChange)="updateApplicationStatus(app, $event)"
-            >
-              <option *ngFor="let status of applicationStatuses" [value]="status">{{ status }}</option>
-            </select>
-          </label>
         </article>
       </div>
     </section>

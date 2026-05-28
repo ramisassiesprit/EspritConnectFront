@@ -76,6 +76,76 @@ export class AdminResourcesComponent implements OnInit {
     return Math.max(1, Math.ceil(this.filteredFiles.length / this.pageSize));
   }
 
+  get totalFilesCount(): number {
+    return this.folders.reduce((sum, f) => sum + (f.itemsCount || 0), 0);
+  }
+
+  get folderSizeStats(): { label: string; value: number }[] {
+    return this.folders
+      .slice()
+      .sort((a, b) => (b.itemsCount || 0) - (a.itemsCount || 0))
+      .slice(0, 6)
+      .map((f) => ({ label: f.name, value: f.itemsCount || 0 }));
+  }
+
+  get folderTrendStats(): { label: string; value: number }[] {
+    const now = new Date();
+    const keys: { key: string; label: string }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = d.toLocaleString('en-US', { month: 'short' });
+      keys.push({ key, label });
+    }
+
+    const counts: Record<string, number> = {};
+    for (const folder of this.folders) {
+      if (!folder.createdAt) continue;
+      const d = new Date(folder.createdAt);
+      if (Number.isNaN(d.getTime())) continue;
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      counts[key] = (counts[key] || 0) + 1;
+    }
+
+    return keys.map((k) => ({ label: k.label, value: counts[k.key] || 0 }));
+  }
+
+  get selectedFolderFileTypeStats(): { label: string; value: number }[] {
+    const files = this.selectedFolderDetails?.files || [];
+    const counts: Record<string, number> = {};
+    for (const file of files) {
+      const t = this.fileTypeLabel(file.mimeType, file.name);
+      counts[t] = (counts[t] || 0) + 1;
+    }
+    return Object.entries(counts).map(([label, value]) => ({ label, value }));
+  }
+
+  maxStatValue(stats: { value: number }[]): number {
+    return Math.max(1, ...stats.map((s) => s.value));
+  }
+
+  totalStatValue(stats: { value: number }[]): number {
+    return stats.reduce((sum, s) => sum + s.value, 0);
+  }
+
+  donutBackground(stats: { label: string; value: number }[], palette: string[]): string {
+    const total = this.totalStatValue(stats);
+    if (total <= 0) {
+      return 'conic-gradient(#e2e8f0 0 360deg)';
+    }
+    let current = 0;
+    const segments: string[] = [];
+    stats.forEach((item, idx) => {
+      const angle = (item.value / total) * 360;
+      const start = current;
+      const end = current + angle;
+      const color = palette[idx % palette.length];
+      segments.push(`${color} ${start}deg ${end}deg`);
+      current = end;
+    });
+    return `conic-gradient(${segments.join(', ')})`;
+  }
+
   prevFolderPage(): void { this.folderPage = Math.max(1, this.folderPage - 1); }
   nextFolderPage(): void { this.folderPage = Math.min(this.folderTotalPages, this.folderPage + 1); }
   prevFilePage(): void { this.filePage = Math.max(1, this.filePage - 1); }
@@ -354,5 +424,16 @@ export class AdminResourcesComponent implements OnInit {
     }
     const simpleMatch = /filename="?([^";]+)"?/i.exec(contentDisposition);
     return simpleMatch?.[1] || null;
+  }
+
+  private fileTypeLabel(mimeType?: string, fileName?: string): string {
+    const mt = (mimeType || '').toLowerCase();
+    if (mt.includes('pdf')) return 'PDF';
+    if (mt.includes('word') || mt.includes('document')) return 'DOC';
+    if (mt.includes('image')) return 'Image';
+    if (mt.includes('sheet') || mt.includes('excel')) return 'Spreadsheet';
+    if (mt.includes('presentation') || mt.includes('powerpoint')) return 'Presentation';
+    const ext = (fileName?.split('.').pop() || '').toUpperCase();
+    return ext || 'Other';
   }
 }

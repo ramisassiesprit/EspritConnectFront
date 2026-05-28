@@ -1,0 +1,41 @@
+/* Make Suggested Mentors cards more compact */
+.suggestion-card {
+	min-width: 160px !important;
+	max-width: 180px !important;
+	padding: 0.6rem !important;
+}
+
+.suggestion-card .avatar {
+	width: 72px !important;
+	height: 72px !important;
+}
+
+.suggestion-card .match-badge {
+	font-size: 13px !important;
+	padding: 0.25rem 0.5rem !important;
+	margin-top: 0.35rem !important;
+}
+
+.suggestion-card .mentor-name {
+	font-size: 15px !important;
+	line-height: 1.1 !important;
+	margin-top: 0.4rem !important;
+}
+
+.suggestion-card .mentor-job {
+	font-size: 12px !important;
+	min-height: 40px !important;
+}
+
+.suggestion-card .connect-btn {
+	font-size: 13px !important;
+	padding: 0.35rem 0.75rem !important;
+}
+
+/* Slightly reduce spacing inside the suggestions container on small screens */
+@media (max-width: 640px) {
+	.suggestion-card { min-width: 140px !important; max-width: 160px !important; }
+	.suggestion-card .avatar { width: 56px !important; height: 56px !important; }
+	.suggestion-card .mentor-name { font-size: 13px !important; }
+}
+

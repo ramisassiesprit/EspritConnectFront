@@ -30,6 +30,9 @@
         <div class="job-card-meta">
           <span>Posted {{ job.createdAt | date:'dd/MM/yyyy' }}</span>
           <span>{{ job.location || 'Location N/A' }}</span>
+          <span class="applied-chip" [ngClass]="applicationStateClass(job.id)" *ngIf="hasApplied(job.id)">
+            Applied - {{ applicationStatusLabel(job.id) }}
+          </span>
         </div>
         <p class="job-card-desc">{{ job.description }}</p>
       </article>
@@ -199,7 +202,74 @@
 
       <div class="description">{{ selectedJob.description }}</div>
 
-      <button class="apply" (click)="openApplyLink()">APPLY</button>
+      <div class="apply-zone">
+        <div class="apply-card apply-card--external">
+          <div class="apply-card__head">
+            <h3>External Application</h3>
+            <span class="apply-badge">Company Site</span>
+          </div>
+          <p class="apply-text">Use the company website to apply directly if they manage applications externally.</p>
+          <button class="apply-btn apply-btn--external" *ngIf="selectedJob.applyUrl" (click)="openApplyLink()">Open external apply link</button>
+          <p class="apply-muted" *ngIf="!selectedJob.applyUrl">No external apply URL for this job.</p>
+        </div>
+
+        <div class="apply-card apply-card--platform">
+          <div class="apply-card__head">
+            <h3>Apply on Esprit Connect</h3>
+            <span class="apply-badge apply-badge--platform">Recommended</span>
+          </div>
+
+          <ng-container *ngIf="hasApplied(selectedJob.id); else platformApplyForm">
+            <div class="applied-summary" [ngClass]="applicationStateClass(selectedJob.id)">
+              <p class="apply-state applied">
+                You already applied to this job.
+              </p>
+              <p class="applied-status-line">
+                Current status: <strong>{{ applicationStatusLabel(selectedJob.id) }}</strong>
+              </p>
+              <p class="applied-help">
+                {{ applicationStatusMessage(selectedJob.id) }}
+              </p>
+            </div>
+          </ng-container>
+
+          <ng-template #platformApplyForm>
+            <p class="apply-state">
+              Current status: <strong>Not applied yet</strong>
+            </p>
+            <p class="apply-text">Upload your CV. Your profile details are sent automatically to the company.</p>
+
+            <div class="apply-form-grid">
+              <div class="input-group">
+                <label for="cv-upload">CV (PDF, DOC, DOCX)</label>
+                <input
+                  id="cv-upload"
+                  type="file"
+                  class="apply-input"
+                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  (change)="onCvSelected($event)"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="cover-letter-text">Cover letter (optional)</label>
+                <textarea
+                  id="cover-letter-text"
+                  class="apply-input apply-textarea"
+                  [(ngModel)]="coverLetterText"
+                  rows="5"
+                  placeholder="Write a short motivation paragraph..."
+                ></textarea>
+              </div>
+            </div>
+
+            <button class="apply-btn apply-btn--platform" (click)="submitOnPlatform()" [disabled]="applying || hasApplied(selectedJob.id)">
+              {{ applying ? 'Submitting...' : 'Submit application on platform' }}
+            </button>
+          </ng-template>
+        </div>
+      </div>
+      <p class="ok" *ngIf="message">{{ message }}</p>
       <p class="error" *ngIf="error">{{ error }}</p>
     </article>
 

@@ -1,0 +1,204 @@
+.applicants-page {
+  background: linear-gradient(180deg, #f4f6f9 0%, #eef2f7 100%);
+  border: 1px solid #dfe6ef;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.page-head h2 {
+  margin: 4px 0;
+  color: #1f2937;
+  letter-spacing: 0.01em;
+}
+
+.page-head p {
+  margin: 0;
+  color: #5a6b7d;
+}
+
+.page-head__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.count-badge {
+  background: #e6edf7;
+  color: #2f4d73;
+  border: 1px solid #d0deef;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.job-context {
+  margin-top: 2px !important;
+  font-size: 15px;
+}
+
+.back-link {
+  color: #ed1c24;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.state {
+  margin: 10px 0;
+  color: #5a6b7d;
+}
+
+.state.error {
+  color: #b91c1c;
+}
+
+.applicant-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.applicant-card {
+  background: #ffffff;
+  border: 1px solid #dbe2ea;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 6px 16px rgba(30, 58, 95, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.applicant-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #ed1c24 0%, #ff7a45 100%);
+}
+
+.applicant-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.applicant-card__top h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.applicant-card__top label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.applicant-card__top select {
+  border: 1px solid #d5dce4;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px 10px;
+  font-weight: 600;
+}
+
+.applicant-card__top select.status-pending {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e3a8a;
+}
+
+.applicant-card__top select.status-reviewed {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+  color: #5b21b6;
+}
+
+.applicant-card__top select.status-shortlisted {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+.applicant-card__top select.status-accepted {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+.applicant-card__top select.status-rejected {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.applicant-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  padding: 10px 0 2px;
+  border-top: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.applicant-grid p,
+.line {
+  margin: 0;
+  color: #4b5f75;
+}
+
+.line {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f4c81;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.action-link:hover {
+  color: #0b3b64;
+}
+
+.cover-letter {
+  margin-top: 12px;
+}
+
+.cover-letter p {
+  margin: 6px 0 0;
+  white-space: pre-wrap;
+  line-height: 1.55;
+  color: #334e68;
+  background: #f7fbff;
+  border: 1px solid #d7e6f3;
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-height: 72px;
+}
+
+@media (max-width: 900px) {
+  .applicant-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .applicant-card__top {
+    flex-direction: column;
+  }
+}
