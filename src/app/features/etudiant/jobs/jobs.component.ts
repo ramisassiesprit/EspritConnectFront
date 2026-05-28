@@ -5,6 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { JobApplication, JobOffer } from '../../../core/models/job.model';
 import { JobService } from '../../../core/services/job.service';
+import { ProfileService } from '../../../core/services/profile.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -18,6 +19,8 @@ export class JobsComponent implements OnInit {
   jobs: JobOffer[] = [];
   selectedJob: JobOffer | null = null;
   myApplicationsByJobId: Record<string, JobApplication> = {};
+  studentFieldOfStudy = '';
+  showRecommendedOnly = false;
 
   loading = false;
   applying = false;
@@ -43,16 +46,22 @@ export class JobsComponent implements OnInit {
   ];
 
   selectedContractTypes: string[] = [];
-  selectedIndustryOptions: string[] = [];
+  selectedStudyFieldOptions: string[] = [];
   selectedLocationOptions: string[] = [];
 
-  industryOptions = [
-    'Accounting',
-    'Administrative',
-    'Arts and Design',
-    'Business Development',
-    'Community & Social Services',
-    'Consulting'
+  studyFieldOptions = [
+    'G\u00e9nie Logiciel',
+    'Informatique',
+    'G\u00e9nie T\u00e9l\u00e9communications',
+    'G\u00e9nie \u00c9lectrom\u00e9canique',
+    'G\u00e9nie Civil',
+    'Management & Business',
+    'Science des Donn\u00e9es',
+    'Syst\u00e8mes Embarqu\u00e9s',
+    'Cloud & S\u00e9curit\u00e9',
+    'R\u00e9seaux & T\u00e9l\u00e9coms',
+    'Finance & Comptabilit\u00e9',
+    'Marketing & Ventes'
   ];
 
   locationOptions = [
@@ -64,20 +73,22 @@ export class JobsComponent implements OnInit {
   ];
 
   isContractDropdownOpen = false;
-  isIndustryDropdownOpen = false;
+  isStudyFieldDropdownOpen = false;
   isLocationDropdownOpen = false;
   contractSearch = '';
-  industrySearch = '';
+  studyFieldSearch = '';
   locationSearch = '';
 
   constructor(
     private readonly jobService: JobService,
+    private readonly profileService: ProfileService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
+    this.loadStudentFieldOfStudy();
     this.loadMyApplications();
     this.loadJobs();
 
@@ -102,11 +113,34 @@ export class JobsComponent implements OnInit {
       const matchCompany = !this.filterCompany || (job.company || '').toLowerCase().includes(this.filterCompany.toLowerCase());
       const matchTitle = !this.filterTitle || job.title.toLowerCase().includes(this.filterTitle.toLowerCase());
       const matchContract = !this.selectedContractTypes.length || this.selectedContractTypes.includes((job.contractType || '').toUpperCase());
-      const matchIndustry = !this.selectedIndustryOptions.length || this.selectedIndustryOptions.includes(job.industry || '');
+      const normalizedJobTargetFields = (job.targetFields || []).map((field) => this.normalizeStudyField(field));
+      const matchStudyFields = !this.selectedStudyFieldOptions.length
+        || this.selectedStudyFieldOptions.some((selected) => normalizedJobTargetFields.includes(this.normalizeStudyField(selected)));
       const matchLocation = !this.selectedLocationOptions.length || this.selectedLocationOptions.includes(job.location || '');
 
-      return matchGlobal && matchCompany && matchTitle && matchContract && matchIndustry && matchLocation;
+      return matchGlobal && matchCompany && matchTitle && matchContract && matchStudyFields && matchLocation;
     });
+  }
+
+  get recommendedJobs(): JobOffer[] {
+    const studentField = this.normalizeStudyField(this.studentFieldOfStudy);
+    if (!studentField) {
+      return [];
+    }
+    return this.filteredJobs.filter((job) =>
+      (job.targetFields || []).some((field) => this.normalizeStudyField(field) === studentField)
+    );
+  }
+
+  get displayedJobs(): JobOffer[] {
+    if (!this.showRecommendedOnly) {
+      return this.filteredJobs;
+    }
+    return this.recommendedJobs;
+  }
+
+  toggleRecommendedOnly(): void {
+    this.showRecommendedOnly = !this.showRecommendedOnly;
   }
 
   get filteredContractTypeOptions(): { label: string; value: string }[] {
@@ -117,12 +151,12 @@ export class JobsComponent implements OnInit {
     return this.contractTypeOptions.filter((o) => o.label.toLowerCase().includes(q));
   }
 
-  get filteredIndustryOptions(): string[] {
-    const q = this.industrySearch.trim().toLowerCase();
+  get filteredStudyFieldOptions(): string[] {
+    const q = this.studyFieldSearch.trim().toLowerCase();
     if (!q) {
-      return this.industryOptions;
+      return this.studyFieldOptions;
     }
-    return this.industryOptions.filter((o) => o.toLowerCase().includes(q));
+    return this.studyFieldOptions.filter((o) => o.toLowerCase().includes(q));
   }
 
   get filteredLocationOptions(): string[] {
@@ -141,19 +175,19 @@ export class JobsComponent implements OnInit {
     this.filterIndustry = '';
     this.filterLocation = '';
     this.selectedContractTypes = [];
-    this.selectedIndustryOptions = [];
+    this.selectedStudyFieldOptions = [];
     this.selectedLocationOptions = [];
     this.contractSearch = '';
-    this.industrySearch = '';
+    this.studyFieldSearch = '';
     this.locationSearch = '';
     this.isContractDropdownOpen = false;
-    this.isIndustryDropdownOpen = false;
+    this.isStudyFieldDropdownOpen = false;
     this.isLocationDropdownOpen = false;
   }
 
-  toggleDropdown(type: 'contract' | 'industry' | 'location'): void {
+  toggleDropdown(type: 'contract' | 'studyField' | 'location'): void {
     this.isContractDropdownOpen = type === 'contract' ? !this.isContractDropdownOpen : false;
-    this.isIndustryDropdownOpen = type === 'industry' ? !this.isIndustryDropdownOpen : false;
+    this.isStudyFieldDropdownOpen = type === 'studyField' ? !this.isStudyFieldDropdownOpen : false;
     this.isLocationDropdownOpen = type === 'location' ? !this.isLocationDropdownOpen : false;
   }
 
@@ -180,12 +214,12 @@ export class JobsComponent implements OnInit {
     }
   }
 
-  toggleSelectedIndustry(value: string): void {
-    const index = this.selectedIndustryOptions.indexOf(value);
+  toggleSelectedStudyField(value: string): void {
+    const index = this.selectedStudyFieldOptions.indexOf(value);
     if (index >= 0) {
-      this.selectedIndustryOptions.splice(index, 1);
+      this.selectedStudyFieldOptions.splice(index, 1);
     } else {
-      this.selectedIndustryOptions.push(value);
+      this.selectedStudyFieldOptions.push(value);
     }
   }
 
@@ -346,6 +380,28 @@ export class JobsComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  private loadStudentFieldOfStudy(): void {
+    this.profileService.getMyEspritProfile().subscribe({
+      next: (profile) => {
+        this.studentFieldOfStudy = profile?.fieldOfStudy || '';
+      },
+      error: () => {
+        this.studentFieldOfStudy = '';
+      }
+    });
+  }
+
+  private normalizeStudyField(value?: string | null): string {
+    if (!value) {
+      return '';
+    }
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase();
   }
 
   private loadMyApplications(): void {

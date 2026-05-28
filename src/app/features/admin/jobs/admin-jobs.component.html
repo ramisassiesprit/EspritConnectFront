@@ -109,6 +109,42 @@
         <input [(ngModel)]="form.deadline" type="date" />
       </label>
 
+      <div class="target-field-block">
+        <label>Target field(s) of study</label>
+        <div class="multi-select">
+          <button
+            type="button"
+            class="multi-select-toggle"
+            [ngClass]="{ placeholder: !selectedTargetFields.length }"
+            (click)="toggleTargetFieldDropdown()"
+          >
+            <span class="multi-select-value">
+              {{ selectedTargetFields.length ? selectedTargetFields.join(', ') : 'Select target fields' }}
+            </span>
+            <span class="arrow" [class.open]="isTargetFieldDropdownOpen"></span>
+          </button>
+
+          <div class="multi-select-panel" *ngIf="isTargetFieldDropdownOpen" (wheel)="preventScrollBubble($event)">
+            <input
+              type="text"
+              class="multi-search"
+              placeholder="Search field of study"
+              [(ngModel)]="targetFieldSearch"
+              (click)="$event.stopPropagation()"
+            />
+            <label *ngFor="let option of filteredTargetFieldOptions" class="multi-option">
+              <input
+                type="checkbox"
+                [checked]="selectedTargetFields.includes(option)"
+                (change)="toggleSelectedTargetField(option)"
+              />
+              <span>{{ option }}</span>
+            </label>
+            <p class="multi-empty" *ngIf="filteredTargetFieldOptions.length === 0">No matching fields.</p>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <div class="map-picker">
@@ -148,10 +184,10 @@
         <article class="job-item" *ngFor="let job of filteredJobs">
           <div class="job-item__main" (click)="selectJob(job)">
             <h3>{{ job.title }}</h3>
-            <p>{{ job.company || 'N/A' }} · {{ job.location || 'N/A' }}</p>
+            <p>{{ job.company || 'N/A' }} - {{ job.location || 'N/A' }}</p>
             <small class="job-meta-line">
               <span>{{ job.contractType || 'N/A' }}</span>
-              <span class="meta-sep">·</span>
+              <span class="meta-sep">-</span>
               <span [ngClass]="jobStatusClass(job.status)">{{ job.status }}</span>
             </small>
           </div>
