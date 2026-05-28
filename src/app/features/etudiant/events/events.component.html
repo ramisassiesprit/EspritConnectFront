@@ -315,6 +315,14 @@
             </div>
           </div>
 
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label>Tags de l'événement (Mots-clés séparés par des virgules)</label>
+              <input type="text" [(ngModel)]="newEvent.tags" name="tags" placeholder="Ex: Spring Boot, Angular, Web3, Hackathon...">
+              <small style="color: #6b7280; font-size: 11px; margin-top: 4px; display: block;">Ces tags seront utilisés par notre algorithme pour recommander cet événement aux étudiants pertinents.</small>
+            </div>
+          </div>
+
           <div class="form-actions-bar">
             <button type="button" class="btn-cancel-action" (click)="closeCreateModal()">Annuler</button>
             <button type="submit" class="btn-submit-action">Créer l'événement</button>

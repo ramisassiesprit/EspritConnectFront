@@ -53,7 +53,8 @@ export class EventsComponent implements OnInit {
     startAt: '',
     endAt: '',
     capacity: undefined as number | undefined,
-    coverUrl: ''
+    coverUrl: '',
+    tags: ''
   };
 
   eventTypes = Object.values(EventType);
@@ -79,6 +80,10 @@ export class EventsComponent implements OnInit {
     this.eventService.getRecommendedEvents().subscribe({
       next: (recs) => {
         this.recommendedEvents.set(recs);
+        console.log("Scores de recommandation des événements :");
+        recs.forEach(event => {
+          console.log(`- ${event.title} : ${event.matchScore}`);
+        });
       },
       error: (err) => console.error('Failed to load recommended events', err)
     });
@@ -168,7 +173,8 @@ export class EventsComponent implements OnInit {
       startAt: '',
       endAt: '',
       capacity: undefined,
-      coverUrl: ''
+      coverUrl: '',
+      tags: ''
     };
     this.showCreateModal.set(true);
   }
@@ -192,7 +198,8 @@ export class EventsComponent implements OnInit {
       startAt: new Date(this.newEvent.startAt).toISOString(),
       endAt: this.newEvent.endAt ? new Date(this.newEvent.endAt).toISOString() : undefined,
       capacity: this.newEvent.capacity,
-      coverUrl: this.newEvent.coverUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800'
+      coverUrl: this.newEvent.coverUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+      tags: this.newEvent.tags
     };
 
     this.eventService.createEvent(payload).subscribe({
