@@ -19,6 +19,10 @@ export class JobService {
     return this.http.get<JobOffer[]>(`${this.jobsUrl}/mine`);
   }
 
+  getTargetFieldOptions(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.jobsUrl}/target-fields`);
+  }
+
   getPendingJobs(): Observable<JobOffer[]> {
     return this.http.get<JobOffer[]>(`${this.jobsUrl}/pending`);
   }

@@ -14,13 +14,14 @@
         <!-- Avatar -->
         <div class="avatar-wrap">
           <div class="avatar">
-            <img *ngIf="user.avatarUrl" [src]="user.avatarUrl" alt="avatar">
-            <i *ngIf="!user.avatarUrl" class="bi bi-person-fill avatar-placeholder"></i>
+            <img *ngIf="avatarPreviewUrl || user.avatarUrl" [src]="avatarPreviewUrl || user.avatarUrl" alt="avatar">
+            <i *ngIf="!avatarPreviewUrl && !user.avatarUrl" class="bi bi-person-fill avatar-placeholder"></i>
           </div>
           <label for="avatarInput" class="avatar-cam">
             <i class="bi bi-camera"></i>
           </label>
           <input type="file" id="avatarInput" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+          <button *ngIf="hasPendingAvatarSave" type="button" (click)="saveAvatar()" class="btn-avatar-save">SAVE PHOTO</button>
         </div>
 
         <!-- Name + Role + Button + Social -->

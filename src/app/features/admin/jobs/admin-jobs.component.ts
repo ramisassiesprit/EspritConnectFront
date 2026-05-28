@@ -34,6 +34,23 @@ export class AdminJobsComponent implements OnInit {
   selectedImageFile: File | null = null;
 
   readonly contractTypes: ContractType[] = ['CDI', 'CDD', 'INTERNSHIP', 'FREELANCE', 'PART_TIME', 'VOLUNTEER'];
+  targetFieldOptions: string[] = [
+    'G\u00e9nie Logiciel',
+    'Informatique',
+    'G\u00e9nie T\u00e9l\u00e9communications',
+    'G\u00e9nie \u00c9lectrom\u00e9canique',
+    'G\u00e9nie Civil',
+    'Management & Business',
+    'Science des Donn\u00e9es',
+    'Syst\u00e8mes Embarqu\u00e9s',
+    'Cloud & S\u00e9curit\u00e9',
+    'R\u00e9seaux & T\u00e9l\u00e9coms',
+    'Finance & Comptabilit\u00e9',
+    'Marketing & Ventes'
+  ];
+  selectedTargetFields: string[] = [];
+  targetFieldSearch = '';
+  isTargetFieldDropdownOpen = false;
   form: JobOffer = this.emptyJob();
   private map: any = null;
   private marker: any = null;
@@ -182,6 +199,9 @@ export class AdminJobsComponent implements OnInit {
     this.showCreateForm = true;
     this.editingJobId = '';
     this.form = this.emptyJob();
+    this.selectedTargetFields = [];
+    this.targetFieldSearch = '';
+    this.isTargetFieldDropdownOpen = false;
     this.form.company = this.companyAccountName || this.form.company;
     this.selectedImageFile = null;
     this.message = '';
@@ -206,6 +226,9 @@ export class AdminJobsComponent implements OnInit {
       ...job,
       deadline: job.deadline ? String(job.deadline).slice(0, 10) : undefined
     };
+    this.selectedTargetFields = [...(job.targetFields || [])];
+    this.targetFieldSearch = '';
+    this.isTargetFieldDropdownOpen = false;
     this.message = '';
     this.error = '';
     this.selectedImageFile = null;
@@ -220,6 +243,9 @@ export class AdminJobsComponent implements OnInit {
     this.showCreateForm = false;
     this.editingJobId = '';
     this.form = this.emptyJob();
+    this.selectedTargetFields = [];
+    this.targetFieldSearch = '';
+    this.isTargetFieldDropdownOpen = false;
     this.selectedImageFile = null;
     this.destroyMap();
   }
@@ -250,6 +276,7 @@ export class AdminJobsComponent implements OnInit {
       status: this.form.status || 'PENDING',
       applyUrl: this.form.applyUrl?.trim() || undefined,
       attachmentUrl: this.form.attachmentUrl?.trim() || undefined,
+      targetFields: [...this.selectedTargetFields],
       latitude: this.form.latitude != null ? Number(this.form.latitude) : undefined,
       longitude: this.form.longitude != null ? Number(this.form.longitude) : undefined
     };
@@ -295,6 +322,41 @@ export class AdminJobsComponent implements OnInit {
   onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedImageFile = input.files?.[0] || null;
+  }
+
+  toggleTargetFieldDropdown(): void {
+    this.isTargetFieldDropdownOpen = !this.isTargetFieldDropdownOpen;
+  }
+
+  get filteredTargetFieldOptions(): string[] {
+    const q = this.targetFieldSearch.trim().toLowerCase();
+    if (!q) {
+      return this.targetFieldOptions;
+    }
+    return this.targetFieldOptions.filter((v) => v.toLowerCase().includes(q));
+  }
+
+  toggleSelectedTargetField(value: string): void {
+    const idx = this.selectedTargetFields.indexOf(value);
+    if (idx >= 0) {
+      this.selectedTargetFields.splice(idx, 1);
+    } else {
+      this.selectedTargetFields.push(value);
+    }
+  }
+
+  preventScrollBubble(event: WheelEvent): void {
+    const panel = event.currentTarget as HTMLElement | null;
+    if (!panel) {
+      return;
+    }
+    const delta = event.deltaY;
+    const atTop = panel.scrollTop === 0;
+    const atBottom = Math.ceil(panel.scrollTop + panel.clientHeight) >= panel.scrollHeight;
+    if ((delta < 0 && atTop) || (delta > 0 && atBottom)) {
+      event.preventDefault();
+    }
+    event.stopPropagation();
   }
 
   deleteJob(job: JobOffer): void {
@@ -436,6 +498,7 @@ export class AdminJobsComponent implements OnInit {
       deadline: undefined,
       applyUrl: '',
       attachmentUrl: '',
+      targetFields: [],
       status: 'PENDING'
     };
   }

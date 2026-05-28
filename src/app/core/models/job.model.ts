@@ -21,6 +21,7 @@ export interface JobOffer {
   deadline?: string;
   applyUrl?: string;
   attachmentUrl?: string;
+  targetFields?: string[];
   imageUrl?: string;
   status: JobStatus;
   createdAt?: string;

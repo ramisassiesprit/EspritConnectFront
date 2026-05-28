@@ -8,12 +8,13 @@ import { User } from '../../../core/models/user.model';
 import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../../../core/models/profile.model';
 import { RequestHelpModalComponent } from './request-help-modal/request-help-modal.component';
 import { OfferHelpModalComponent } from './offer-help-modal/offer-help-modal.component';
+import { VideoChatModalComponent } from './video-chat-modal/video-chat-modal.component';
 import { MentorshipService } from '../../../core/services/mentorship.service';
 
 @Component({
   selector: 'app-user-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, RequestHelpModalComponent, OfferHelpModalComponent],
+  imports: [CommonModule, RouterModule, RequestHelpModalComponent, OfferHelpModalComponent, VideoChatModalComponent],
   templateUrl: './user-details.component.html',
   styleUrl: './user-details.component.css'
 })
@@ -100,6 +101,19 @@ export class UserDetailsComponent implements OnInit {
   // Modals state
   isRequestHelpModalOpen = false;
   isOfferHelpModalOpen = false;
+  isVideoChatModalOpen = false;
+
+  openVideoChatModal() {
+    this.isVideoChatModalOpen = true;
+  }
+
+  closeVideoChatModal() {
+    this.isVideoChatModalOpen = false;
+  }
+
+  handleVideoChatScheduled(event: any) {
+    console.log('Video chat scheduled!', event);
+  }
 
   openRequestHelpModal() {
     this.isRequestHelpModalOpen = true;

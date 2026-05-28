@@ -9,13 +9,27 @@
         </div>
       </div>
       <p class="jobs-result">Found {{ filteredJobs.length }} job opportunities</p>
+
+      <div class="recommend-toggle-wrap" *ngIf="studentFieldOfStudy">
+        <button
+          type="button"
+          class="recommend-toggle-btn"
+          [class.active]="showRecommendedOnly"
+          (click)="toggleRecommendedOnly()"
+        >
+          {{ showRecommendedOnly ? 'Showing Recommended Only' : 'Show Recommended Jobs' }}
+        </button>
+        <span class="recommend-caption">Based on your field: <strong>{{ studentFieldOfStudy }}</strong></span>
+      </div>
     </div>
 
     <p class="inline-state error" *ngIf="error">{{ error }}</p>
     <p class="inline-state loading" *ngIf="loading">Loading jobs...</p>
 
-    <div class="job-list" *ngIf="!loading && filteredJobs.length > 0">
-      <article class="job-card" *ngFor="let job of filteredJobs" (click)="openJob(job.id)">
+    <p class="inline-state" *ngIf="!loading && showRecommendedOnly && displayedJobs.length === 0">No recommended jobs for your field right now.</p>
+
+    <div class="job-list" *ngIf="!loading && displayedJobs.length > 0">
+      <article class="job-card" [class.job-card--recommended]="showRecommendedOnly" *ngFor="let job of displayedJobs" (click)="openJob(job.id)">
         <div class="job-card-top">
           <img
             class="company-logo"
@@ -80,33 +94,33 @@
     </div>
 
     <div class="filter-field">
-      <label>Job function</label>
+      <label>Study fields</label>
       <div class="multi-select">
         <button
           type="button"
           class="multi-select-toggle"
-          [ngClass]="{ placeholder: !selectedIndustryOptions.length }"
-          (click)="toggleDropdown('industry')"
+          [ngClass]="{ placeholder: !selectedStudyFieldOptions.length }"
+          (click)="toggleDropdown('studyField')"
         >
           <span class="multi-select-value">
-            {{ selectedIndustryOptions.length ? selectedIndustryOptions.join(', ') : 'Select' }}
+            {{ selectedStudyFieldOptions.length ? selectedStudyFieldOptions.join(', ') : 'Select' }}
           </span>
-          <span class="arrow" [class.open]="isIndustryDropdownOpen"></span>
+          <span class="arrow" [class.open]="isStudyFieldDropdownOpen"></span>
         </button>
 
-        <div class="multi-select-panel" *ngIf="isIndustryDropdownOpen" (wheel)="preventScrollBubble($event)">
+        <div class="multi-select-panel" *ngIf="isStudyFieldDropdownOpen" (wheel)="preventScrollBubble($event)">
           <input
             type="text"
             class="multi-search"
             placeholder="Search"
-            [(ngModel)]="industrySearch"
+            [(ngModel)]="studyFieldSearch"
             (click)="$event.stopPropagation()"
           />
-          <label *ngFor="let option of filteredIndustryOptions" class="multi-option">
+          <label *ngFor="let option of filteredStudyFieldOptions" class="multi-option">
             <input
               type="checkbox"
-              [checked]="selectedIndustryOptions.includes(option)"
-              (change)="toggleSelectedIndustry(option)"
+              [checked]="selectedStudyFieldOptions.includes(option)"
+              (change)="toggleSelectedStudyField(option)"
             />
             <span>{{ option }}</span>
           </label>
@@ -178,6 +192,13 @@
             <div>
               <label>Posted</label>
               <p>{{ selectedJob.createdAt | date:'dd/MM/yyyy' }}</p>
+            </div>
+          </div>
+
+          <div class="target-fields" *ngIf="selectedJob.targetFields && selectedJob.targetFields.length > 0">
+            <label>Targeted fields of study</label>
+            <div class="target-fields__chips">
+              <span class="target-field-chip" *ngFor="let field of selectedJob.targetFields">{{ field }}</span>
             </div>
           </div>
         </div>
