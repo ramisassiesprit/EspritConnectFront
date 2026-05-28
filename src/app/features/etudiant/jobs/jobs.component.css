@@ -83,6 +83,52 @@
   color: #dc2626;
 }
 
+.recommend-toggle-wrap {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.recommend-toggle-btn {
+  border: 1px solid #fecaca;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #b91c1c;
+  background: #fff1f2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recommend-toggle-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(244, 63, 94, 0.18);
+}
+
+.recommend-toggle-btn.active {
+  color: #ffffff;
+  border-color: #dc2626;
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+.recommend-caption {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.job-card--recommended {
+  border-color: #bfdbfe;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.job-card--recommended:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 18px 34px rgba(59, 130, 246, 0.12);
+}
+
 .job-list {
   display: flex;
   flex-direction: column;
@@ -152,6 +198,36 @@
   padding: 2px 10px;
   font-weight: 700;
   font-size: 12px;
+}
+
+.applied-chip.state-pending {
+  background: #eff6ff;
+  color: #1e3a8a;
+  border-color: #bfdbfe;
+}
+
+.applied-chip.state-reviewed {
+  background: #f5f3ff;
+  color: #5b21b6;
+  border-color: #ddd6fe;
+}
+
+.applied-chip.state-shortlisted {
+  background: #fff7ed;
+  color: #9a3412;
+  border-color: #fed7aa;
+}
+
+.applied-chip.state-accepted {
+  background: #f0fdf4;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.applied-chip.state-rejected {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
 }
 
 .job-card-desc {
@@ -370,6 +446,42 @@
   margin: 8px 0 0;
   color: #1f2937;
   font-weight: 600;
+}
+
+.target-fields {
+  margin-top: 14px;
+}
+
+.target-fields label {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.target-fields__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.target-field-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #fecaca;
+  background: linear-gradient(180deg, #fff1f2 0%, #ffffff 100%);
+  color: #9f1239;
+  font-size: 12px;
+  font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.target-field-chip:hover {
+  transform: translateY(-1px);
+  border-color: #fda4af;
+  box-shadow: 0 6px 14px rgba(244, 63, 94, 0.12);
 }
 
 .description {
@@ -704,6 +816,10 @@
 
   .apply-zone {
     grid-template-columns: 1fr;
+  }
+
+  .recommend-toggle-wrap {
+    align-items: stretch;
   }
 }
 

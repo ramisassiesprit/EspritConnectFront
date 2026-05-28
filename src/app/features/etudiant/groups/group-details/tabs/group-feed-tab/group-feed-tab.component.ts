@@ -264,9 +264,9 @@ export class GroupFeedTabComponent implements OnInit, OnDestroy {
     return (tempDiv.textContent || tempDiv.innerText || '').trim();
   }
 
-  getFullUrl(url: string): string {
+  getFullUrl(url?: string): string {
     if (!url) return '';
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
     const base = environment.apiUrl;
     return base + (url.startsWith('/') ? url.substring(1) : url);
   }
@@ -541,7 +541,8 @@ export class GroupFeedTabComponent implements OnInit, OnDestroy {
     // Combine all selected media files and other attachments
     const uploads: File[] = [...this.selectedMediaFiles, ...this.selectedFiles];
 
-    let finalContent = this.modalPostContent;
+    let plainContent = this.cleanHtmlContent(this.stripHtmlTags(this.modalPostContent));
+    let finalContent = plainContent;
     if (this.selectedTags && this.selectedTags.length > 0) {
       finalContent += `<!--TAGS:${JSON.stringify(this.selectedTags)}-->`;
     }

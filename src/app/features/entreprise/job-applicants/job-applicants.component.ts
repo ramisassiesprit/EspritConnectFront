@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApplicationStatus, JobApplication, JobOffer } from '../../../core/models/job.model';
+import { UserRole } from '../../../core/models/user-role.enum';
+import { AuthService } from '../../../core/services/auth.service';
 import { JobService } from '../../../core/services/job.service';
 
 @Component({
@@ -17,19 +19,24 @@ export class JobApplicantsComponent implements OnInit {
   applications: JobApplication[] = [];
   loading = false;
   error = '';
+  backRoute = '/entreprise/jobs';
 
   readonly applicationStatuses: ApplicationStatus[] = ['PENDING', 'REVIEWED', 'SHORTLISTED', 'REJECTED', 'ACCEPTED'];
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly authService: AuthService,
     private readonly jobService: JobService
   ) {}
 
   ngOnInit(): void {
+    const role = this.authService.currentUser()?.role;
+    this.backRoute = role === UserRole.ADMIN ? '/admin/jobs' : '/entreprise/jobs';
+
     const jobId = this.route.snapshot.paramMap.get('id');
     if (!jobId) {
-      this.router.navigate(['/entreprise/jobs']);
+      this.router.navigate([this.backRoute]);
       return;
     }
     this.load(jobId);

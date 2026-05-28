@@ -8,11 +8,12 @@ import { Message } from '../../../core/models/message.model';
 import { User } from '../../../core/models/user.model';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { VideoChatModalComponent } from '../user-details/video-chat-modal/video-chat-modal.component';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, VideoChatModalComponent],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
@@ -31,6 +32,22 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   newMessage: string = '';
   contacts: User[] = [];
   private messageSub?: Subscription;
+  
+  isVideoChatModalOpen = false;
+
+  openVideoChatModal() {
+    if (this.receiver) {
+      this.isVideoChatModalOpen = true;
+    }
+  }
+
+  closeVideoChatModal() {
+    this.isVideoChatModalOpen = false;
+  }
+
+  handleVideoChatScheduled(event: any) {
+    console.log('Video chat scheduled from chat screen!', event);
+  }
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe(user => {

@@ -12,7 +12,7 @@
 
     <!-- Post Creator trigger -->
     <div class="section-card creator-card">
-      <img [src]="currentUser()?.avatarUrl" *ngIf="currentUser()?.avatarUrl" class="creator-avatar" alt="Avatar"
+      <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl" class="creator-avatar" alt="Avatar"
         style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
       <div class="creator-avatar" *ngIf="!currentUser()?.avatarUrl"
         style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af; width: 40px; height: 40px;">
@@ -48,6 +48,8 @@
 
           <div style="position: relative; width: 50px; height: 50px; flex-shrink: 0;">
             <img [src]="member.avatarUrl" *ngIf="member.avatarUrl"
+          <div style="position: relative; width: 28px; height: 28px; flex-shrink: 0;">
+            <img [src]="getFullUrl(member.avatarUrl)" *ngIf="member.avatarUrl"
               style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Avatar">
             <div *ngIf="!member.avatarUrl"
               style="display: flex; align-items: center; justify-content: center; background-color: #e5e7eb; border-radius: 50%; color: #9ca3af; width: 100%; height: 100%;">
@@ -176,7 +178,7 @@
           <div *ngIf="openCommentsPostIds[post.id]" class="comments-drawer" style="width: 100%;">
             <!-- Comment Input Box -->
             <div class="comment-input-box" style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
-              <img [src]="currentUser()?.avatarUrl" *ngIf="currentUser()?.avatarUrl" class="comment-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+              <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl" class="comment-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
               <div class="comment-avatar" *ngIf="!currentUser()?.avatarUrl" style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af; width: 32px; height: 32px;">
                 <i class="bi bi-person-fill" style="font-size: 16px;"></i>
               </div>
@@ -192,7 +194,7 @@
                 No comments yet. Share your thoughts!
               </div>
               <div *ngFor="let comment of postComments[post.id]" class="comment-item" style="display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; background-color: #f9fafb; border-radius: 12px; transition: background 0.2s;">
-                <img [src]="comment.user.avatarUrl" *ngIf="comment.user.avatarUrl" class="comment-avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px;">
+                <img [src]="getFullUrl(comment.user.avatarUrl)" *ngIf="comment.user.avatarUrl" class="comment-avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px;">
                 <div *ngIf="!comment.user.avatarUrl" class="comment-avatar" style="display: flex; align-items: center; justify-content: center; background-color: #e5e7eb; border-radius: 50%; color: #9ca3af; width: 28px; height: 28px; flex-shrink: 0; margin-top: 2px;">
                   <i class="bi bi-person-fill" style="font-size: 14px;"></i>
                 </div>
@@ -237,7 +239,7 @@
           <div *ngFor="let user of searchResults" (click)="selectUser(user)"
             style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background 0.2s;"
             onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
-            <img [src]="user.avatarUrl" *ngIf="user.avatarUrl"
+            <img [src]="getFullUrl(user.avatarUrl)" *ngIf="user.avatarUrl"
               style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" alt="Avatar">
             <div *ngIf="!user.avatarUrl"
               style="width: 24px; height: 24px; border-radius: 50%; background-color: #f3f4f6; color: #9ca3af; display: flex; align-items: center; justify-content: center;">
@@ -282,7 +284,7 @@
     <!-- Modal Header -->
     <div class="modal-header">
       <div class="modal-author">
-        <img [src]="currentUser()?.avatarUrl" *ngIf="currentUser()?.avatarUrl" class="modal-avatar" alt="Avatar">
+        <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl" class="modal-avatar" alt="Avatar">
         <div class="modal-avatar" *ngIf="!currentUser()?.avatarUrl"
           style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af;">
           <i class="bi bi-person-fill" style="font-size: 20px; line-height: 1;"></i>
@@ -363,7 +365,7 @@
           <div class="tag-members-list">
             <div *ngFor="let member of onlineMembers" (click)="toggleMemberTag(member)" class="tag-member-row"
               [class.selected]="isMemberTagged(member)">
-              <img [src]="member.avatarUrl" *ngIf="member.avatarUrl" class="tag-member-avatar" alt="Avatar">
+              <img [src]="getFullUrl(member.avatarUrl)" *ngIf="member.avatarUrl" class="tag-member-avatar" alt="Avatar">
               <div *ngIf="!member.avatarUrl" class="tag-member-avatar"
                 style="display: flex; align-items: center; justify-content: center; background-color: #e5e7eb; color: #9ca3af; font-size: 10px;">
                 <i class="bi bi-person-fill"></i>

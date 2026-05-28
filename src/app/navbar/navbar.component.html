@@ -26,6 +26,69 @@
           }
         </button>
 
+        <!-- Meetings -->
+        <div style="position: relative; display: inline-block;">
+          <button class="navbar__icon-btn" aria-label="Meetings" (click)="toggleMeetingsDropdown(); $event.stopPropagation()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            @if (unreadMeetingsCount() > 0) {
+              <span class="navbar__badge" style="background-color: #2196F3;">{{ unreadMeetingsCount() }}</span>
+            }
+          </button>
+
+          @if (showMeetingsDropdown()) {
+            <div class="navbar__profile-menu navbar__notif-menu fade-in" (click)="$event.stopPropagation()" style="width: 320px; right: 0; max-height: 400px; overflow-y: auto; position: absolute; top: 100%; margin-top: 10px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; z-index: 1000;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px;">
+                <span style="font-weight: bold; font-size: 15px; color: #333;">Vos Réunions</span>
+              </div>
+              <hr class="navbar__divider" style="margin: 0; border: 0; border-top: 1px solid #eee;">
+              
+              <div class="navbar__notif-list">
+                @if (meetings().length === 0) {
+                  <div style="padding: 25px; text-align: center; color: #777; font-size: 13px;">
+                    Aucune réunion prévue
+                  </div>
+                } @else {
+                  @for (meeting of meetings(); track meeting.id) {
+                    <div class="navbar__notif-item" [class.navbar__notif-item--unread]="!meeting.isRead" style="padding: 12px 15px; border-bottom: 1px solid #f5f5f5; display: flex; flex-direction: column; gap: 4px; transition: background-color 0.2s; cursor: pointer;" (click)="onMeetingClick(meeting, $event)">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                        <span style="font-weight: 600; font-size: 13px; color: #111; line-height: 1.4;">{{ meeting.title }}</span>
+                        @if (!meeting.isRead) {
+                          <button (click)="markMeetingAsRead(meeting, $event)" title="Marquer comme lu" style="background: none; border: none; padding: 2px; color: #2196F3; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; width: 22px; height: 22px; margin-top: -2px; flex-shrink: 0;" onmouseenter="this.style.backgroundColor='#e3f2fd'" onmouseleave="this.style.backgroundColor='transparent'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          </button>
+                        }
+                      </div>
+                      
+                      <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+                        <span style="font-size: 12px; font-weight: 500; color: #444;">
+                          📅 {{ meeting.scheduledDate | date:'dd/MM/yyyy HH:mm' }}
+                        </span>
+                        
+                        @if (meeting.isExpired) {
+                          <span style="font-size: 11px; color: #C00000; font-weight: 500;">Expirée</span>
+                        } @else {
+                          <span style="font-size: 11px; color: #008000; font-weight: 500;">
+                            Dans {{ meeting.daysLeft }} jour(s)
+                          </span>
+                        }
+                      </div>
+                      
+                      <span style="font-size: 10px; color: #999; margin-top: 6px;">Créée le {{ meeting.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </div>
+
         <!-- Notifications -->
         <div style="position: relative; display: inline-block;">
           <button class="navbar__icon-btn" aria-label="Notifications" (click)="toggleNotifDropdown(); $event.stopPropagation()">
@@ -49,13 +112,13 @@
               <hr class="navbar__divider" style="margin: 0; border: 0; border-top: 1px solid #eee;">
               
               <div class="navbar__notif-list">
-                @if (notifications().length === 0) {
+                @if (regularNotifications().length === 0) {
                   <div style="padding: 25px; text-align: center; color: #777; font-size: 13px;">
                     Aucune notification pour le moment
                   </div>
                 } @else {
-                  @for (notif of notifications(); track notif.id) {
-                    <div class="navbar__notif-item" [class.navbar__notif-item--unread]="!notif.isRead" style="padding: 12px 15px; border-bottom: 1px solid #f5f5f5; display: flex; flex-direction: column; gap: 4px; transition: background-color 0.2s; cursor: pointer;" [routerLink]="getNotificationLink(notif)" (click)="showNotifDropdown.set(false)">
+                  @for (notif of regularNotifications(); track notif.id) {
+                    <div class="navbar__notif-item" [class.navbar__notif-item--unread]="!notif.isRead" style="padding: 12px 15px; border-bottom: 1px solid #f5f5f5; display: flex; flex-direction: column; gap: 4px; transition: background-color 0.2s; cursor: pointer;" (click)="onNotificationClick(notif, $event)">
                       <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
                         <span style="font-weight: 600; font-size: 13px; color: #111; line-height: 1.4;">{{ notif.title }}</span>
                         @if (!notif.isRead) {

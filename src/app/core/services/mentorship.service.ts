@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { User } from '../models/user.model';
+import { EspritProfile, User } from '../models/user.model';
 
 export type MentoringStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED' | 'CANCELLED';
 
@@ -14,6 +14,13 @@ export interface MentoringRequest {
   status: MentoringStatus;
   requestedAt?: string;
   updatedAt?: string;
+}
+
+export interface MentorMatch {
+  user: User;
+  espritProfile?: EspritProfile;
+  matchPercentage: number;
+  matchedSignals?: string[];
 }
 
 @Injectable({
@@ -46,6 +53,12 @@ export class MentorshipService {
   updateRequestStatus(requestId: string, status: MentoringStatus): Observable<MentoringRequest> {
     return this.http.put<MentoringRequest>(`${this.apiUrl}/requests/${requestId}/status`, null, {
       params: { status }
+    });
+  }
+
+  getRecommendedMentors(userId: string): Observable<MentorMatch[]> {
+    return this.http.get<MentorMatch[]>(`${this.apiUrl}/recommendations`, {
+      params: { userId }
     });
   }
 }

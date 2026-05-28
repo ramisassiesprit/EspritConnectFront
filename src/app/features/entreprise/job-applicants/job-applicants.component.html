@@ -1,6 +1,6 @@
 <section class="applicants-page">
   <div class="page-head">
-    <a routerLink="/entreprise/jobs" class="back-link">Back to jobs</a>
+    <a [routerLink]="backRoute" class="back-link">Back to jobs</a>
     <div class="page-head__title-row">
       <h2>Applicants</h2>
       <span class="count-badge" *ngIf="!loading && !error">{{ applications.length }} total</span>

@@ -3,9 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  ApplicationStatus,
   ContractType,
-  JobApplication,
   JobOffer,
   JobStatus
 } from '../../../core/models/job.model';
@@ -23,9 +21,6 @@ import { UserService } from '../../../core/services/User.service';
 })
 export class AdminJobsComponent implements OnInit {
   jobs: JobOffer[] = [];
-  selectedJobId = '';
-  selectedJob: JobOffer | null = null;
-  applications: JobApplication[] = [];
 
   loading = false;
   saving = false;
@@ -39,8 +34,23 @@ export class AdminJobsComponent implements OnInit {
   selectedImageFile: File | null = null;
 
   readonly contractTypes: ContractType[] = ['CDI', 'CDD', 'INTERNSHIP', 'FREELANCE', 'PART_TIME', 'VOLUNTEER'];
-  readonly applicationStatuses: ApplicationStatus[] = ['PENDING', 'REVIEWED', 'SHORTLISTED', 'REJECTED', 'ACCEPTED'];
-
+  targetFieldOptions: string[] = [
+    'G\u00e9nie Logiciel',
+    'Informatique',
+    'G\u00e9nie T\u00e9l\u00e9communications',
+    'G\u00e9nie \u00c9lectrom\u00e9canique',
+    'G\u00e9nie Civil',
+    'Management & Business',
+    'Science des Donn\u00e9es',
+    'Syst\u00e8mes Embarqu\u00e9s',
+    'Cloud & S\u00e9curit\u00e9',
+    'R\u00e9seaux & T\u00e9l\u00e9coms',
+    'Finance & Comptabilit\u00e9',
+    'Marketing & Ventes'
+  ];
+  selectedTargetFields: string[] = [];
+  targetFieldSearch = '';
+  isTargetFieldDropdownOpen = false;
   form: JobOffer = this.emptyJob();
   private map: any = null;
   private marker: any = null;
@@ -135,15 +145,6 @@ export class AdminJobsComponent implements OnInit {
     return keys.map((k) => ({ label: k.label, value: counts[k.key] || 0 }));
   }
 
-  get applicationStatusStats(): { label: string; value: number }[] {
-    const counts: Record<string, number> = {};
-    for (const app of this.applications) {
-      const key = app.status || 'PENDING';
-      counts[key] = (counts[key] || 0) + 1;
-    }
-    return Object.entries(counts).map(([label, value]) => ({ label, value }));
-  }
-
   maxStatValue(stats: { value: number }[]): number {
     return Math.max(1, ...stats.map((s) => s.value));
   }
@@ -174,9 +175,10 @@ export class AdminJobsComponent implements OnInit {
     if (!job.id) {
       return;
     }
-    this.selectedJobId = job.id;
-    this.selectedJob = job;
-    this.loadApplications(job.id);
+    if (this.isAdminMode) {
+      this.router.navigate(['/admin/jobs', job.id, 'applicants']);
+      return;
+    }
   }
 
   viewApplicants(job: JobOffer): void {
@@ -187,7 +189,7 @@ export class AdminJobsComponent implements OnInit {
       this.router.navigate(['/entreprise/jobs', job.id, 'applicants']);
       return;
     }
-    this.selectJob(job);
+    this.router.navigate(['/admin/jobs', job.id, 'applicants']);
   }
 
   startCreate(): void {
@@ -197,6 +199,9 @@ export class AdminJobsComponent implements OnInit {
     this.showCreateForm = true;
     this.editingJobId = '';
     this.form = this.emptyJob();
+    this.selectedTargetFields = [];
+    this.targetFieldSearch = '';
+    this.isTargetFieldDropdownOpen = false;
     this.form.company = this.companyAccountName || this.form.company;
     this.selectedImageFile = null;
     this.message = '';
@@ -221,6 +226,9 @@ export class AdminJobsComponent implements OnInit {
       ...job,
       deadline: job.deadline ? String(job.deadline).slice(0, 10) : undefined
     };
+    this.selectedTargetFields = [...(job.targetFields || [])];
+    this.targetFieldSearch = '';
+    this.isTargetFieldDropdownOpen = false;
     this.message = '';
     this.error = '';
     this.selectedImageFile = null;
@@ -235,6 +243,9 @@ export class AdminJobsComponent implements OnInit {
     this.showCreateForm = false;
     this.editingJobId = '';
     this.form = this.emptyJob();
+    this.selectedTargetFields = [];
+    this.targetFieldSearch = '';
+    this.isTargetFieldDropdownOpen = false;
     this.selectedImageFile = null;
     this.destroyMap();
   }
@@ -265,6 +276,7 @@ export class AdminJobsComponent implements OnInit {
       status: this.form.status || 'PENDING',
       applyUrl: this.form.applyUrl?.trim() || undefined,
       attachmentUrl: this.form.attachmentUrl?.trim() || undefined,
+      targetFields: [...this.selectedTargetFields],
       latitude: this.form.latitude != null ? Number(this.form.latitude) : undefined,
       longitude: this.form.longitude != null ? Number(this.form.longitude) : undefined
     };
@@ -312,9 +324,44 @@ export class AdminJobsComponent implements OnInit {
     this.selectedImageFile = input.files?.[0] || null;
   }
 
+  toggleTargetFieldDropdown(): void {
+    this.isTargetFieldDropdownOpen = !this.isTargetFieldDropdownOpen;
+  }
+
+  get filteredTargetFieldOptions(): string[] {
+    const q = this.targetFieldSearch.trim().toLowerCase();
+    if (!q) {
+      return this.targetFieldOptions;
+    }
+    return this.targetFieldOptions.filter((v) => v.toLowerCase().includes(q));
+  }
+
+  toggleSelectedTargetField(value: string): void {
+    const idx = this.selectedTargetFields.indexOf(value);
+    if (idx >= 0) {
+      this.selectedTargetFields.splice(idx, 1);
+    } else {
+      this.selectedTargetFields.push(value);
+    }
+  }
+
+  preventScrollBubble(event: WheelEvent): void {
+    const panel = event.currentTarget as HTMLElement | null;
+    if (!panel) {
+      return;
+    }
+    const delta = event.deltaY;
+    const atTop = panel.scrollTop === 0;
+    const atBottom = Math.ceil(panel.scrollTop + panel.clientHeight) >= panel.scrollHeight;
+    if ((delta < 0 && atTop) || (delta > 0 && atBottom)) {
+      event.preventDefault();
+    }
+    event.stopPropagation();
+  }
+
   deleteJob(job: JobOffer): void {
-    if (!this.isCompanyMode) {
-      this.error = 'Only company accounts can delete jobs.';
+    if (!this.isCompanyMode && !this.isAdminMode) {
+      this.error = 'Only company and admin accounts can delete jobs.';
       return;
     }
     if (!job.id) {
@@ -329,34 +376,11 @@ export class AdminJobsComponent implements OnInit {
 
     this.jobService.deleteJob(job.id).subscribe({
       next: () => {
-        if (this.selectedJobId === job.id) {
-          this.selectedJobId = '';
-          this.selectedJob = null;
-          this.applications = [];
-        }
         this.message = 'Job deleted successfully.';
         this.loadJobs();
       },
       error: (err) => {
         this.error = err?.error?.message || 'Unable to delete job.';
-      }
-    });
-  }
-
-  updateApplicationStatus(application: JobApplication, status: ApplicationStatus): void {
-    if (!application.id) {
-      return;
-    }
-
-    this.jobService.updateApplicationStatus(application.id, status).subscribe({
-      next: (updated) => {
-        this.applications = this.applications.map((item) =>
-          item.id === updated.id ? updated : item
-        );
-        this.message = 'Application status updated.';
-      },
-      error: (err) => {
-        this.error = err?.error?.message || 'Unable to update application status.';
       }
     });
   }
@@ -452,32 +476,10 @@ export class AdminJobsComponent implements OnInit {
       next: (jobs) => {
         this.jobs = jobs;
         this.loading = false;
-        if (this.selectedJobId) {
-          const match = jobs.find((j) => j.id === this.selectedJobId);
-          if (match) {
-            this.selectedJob = match;
-            this.loadApplications(this.selectedJobId);
-          } else {
-            this.selectedJobId = '';
-            this.selectedJob = null;
-            this.applications = [];
-          }
-        }
       },
       error: (err) => {
         this.loading = false;
         this.error = err?.error?.message || 'Unable to load jobs.';
-      }
-    });
-  }
-
-  private loadApplications(jobId: string): void {
-    this.jobService.getApplicationsByOffer(jobId).subscribe({
-      next: (apps) => {
-        this.applications = apps;
-      },
-      error: () => {
-        this.applications = [];
       }
     });
   }
@@ -496,6 +498,7 @@ export class AdminJobsComponent implements OnInit {
       deadline: undefined,
       applyUrl: '',
       attachmentUrl: '',
+      targetFields: [],
       status: 'PENDING'
     };
   }
@@ -510,14 +513,6 @@ export class AdminJobsComponent implements OnInit {
 
   get isCreateMode(): boolean {
     return this.isCompanyMode && this.isCreateRoute();
-  }
-
-  applicantDisplayName(application: JobApplication): string {
-    const name = `${application.applicantFirstName || ''} ${application.applicantLastName || ''}`.trim();
-    if (name) {
-      return name;
-    }
-    return application.applicantId || 'Unknown';
   }
 
   jobStatusClass(status?: JobStatus): string {

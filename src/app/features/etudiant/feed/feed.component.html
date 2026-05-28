@@ -131,10 +131,9 @@
         <div class="post-body">
           <p class="post-text" style="white-space: pre-wrap;">{{ post.content }}</p>
 
-          <!-- Images Grid -->
           <div *ngIf="post.images && post.images.length > 0" class="post-images-grid"
             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 12px;">
-            <img *ngFor="let imgUrl of post.images" [src]="imgUrl"
+            <img *ngFor="let imgUrl of post.images" [src]="getFullUrl(imgUrl)"
               style="width: 100%; border-radius: 8px; object-fit: cover; max-height: 300px;" alt="Post image">
           </div>
 
@@ -149,7 +148,7 @@
                 <span class="file-name">{{ file.name }}</span>
                 <span class="file-size">{{ (file.size / 1024) | number:'1.0-2' }} KB</span>
               </div>
-              <a [href]="file.url" target="_blank" download class="btn-download-file"
+              <a [href]="getFullUrl(file.url)" target="_blank" download class="btn-download-file"
                 style="display: flex; align-items: center; justify-content: center; height: 32px; width: 32px; border-radius: 50%; color: #ef4444; background: #fee2e2;">
                 <i class="bi bi-download"></i>
               </a>

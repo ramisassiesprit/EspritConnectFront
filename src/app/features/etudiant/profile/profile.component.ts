@@ -56,6 +56,8 @@ export class ProfileComponent implements OnInit {
 
   isEditingProfile: boolean = false;
   isEditingEsprit: boolean = false;
+  avatarPreviewUrl: string | null = null;
+  hasPendingAvatarSave: boolean = false;
 
   programOptions = [
     { value: 'ESE-ESPRIT School of Engineering', label: 'ESE - ESPRIT School of Engineering' },
@@ -162,8 +164,24 @@ export class ProfileComponent implements OnInit {
   updateProfile(): void {
     this.userService.updateProfile(this.user).subscribe(u => {
       this.user = u;
+      this.avatarPreviewUrl = null;
+      this.hasPendingAvatarSave = false;
       this.isEditingProfile = false;
       Swal.fire('Informations personnelles mises à jour !');
+    });
+  }
+
+  saveAvatar(): void {
+    if (!this.hasPendingAvatarSave || !this.avatarPreviewUrl) {
+      return;
+    }
+
+    this.user.avatarUrl = this.avatarPreviewUrl;
+    this.userService.updateProfile(this.user).subscribe(u => {
+      this.user = u;
+      this.avatarPreviewUrl = null;
+      this.hasPendingAvatarSave = false;
+      Swal.fire('Photo de profil mise à jour !');
     });
   }
 
@@ -234,7 +252,8 @@ export class ProfileComponent implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.user.avatarUrl = e.target.result;
+        this.avatarPreviewUrl = e.target.result;
+        this.hasPendingAvatarSave = true;
       };
       reader.readAsDataURL(file);
     }

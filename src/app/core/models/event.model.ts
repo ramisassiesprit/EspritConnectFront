@@ -38,6 +38,7 @@ export interface Event {
   creatorId?: string;
   createdAt?: string;
   updatedAt?: string;
+  matchScore?: number;
 }
 
 export interface EventRegistration {
