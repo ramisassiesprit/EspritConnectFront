@@ -1,4 +1,4 @@
-import { Component, signal, inject, effect, HostListener, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, computed, inject, effect, HostListener, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink, RouterLinkActive, ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -43,8 +43,57 @@ export class NavbarComponent implements OnInit, OnDestroy {
   msgCount = signal(0);
   showProfileMenu = signal(false);
   showNotifDropdown = signal(false);
+  showMeetingsDropdown = signal(false);
   currentUser = signal<User | null>(null);
   notifications = signal<Notification[]>([]);
+  
+  // Exclude video chat URLs from regular notifications
+  regularNotifications = computed(() => {
+    return this.notifications().filter(n => n.targetType !== 'VIDEO_CHAT_URL');
+  });
+
+  // Extract meetings from notifications
+  meetings = computed(() => {
+    return this.notifications()
+      .filter(n => n.targetType === 'VIDEO_CHAT_URL')
+      .map(n => {
+        // Parse date from body "at YYYY-MM-DDTHH:mm"
+        const dateMatch = n.body?.match(/at\s(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})/);
+        const urlMatch = n.body?.match(/Link:\s*(https?:\/\/[^\s]+)/);
+        
+        let scheduledDate = new Date();
+        if (dateMatch) {
+          scheduledDate = new Date(dateMatch[1]);
+        }
+        
+        const now = new Date();
+        const diffTime = scheduledDate.getTime() - now.getTime();
+        const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const isExpired = diffTime < 0 && Math.abs(diffTime) > 60 * 60 * 1000; // Expired 1 hour after scheduled time
+        
+        let url = '';
+        if (urlMatch) {
+          url = urlMatch[1];
+        }
+        
+        return {
+          id: n.id,
+          title: n.title,
+          scheduledDate,
+          daysLeft,
+          isExpired,
+          url,
+          isRead: n.isRead,
+          createdAt: n.createdAt
+        };
+      })
+      .sort((a, b) => a.scheduledDate.getTime() - b.scheduledDate.getTime());
+  });
+
+  unreadMeetingsCount = computed(() => {
+    return this.meetings().filter(m => !m.isRead).length;
+  });
+
   private pollInterval: any;
   private liveNotificationSub?: Subscription;
 
@@ -55,6 +104,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
     if (this.showNotifDropdown() && !this.el.nativeElement.contains(event.target)) {
       this.showNotifDropdown.set(false);
+    }
+    if (this.showMeetingsDropdown() && !this.el.nativeElement.contains(event.target)) {
+      this.showMeetingsDropdown.set(false);
     }
   }
 
@@ -125,7 +177,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.notificationService.getNotifications().subscribe({
         next: (notifs) => {
           this.notifications.set(notifs);
-          this.notifCount.set(notifs.filter(n => !n.isRead).length);
+          this.notifCount.set(this.regularNotifications().filter(n => !n.isRead).length);
         },
         error: (err) => console.error('Failed to load notifications', err)
       });
@@ -136,12 +188,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.showNotifDropdown.update(v => !v);
     if (this.showNotifDropdown()) {
       this.showProfileMenu.set(false);
+      this.showMeetingsDropdown.set(false);
+    }
+  }
+
+  toggleMeetingsDropdown() {
+    this.showMeetingsDropdown.update(v => !v);
+    if (this.showMeetingsDropdown()) {
+      this.showProfileMenu.set(false);
+      this.showNotifDropdown.set(false);
     }
   }
 
   markNotificationAsRead(notif: Notification, event: Event) {
     event.stopPropagation();
     this.notificationService.markAsRead(notif.id).subscribe(() => {
+      this.loadNotifications();
+    });
+  }
+
+  markMeetingAsRead(meeting: any, event: Event) {
+    event.stopPropagation();
+    this.notificationService.markAsRead(meeting.id).subscribe(() => {
       this.loadNotifications();
     });
   }
@@ -167,19 +235,39 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.showNotifDropdown.set(false);
     }
     
-    // Extract video chat link if present
-     if (notif.targetType === 'VIDEO_CHAT_URL' || (notif.body && (notif.body.includes('https://meet.google.com') || notif.body.includes('https://meet.jit.si')))) {
-       const body = notif.body;
-       const urlMatch = body?.match(/https:\/\/(meet\.google\.com|meet\.jit\.si)\/[a-zA-Z0-9\-]+/);
-       if (urlMatch) {
-         window.open(urlMatch[0], '_blank');
-         return;
-       }
-    }
-
     const link = this.getNotificationLink(notif);
     if (link) {
       this.router.navigate([link]);
+    }
+  }
+
+  onMeetingClick(meeting: any, event: Event) {
+    if (this.showMeetingsDropdown()) {
+        this.showMeetingsDropdown.set(false);
+    }
+    
+    // Mark as read
+    if (!meeting.isRead) {
+      this.notificationService.markAsRead(meeting.id).subscribe(() => {
+        this.loadNotifications();
+      });
+    }
+
+    if (meeting.url) {
+      const now = new Date();
+      // Allow joining 10 minutes before the scheduled time
+      const allowJoinTime = new Date(meeting.scheduledDate.getTime() - 10 * 60000);
+
+      if (now < allowJoinTime) {
+        const formattedTime = meeting.scheduledDate.toLocaleString('fr-FR', {
+          dateStyle: 'medium',
+          timeStyle: 'short'
+        });
+        alert(`⚠️ The meeting cannot be joined yet.\n\nIt is scheduled for: ${formattedTime}.\nPlease come back 10 minutes before the meeting starts.`);
+        return;
+      }
+      
+      window.open(meeting.url, '_blank');
     }
   }
 
