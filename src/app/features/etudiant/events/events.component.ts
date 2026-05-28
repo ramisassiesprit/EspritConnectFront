@@ -57,6 +57,10 @@ export class EventsComponent implements OnInit {
     tags: ''
   };
 
+  // Cover image preview / file
+  coverPreview: string | null = null;
+  selectedCoverFile?: File;
+
   eventTypes = Object.values(EventType);
 
   ngOnInit() {
@@ -176,11 +180,30 @@ export class EventsComponent implements OnInit {
       coverUrl: '',
       tags: ''
     };
+    this.coverPreview = null;
+    this.selectedCoverFile = undefined;
     this.showCreateModal.set(true);
   }
 
   closeCreateModal() {
     this.showCreateModal.set(false);
+    this.coverPreview = null;
+  }
+
+  onCoverFileSelected(event: any) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      this.selectedCoverFile = undefined;
+      this.coverPreview = null;
+      return;
+    }
+    const file = input.files[0];
+    this.selectedCoverFile = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.coverPreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 
   submitEvent() {
@@ -198,7 +221,7 @@ export class EventsComponent implements OnInit {
       startAt: new Date(this.newEvent.startAt).toISOString(),
       endAt: this.newEvent.endAt ? new Date(this.newEvent.endAt).toISOString() : undefined,
       capacity: this.newEvent.capacity,
-      coverUrl: this.newEvent.coverUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+      coverUrl: this.coverPreview ? this.coverPreview : (this.newEvent.coverUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800'),
       tags: this.newEvent.tags
     };
 

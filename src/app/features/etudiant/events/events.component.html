@@ -310,8 +310,15 @@
 
           <div class="form-row">
             <div class="form-group col-12">
-              <label>URL de l'image de couverture</label>
+              <label>Image de couverture</label>
+              <input type="file" accept="image/*" (change)="onCoverFileSelected($event)">
+              <small style="color: #6b7280; font-size: 11px; margin-top: 4px; display: block;">Vous pouvez télécharger une image ou saisir une URL ci-dessous.</small>
               <input type="url" [(ngModel)]="newEvent.coverUrl" name="coverUrl" placeholder="Ex: https://images.unsplash.com/photo-1540575467063-178a50c2df87...">
+              @if (coverPreview) {
+                <div class="cover-preview" style="margin-top:8px;">
+                  <img [src]="coverPreview" alt="Aperçu image" style="max-width:100%; height:auto; border-radius:6px;" />
+                </div>
+              }
             </div>
           </div>
 
