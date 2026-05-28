@@ -1,0 +1,67 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+      <h3 class="text-lg font-bold text-gray-800">Schedule Video Chat</h3>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6">
+      <div *ngIf="successMessage" class="mb-4 p-3 bg-green-50 text-green-700 rounded-md border border-green-200">
+        {{ successMessage }}
+      </div>
+
+      <div class="flex items-center gap-3 mb-6" *ngIf="user">
+        <img [src]="user.avatarUrl || 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName"
+             class="w-10 h-10 rounded-full object-cover border border-gray-200">
+        <div>
+          <p class="text-sm text-gray-500 font-medium">Meeting with</p>
+          <p class="text-gray-800 font-bold leading-tight">{{user.firstName}} {{user.lastName}}</p>
+        </div>
+      </div>
+
+      <form (ngSubmit)="scheduleMeeting()" #form="ngForm" class="space-y-4">
+        
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Topic *</label>
+          <input type="text" [(ngModel)]="topic" name="topic" required
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ED1C24] focus:border-[#ED1C24] outline-none transition-all placeholder-gray-400"
+                 placeholder="e.g. Technical Interview Prep">
+        </div>
+
+        <div>
+           <label class="block text-sm font-semibold text-gray-700 mb-1">Date & Time *</label>
+           <input type="datetime-local" [(ngModel)]="date" name="date" required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ED1C24] focus:border-[#ED1C24] outline-none transition-all">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Supplementary Message</label>
+          <textarea [(ngModel)]="message" name="message" rows="3"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ED1C24] focus:border-[#ED1C24] outline-none transition-all resize-none placeholder-gray-400"
+                    placeholder="Any specific details you want to add?"></textarea>
+        </div>
+
+        <!-- Footer / Actions -->
+        <div class="pt-4 flex justify-end gap-3">
+          <button type="button" (click)="closeModal()"
+                  class="px-5 py-2 rounded-lg font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
+            Cancel
+          </button>
+          <button type="submit"
+                  [disabled]="!form.valid || isSending"
+                  class="px-5 py-2 rounded-lg font-medium text-white bg-[#ED1C24] hover:bg-[#D31920] disabled:bg-red-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
+            <span *ngIf="isSending" class="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+            {{ isSending ? 'Scheduling...' : 'Schedule via Meet' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

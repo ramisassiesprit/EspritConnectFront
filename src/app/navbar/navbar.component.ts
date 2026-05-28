@@ -162,6 +162,27 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  onNotificationClick(notif: Notification, event: Event) {
+    if (this.showNotifDropdown()) {
+        this.showNotifDropdown.set(false);
+    }
+    
+    // Extract video chat link if present
+     if (notif.targetType === 'VIDEO_CHAT_URL' || (notif.body && (notif.body.includes('https://meet.google.com') || notif.body.includes('https://meet.jit.si')))) {
+       const body = notif.body;
+       const urlMatch = body?.match(/https:\/\/(meet\.google\.com|meet\.jit\.si)\/[a-zA-Z0-9\-]+/);
+       if (urlMatch) {
+         window.open(urlMatch[0], '_blank');
+         return;
+       }
+    }
+
+    const link = this.getNotificationLink(notif);
+    if (link) {
+      this.router.navigate([link]);
+    }
+  }
+
   markAllNotificationsAsRead() {
     this.notificationService.markAllAsRead().subscribe(() => {
       this.loadNotifications();
