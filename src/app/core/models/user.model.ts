@@ -87,4 +87,6 @@ export interface User {
   workExperiences?: WorkExperience[];
   otherEducations?: OtherEducation[];
   skills?: Skill[];
+  cvUrl?: string;
+  cvKeywords?: string;
 }

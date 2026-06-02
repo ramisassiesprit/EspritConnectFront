@@ -1,85 +1,99 @@
 <section class="applicants-page">
   <div class="page-head">
-    <a [routerLink]="backRoute" class="back-link">Back to jobs</a>
+    <a [routerLink]="backRoute" class="back-link">← Back to jobs</a>
     <div class="page-head__title-row">
-      <h2>Applicants</h2>
-      <span class="count-badge" *ngIf="!loading && !error">{{ applications.length }} total</span>
+      <h2>Job Applications</h2>
     </div>
-    <p class="job-context" *ngIf="job">{{ job.title }} - {{ job.company || 'N/A' }}</p>
+    <p class="job-context" *ngIf="job">{{ job.title }} — {{ job.company || 'N/A' }}</p>
   </div>
 
-  <p class="state" *ngIf="loading">Loading applicants...</p>
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn" [class.tab-btn--active]="activeTab === 'applicants'" (click)="activeTab = 'applicants'">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      Applicants <span class="tab-badge">{{ applications.length }}</span>
+    </button>
+    <button class="tab-btn" [class.tab-btn--active]="activeTab === 'recommended'" (click)="activeTab = 'recommended'">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>
+      Recommended Profiles <span class="tab-badge tab-badge--accent">{{ recommendedCandidates.length }}</span>
+    </button>
+  </div>
+
+  <p class="state" *ngIf="loading">Loading...</p>
   <p class="state error" *ngIf="error">{{ error }}</p>
-  <p class="state" *ngIf="!loading && !error && applications.length === 0">No applications for this job yet.</p>
 
-  <div class="applicant-list" *ngIf="!loading && !error && applications.length > 0">
-    <article class="applicant-card" *ngFor="let app of applications">
-      <header class="applicant-card__top">
-        <h3>{{ applicantDisplayName(app) }}</h3>
-        <label>
-          Status
-          <select
-            [ngClass]="statusClass(app.status || 'PENDING')"
-            [ngModel]="app.status || 'PENDING'"
-            (ngModelChange)="updateApplicationStatus(app, $event)"
-          >
-            <option *ngFor="let status of applicationStatuses" [value]="status">{{ status }}</option>
-          </select>
-        </label>
-      </header>
+  <!-- Applicants Tab -->
+  <ng-container *ngIf="!loading && !error && activeTab === 'applicants'">
+    <p class="state" *ngIf="applications.length === 0">No applications for this job yet.</p>
+    <div class="applicant-list" *ngIf="applications.length > 0">
+      <article class="applicant-card" *ngFor="let app of applications">
+        <header class="applicant-card__top">
+          <div class="applicant-avatar">
+            {{ applicantDisplayName(app).charAt(0).toUpperCase() }}
+          </div>
+          <div class="applicant-info">
+            <h3>{{ applicantDisplayName(app) }}</h3>
+            <span [ngClass]="statusClass(app.status || 'PENDING')" class="status-chip">{{ app.status || 'PENDING' }}</span>
+          </div>
+          <label class="status-select-label">
+            Change Status
+            <select
+              [ngClass]="statusClass(app.status || 'PENDING')"
+              [ngModel]="app.status || 'PENDING'"
+              (ngModelChange)="updateApplicationStatus(app, $event)"
+            >
+              <option *ngFor="let status of applicationStatuses" [value]="status">{{ status }}</option>
+            </select>
+          </label>
+        </header>
 
-      <div class="applicant-grid">
-        <p><strong>Email:</strong> {{ app.applicantEmail || 'N/A' }}</p>
-        <p><strong>Phone:</strong> {{ app.applicantNumTel || 'N/A' }}</p>
-        <p><strong>Current title:</strong> {{ app.applicantJobTitle || 'N/A' }}</p>
-        <p><strong>Industry / Function:</strong> {{ app.applicantIndustry || 'N/A' }} / {{ app.applicantJobFunction || 'N/A' }}</p>
-        <p><strong>Education:</strong> {{ app.applicantDegree || 'N/A' }} - {{ app.applicantProgram || 'N/A' }} ({{ app.applicantGraduationYear || 'N/A' }})</p>
-        <p><strong>Applied:</strong> {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-      </div>
+        <div class="applicant-grid">
+          <p><strong>Email:</strong> {{ app.applicantEmail || 'N/A' }}</p>
+          <p><strong>Phone:</strong> {{ app.applicantNumTel || 'N/A' }}</p>
+          <p><strong>Current title:</strong> {{ app.applicantJobTitle || 'N/A' }}</p>
+          <p><strong>Industry / Function:</strong> {{ app.applicantIndustry || 'N/A' }} / {{ app.applicantJobFunction || 'N/A' }}</p>
+          <p><strong>Education:</strong> {{ app.applicantDegree || 'N/A' }} — {{ app.applicantProgram || 'N/A' }} ({{ app.applicantGraduationYear || 'N/A' }})</p>
+          <p><strong>Applied:</strong> {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+        </div>
 
-      <div class="line">
-        <strong>CV:</strong>
-        <a
-          class="action-link"
-          *ngIf="app.cvUrl"
-          [href]="app.cvUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Open CV
-        </a>
-        <span *ngIf="!app.cvUrl">N/A</span>
-      </div>
-      <div class="line">
-        <strong>LinkedIn:</strong>
-        <a
-          class="action-link"
-          *ngIf="app.applicantLinkedinUrl"
-          [href]="app.applicantLinkedinUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          View profile
-        </a>
-        <span *ngIf="!app.applicantLinkedinUrl">N/A</span>
-      </div>
-      <div class="line">
-        <strong>GitHub:</strong>
-        <a
-          class="action-link"
-          *ngIf="app.applicantGithubUrl"
-          [href]="app.applicantGithubUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          View profile
-        </a>
-        <span *ngIf="!app.applicantGithubUrl">N/A</span>
-      </div>
-      <div class="cover-letter">
-        <strong>Cover letter</strong>
-        <p>{{ app.coverLetterUrl || 'N/A' }}</p>
-      </div>
-    </article>
-  </div>
+        <div class="applicant-links">
+          <a class="link-chip" *ngIf="app.cvUrl" [href]="app.cvUrl" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            CV
+          </a>
+          <a class="link-chip" *ngIf="app.applicantLinkedinUrl" [href]="app.applicantLinkedinUrl" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="link-chip" *ngIf="app.applicantGithubUrl" [href]="app.applicantGithubUrl" target="_blank" rel="noopener">GitHub</a>
+        </div>
+
+        <div class="cover-letter" *ngIf="app.coverLetterUrl">
+          <strong>Cover letter</strong>
+          <p>{{ app.coverLetterUrl }}</p>
+        </div>
+      </article>
+    </div>
+  </ng-container>
+
+  <!-- Recommended Profiles Tab -->
+  <ng-container *ngIf="!loading && !error && activeTab === 'recommended'">
+    <div class="sourcing-header">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>
+      <p>Profiles of students and alumni that best match this job offer, ranked by AI.</p>
+    </div>
+    <p class="state" *ngIf="recommendedCandidates.length === 0">No matching profiles found. Make sure your job description contains relevant keywords.</p>
+    <div class="candidate-grid" *ngIf="recommendedCandidates.length > 0">
+      <article class="candidate-card" *ngFor="let c of recommendedCandidates; let i = index">
+        <div class="candidate-card__rank">#{{ i + 1 }}</div>
+        <div class="candidate-avatar" [style.background]="'hsl(' + (i * 37) + ', 60%, 55%)'">
+          {{ (c.firstName || '?').charAt(0).toUpperCase() }}
+        </div>
+        <div class="candidate-info">
+          <h4>{{ c.firstName }} {{ c.lastName }}</h4>
+          <p class="candidate-title">{{ c.jobTitle || 'Student / Alumni' }}</p>
+          <p class="candidate-industry" *ngIf="c.industry">{{ c.industry }}</p>
+          <p class="candidate-company" *ngIf="c.companyName">{{ c.companyName }}</p>
+          <p class="candidate-bio" *ngIf="c.bio">{{ c.bio | slice:0:100 }}{{ c.bio.length > 100 ? '...' : '' }}</p>
+        </div>
+      </article>
+    </div>
+  </ng-container>
 </section>

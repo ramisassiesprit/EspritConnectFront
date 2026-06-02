@@ -19,6 +19,12 @@ export class EntrepriseShellComponent {
       link: '/entreprise/jobs'
     },
     {
+      label: 'Recommandations',
+      icon: 'star',
+      description: 'Discover top matching talent',
+      link: '/entreprise/recommendations'
+    },
+    {
       label: 'Mon profil',
       icon: 'person',
       description: 'Update your personal information',

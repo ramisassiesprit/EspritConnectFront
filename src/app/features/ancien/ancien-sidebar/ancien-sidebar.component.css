@@ -1,0 +1,167 @@
+.sidebar {
+  width: var(--sidebar-width, 260px);
+  background: var(--white, #fff);
+  max-height: calc(100vh - var(--navbar-height, 60px) - 40px);
+  height: fit-content;
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  padding: 16px 0;
+  overflow-y: auto;
+  position: -webkit-sticky;
+  position: sticky;
+  top: calc(var(--navbar-height, 60px) + 20px);
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__group {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  margin: 4px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #444;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.sidebar__item:hover {
+  background: #f5f5f5;
+}
+
+/* Active Main Item (when opened or selected) */
+.sidebar__item.active {
+  background: #f0f0f0;
+  color: var(--esprit-red, #dc3545);
+}
+
+.sidebar__item-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sidebar__icon {
+  width: 20px;
+  height: 20px;
+  color: #555;
+}
+
+.sidebar__item.active .sidebar__icon {
+  color: var(--esprit-red, #dc3545);
+}
+
+.sidebar__label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar__chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s;
+  color: #777;
+}
+
+.sidebar__chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Sub Navigation */
+.sidebar__sub-nav {
+  display: flex;
+  padding-left: 33px;
+  /* Align with the icon center */
+  margin-bottom: 5px;
+}
+
+.sidebar__sub-line {
+  width: 1px;
+  background: #ddd;
+  margin-right: 20px;
+}
+
+.sidebar__sub-items {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.sidebar__sub-item {
+  padding: 8px 0;
+  font-size: 13px;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.sidebar__sub-item:hover {
+  color: var(--esprit-red, #dc3545);
+}
+
+/* Active Sub Item */
+.sidebar__sub-item.active {
+  color: var(--esprit-red, #dc3545);
+  font-weight: 700;
+}
+
+.sidebar__sub-item.active::before {
+  content: '';
+  position: absolute;
+  left: -21px;
+  /* Align with the vertical line */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: var(--esprit-red, #dc3545);
+  border-radius: 2px;
+}
+
+/* Footer info in sidebar */
+.sidebar__footer-info {
+  padding: 20px 24px;
+  font-size: 12px;
+  color: #777;
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+}
+
+.footer-contact p {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+/* Scrollbar styling */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+.sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}

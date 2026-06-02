@@ -1,0 +1,68 @@
+<section class="reco-page">
+
+  <!-- Header -->
+  <div class="reco-page__header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Recommended Talent Pool</h1>
+      <p>Students and alumni ranked by AI based on your company profile — industry, sector, and description.</p>
+    </div>
+  </div>
+
+  <!-- Tips Banner -->
+  <div class="tips-banner" *ngIf="!loading && candidates.length === 0 && !error">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+    <span>Tip: Complete your company profile (industry, bio) to improve matching quality.</span>
+  </div>
+
+  <!-- States -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Analysing your profile and finding the best matches...</p>
+  </div>
+
+  <div class="error-state" *ngIf="error && !loading">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Results Grid -->
+  <div class="results-info" *ngIf="!loading && !error && candidates.length > 0">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    <span>{{ candidates.length }} profile{{ candidates.length > 1 ? 's' : '' }} found, ranked by relevance</span>
+  </div>
+
+  <div class="candidate-grid" *ngIf="!loading && !error && candidates.length > 0">
+    <article class="candidate-card" *ngFor="let c of candidates; let i = index">
+      <!-- Rank badge -->
+      <div class="rank-badge" [class.rank-badge--top]="i < 3">#{{ i + 1 }}</div>
+
+      <!-- Avatar -->
+      <div class="candidate-avatar" [style.background]="'hsl(' + (i * 43 + 180) + ', 55%, 48%)'">
+        {{ (c.firstName || '?').charAt(0).toUpperCase() }}
+      </div>
+
+      <!-- Info -->
+      <div class="candidate-info">
+        <h3 class="candidate-name">{{ c.firstName }} {{ c.lastName }}</h3>
+        <p class="candidate-title" *ngIf="c.jobTitle">{{ c.jobTitle }}</p>
+        <div class="candidate-meta">
+          <span class="meta-chip" *ngIf="c.industry">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            {{ c.industry }}
+          </span>
+          <span class="meta-chip meta-chip--company" *ngIf="c.companyName">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z"/></svg>
+            {{ c.companyName }}
+          </span>
+        </div>
+        <p class="candidate-bio" *ngIf="c.bio">{{ c.bio | slice:0:120 }}{{ c.bio.length > 120 ? '…' : '' }}</p>
+      </div>
+    </article>
+  </div>
+
+</section>

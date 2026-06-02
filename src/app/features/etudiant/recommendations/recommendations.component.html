@@ -1,0 +1,122 @@
+<div class="recommendations-container">
+  <div class="header-banner">
+    <div>
+      <h1 class="header-title">Recommandations Intelligentes</h1>
+      <p class="header-subtitle">Propulsé par votre CV et votre profil Esprit</p>
+    </div>
+    <div class="header-icon">
+      <i class="bi bi-magic"></i>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <h4>Analyse de votre profil en cours...</h4>
+  </div>
+
+  <div *ngIf="!loading">
+    <div class="tabs-container">
+      <button class="tab-btn" [class.active]="activeTab === 'jobs'" (click)="setActiveTab('jobs')">
+        <i class="bi bi-briefcase"></i> Offres d'emploi
+        <span class="tab-badge">{{ recommendations.jobs.length }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'events'" (click)="setActiveTab('events')">
+        <i class="bi bi-calendar-event"></i> Événements
+        <span class="tab-badge">{{ recommendations.events.length }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'groups'" (click)="setActiveTab('groups')">
+        <i class="bi bi-people"></i> Groupes
+        <span class="tab-badge">{{ recommendations.groups.length }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'mentors'" (click)="setActiveTab('mentors')">
+        <i class="bi bi-person-video3"></i> Mentors
+        <span class="tab-badge">{{ recommendations.mentors.length }}</span>
+      </button>
+    </div>
+
+    <!-- Jobs Tab -->
+    <div *ngIf="activeTab === 'jobs'" class="cards-grid">
+      <div *ngFor="let job of recommendations.jobs" class="glass-card">
+        <div class="card-icon-wrapper">
+          <i class="bi bi-briefcase-fill"></i>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ job.title }}</h3>
+          <p class="card-subtitle">{{ job.company }} • {{ job.location || 'Remote' }}</p>
+          <p class="card-desc">{{ job.description }}</p>
+          <span class="match-badge"><i class="bi bi-check2-circle me-1"></i> Match Parfait</span>
+        </div>
+        <a [routerLink]="['/etudiant/jobs', job.id]" class="action-btn">Voir l'offre</a>
+      </div>
+      <div *ngIf="recommendations.jobs.length === 0" class="empty-state">
+        <div class="empty-icon"><i class="bi bi-search"></i></div>
+        <h3>Aucune offre trouvée</h3>
+        <p class="text-muted">Mettez à jour votre CV pour obtenir plus de recommandations.</p>
+      </div>
+    </div>
+
+    <!-- Events Tab -->
+    <div *ngIf="activeTab === 'events'" class="cards-grid">
+      <div *ngFor="let event of recommendations.events" class="glass-card">
+        <div class="card-icon-wrapper">
+          <i class="bi bi-calendar-event-fill"></i>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ event.title }}</h3>
+          <p class="card-subtitle">{{ event.startAt | date:'mediumDate' }}</p>
+          <p class="card-desc">{{ event.description }}</p>
+          <span class="match-badge"><i class="bi bi-check2-circle me-1"></i> Sujet pertinent</span>
+        </div>
+        <a [routerLink]="['/etudiant/events', event.id]" class="action-btn">Voir l'événement</a>
+      </div>
+      <div *ngIf="recommendations.events.length === 0" class="empty-state">
+        <div class="empty-icon"><i class="bi bi-calendar-x"></i></div>
+        <h3>Aucun événement trouvé</h3>
+        <p class="text-muted">Nous vous alerterons dès qu'un événement correspondra à vos compétences.</p>
+      </div>
+    </div>
+
+    <!-- Groups Tab -->
+    <div *ngIf="activeTab === 'groups'" class="cards-grid">
+      <div *ngFor="let group of recommendations.groups" class="glass-card">
+        <div class="card-icon-wrapper">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ group.groupName }}</h3>
+          <p class="card-subtitle">{{ group.membersCount }} membres</p>
+          <p class="card-desc">{{ group.description }}</p>
+          <span class="match-badge"><i class="bi bi-check2-circle me-1"></i> Communauté ciblée</span>
+        </div>
+        <a [routerLink]="['/etudiant/groups', group.id]" class="action-btn">Rejoindre</a>
+      </div>
+      <div *ngIf="recommendations.groups.length === 0" class="empty-state">
+        <div class="empty-icon"><i class="bi bi-collection"></i></div>
+        <h3>Aucun groupe trouvé</h3>
+        <p class="text-muted">Mettez à jour vos informations pour rejoindre la bonne communauté.</p>
+      </div>
+    </div>
+
+    <!-- Mentors Tab -->
+    <div *ngIf="activeTab === 'mentors'" class="cards-grid">
+      <div *ngFor="let mentor of recommendations.mentors" class="glass-card">
+        <div class="card-icon-wrapper" style="background: transparent;">
+          <img *ngIf="mentor.avatarUrl" [src]="'http://localhost:8085/' + mentor.avatarUrl" alt="avatar" style="width:100%; height:100%; object-fit: cover; border-radius:12px;">
+          <i *ngIf="!mentor.avatarUrl" class="bi bi-person-fill" style="background: rgba(220, 53, 69, 0.1); width:100%; height:100%; display:flex; align-items:center; justify-content:center; border-radius:12px;"></i>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ mentor.firstName }} {{ mentor.lastName }}</h3>
+          <p class="card-subtitle">{{ mentor.jobTitle || 'Expert' }} chez {{ mentor.companyName || 'Indépendant' }}</p>
+          <p class="card-desc">{{ mentor.bio || mentor.industry }}</p>
+          <span class="match-badge"><i class="bi bi-check2-circle me-1"></i> Compétences communes</span>
+        </div>
+        <a [routerLink]="['/etudiant/user', mentor.id]" class="action-btn">Contacter</a>
+      </div>
+      <div *ngIf="recommendations.mentors.length === 0" class="empty-state">
+        <div class="empty-icon"><i class="bi bi-person-x"></i></div>
+        <h3>Aucun mentor trouvé</h3>
+        <p class="text-muted">Aucun mentor disponible dans votre domaine d'expertise pour le moment.</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -22,13 +22,13 @@ interface NavItem {
 }
 
 @Component({
-  selector: 'app-etudiant-sidebar',
+  selector: 'app-ancien-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, CommonModule],
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.css']
+  templateUrl: './ancien-sidebar.component.html',
+  styleUrls: ['./ancien-sidebar.component.css']
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class AncienSidebarComponent implements OnInit, OnDestroy {
   private groupService = inject(GroupService);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -38,36 +38,35 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private routerEventsSub?: Subscription;
 
   navItems: NavItem[] = [
-    { label: 'Home', icon: 'home', route: '/etudiant/home' },
-    { label: 'Feed', icon: 'feed', route: '/etudiant/feed' },
-    { label: 'Directory', icon: 'folder', route: '/etudiant/directory' },
+    { label: 'Home', icon: 'home', route: '/ancien/home' },
+    { label: 'Feed', icon: 'feed', route: '/ancien/feed' },
+    { label: 'Directory', icon: 'folder', route: '/ancien/directory' },
     {
       label: 'Mentoring',
       icon: 'group',
-      route: '/etudiant/mentoring',
+      route: '/ancien/mentoring',
       hasChevron: true,
       isOpen: false,
       subItems: [
-        { label: 'Find a Mentor', route: '/etudiant/mentoring/find' },
-        { label: 'Mentoring Relationships', route: '/etudiant/mentoring/relations' },
-        { label: 'Settings', route: '/etudiant/mentoring/settings' }
+        { label: 'Mentoring Relationships', route: '/ancien/mentoring/relations' },
+        { label: 'Settings', route: '/ancien/mentoring/settings' }
       ]
     },
     {
       label: 'Jobs',
       icon: 'business_center',
-      route: '/etudiant/jobs',
+      route: '/ancien/jobs',
       hasChevron: true,
       isOpen: false,
       subItems: [
-        { label: 'Job Board', route: '/etudiant/jobs/board' }
+        { label: 'Job Board', route: '/ancien/jobs/board' }
       ]
     },
-    { label: 'Photos', icon: 'image', route: '/etudiant/photos' },
+    { label: 'Photos', icon: 'image', route: '/ancien/photos' },
     {
       label: 'Groups',
       icon: 'groups',
-      route: '/etudiant/groups',
+      route: '/ancien/groups',
       hasChevron: true,
       isOpen: false,
       subItems: []
@@ -75,33 +74,31 @@ export class SidebarComponent implements OnInit, OnDestroy {
     {
       label: 'Events',
       icon: 'event',
-      route: '/etudiant/events',
+      route: '/ancien/events',
       hasChevron: true,
       isOpen: false,
       subItems: [
-        { label: 'Event Board', route: '/etudiant/events/board' },
-        { label: 'Post an Event', route: '/etudiant/events/post' }
+        { label: 'Event Board', route: '/ancien/events/board' },
+        { label: 'Post an Event', route: '/ancien/events/post' }
       ]
     },
-    { label: 'Resources', icon: 'description', route: '/etudiant/resources' },
-    { label: 'Pour Vous', icon: 'auto_awesome', route: '/etudiant/recommendations' },
+    { label: 'Resources', icon: 'description', route: '/ancien/resources' },
     {
       label: 'Info & Support',
       icon: 'info',
-      route: '/etudiant/info-support',
+      route: '/ancien/info-support',
       hasChevron: true,
       isOpen: false,
       subItems: [
-        { label: 'Terms of use', route: '/etudiant/info-support/terms' },
-        { label: 'Privacy policy', route: '/etudiant/info-support/privacy' },
-        { label: 'Technical Support', route: '/etudiant/info-support/tech' },
-        { label: 'Submit a ticket', route: '/etudiant/info-support/ticket' }
+        { label: 'Terms of use', route: '/ancien/info-support/terms' },
+        { label: 'Privacy policy', route: '/ancien/info-support/privacy' },
+        { label: 'Technical Support', route: '/ancien/info-support/tech' },
+        { label: 'Submit a ticket', route: '/ancien/info-support/ticket' }
       ]
     }
   ];
 
   constructor() {
-    // Use effect to react to changes in currentUser signal
     effect(() => {
       const session = this.authService.currentUser();
       if (session?.userId) {
@@ -143,7 +140,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     groupsItem.subItems = this.joinedGroups.length
       ? this.joinedGroups.map(group => ({
         label: group.groupName,
-        route: `/etudiant/groups/${group.id}/feed`
+        route: `/ancien/groups/${group.id}/feed`
       }))
       : [];
 

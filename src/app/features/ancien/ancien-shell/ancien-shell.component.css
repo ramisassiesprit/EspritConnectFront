@@ -1,0 +1,75 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f4f6f8; /* Very light gray background */
+}
+
+.shell__hero {
+  height: 480px;
+  width: 100%;
+  margin-top: var(--navbar-height);
+  background-image: url('/forum.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  
+}
+
+.shell__hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(244, 246, 248, 0) 40%, rgba(244, 246, 248, 0.8) 80%, rgba(244, 246, 248, 1) 100%);
+  pointer-events: none;
+}
+
+.shell__layout {
+  display: flex;
+  gap: 30px;
+  padding: 0 40px 40px 40px;
+  margin-top: -240px; /* Pull content over hero */
+  position: relative;
+  z-index: 10;
+  max-width: 1500px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.shell__layout--no-hero {
+  /* navbar is 80px fixed; add navbar height + 24px gap = 104px */
+  margin-top: calc(var(--navbar-height, 80px) + 24px);
+}
+
+.shell__sidebar {
+  flex-shrink: 0;
+}
+
+.shell__main {
+  flex-grow: 1;
+  padding-top: 0px;
+  min-width: 0; /* Important for flex child to handle overflow */
+}
+
+@media (max-width: 1200px) {
+  .shell__layout {
+    padding: 0 20px 20px 20px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 992px) {
+  .shell__layout {
+    flex-direction: column;
+  }
+
+  .shell__sidebar {
+    width: 100%;
+    position: static;
+    height: auto;
+    margin-bottom: 20px;
+  }
+}

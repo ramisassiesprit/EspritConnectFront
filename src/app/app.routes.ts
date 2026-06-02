@@ -6,6 +6,8 @@ import { UserRole } from './core/models/user-role.enum';
 import { etudiantGuard } from './core/guards/etudiant.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { entrepriseGuard } from './core/guards/entreprise.guard';
+import { ancienGuard } from './core/guards/ancien.guard';
+import { enseignantGuard } from './core/guards/enseignant.guard';
 
 export const routes: Routes = [
   {
@@ -237,6 +239,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/etudiant/profile/profile.component').then(m => m.ProfileComponent)
       },
       {
+        path: 'recommendations',
+        loadComponent: () => import('./features/etudiant/recommendations/recommendations.component').then(m => m.RecommendationsComponent)
+      },
+      {
         path: 'chat/:id',
         loadComponent: () => import('./features/etudiant/chat/chat.component').then(m => m.ChatComponent)
       },
@@ -252,17 +258,106 @@ export const routes: Routes = [
   },
   {
     path: 'ancien',
+    canActivate: [ancienGuard],
     loadComponent: () =>
       import('./features/ancien/ancien-shell/ancien-shell.component').then(
         (m) => m.AncienShellComponent,
       ),
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', loadComponent: () => import('./features/etudiant/home/home.component').then((m) => m.HomeComponent) },
+      { path: 'feed', loadComponent: () => import('./features/etudiant/feed/feed.component').then((m) => m.FeedComponent) },
+      { path: 'directory', loadComponent: () => import('./features/etudiant/directory/directory.component').then((m) => m.DirectoryComponent) },
+      {
+        path: 'mentoring',
+        loadComponent: () => import('./features/etudiant/mentoring/mentoring.component').then((m) => m.MentoringComponent),
+        children: [
+          { path: '', redirectTo: 'relations', pathMatch: 'full' },
+          { path: 'relations', loadComponent: () => import('./features/etudiant/mentoring/mentor-relations/mentor-relations.component').then((m) => m.MentorRelationsComponent) },
+          { path: 'settings', loadComponent: () => import('./features/etudiant/mentoring/MentorSettings/mentoringSettings.component').then((m) => m.MentoringSettingsComponent) }
+        ]
+      },
+      { path: 'jobs', loadComponent: () => import('./features/etudiant/jobs/jobs.component').then((m) => m.JobsComponent) },
+      { path: 'jobs/board', redirectTo: 'jobs', pathMatch: 'full' },
+      { path: 'jobs/:id', loadComponent: () => import('./features/etudiant/jobs/jobs.component').then((m) => m.JobsComponent) },
+      { path: 'photos', loadComponent: () => import('./features/etudiant/photos/photos.component').then((m) => m.PhotosComponent) },
+      {
+        path: 'groups',
+        loadComponent: () => import('./features/etudiant/groups/groups.component').then(m => m.GroupsComponent),
+        children: [
+          { path: 'create', loadComponent: () => import('./features/etudiant/groups/group-create/group-create.component').then(m => m.GroupCreateComponent) },
+          { path: 'requests', loadComponent: () => import('./features/etudiant/groups/group-requests/group-requests.component').then(m => m.GroupRequestsComponent) },
+          { path: 'edit/:id', loadComponent: () => import('./features/etudiant/groups/group-update/group-update.component').then(m => m.GroupUpdateComponent) },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/etudiant/groups/group-details/group-details.component').then(m => m.GroupDetailsComponent),
+            children: [
+              { path: '', redirectTo: 'feed', pathMatch: 'full' },
+              { path: 'feed', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-feed-tab/group-feed-tab.component').then(m => m.GroupFeedTabComponent) },
+              { path: 'members', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-members-tab/group-members-tab.component').then(m => m.GroupMembersTabComponent) },
+              { path: 'photos-albums', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-photos-tab/group-photos-tab.component').then(m => m.GroupPhotosTabComponent) },
+              { path: 'events', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-events-tab/group-events-tab.component').then(m => m.GroupEventsTabComponent) },
+            ]
+          }
+        ]
+      },
+      {
+        path: 'events',
+        children: [
+          { path: '', loadComponent: () => import('./features/etudiant/events/events.component').then((m) => m.EventsComponent) },
+          { path: ':id', loadComponent: () => import('./features/etudiant/events/event-details/event-details.component').then((m) => m.EventDetailsComponent) }
+        ]
+      },
+      { path: 'resources', loadComponent: () => import('./features/etudiant/resources/resources.component').then((m) => m.ResourcesComponent) },
+      { path: 'resources/:id', loadComponent: () => import('./features/etudiant/resources/resources.component').then((m) => m.ResourcesComponent) },
+      { path: 'info-support', loadComponent: () => import('./features/etudiant/info-support/info-support.component').then((m) => m.InfoSupportComponent) },
+      { path: 'profile', loadComponent: () => import('./features/etudiant/profile/profile.component').then(m => m.ProfileComponent) }
+    ]
   },
   {
     path: 'enseignant',
+    canActivate: [enseignantGuard],
     loadComponent: () =>
       import('./features/enseignant/enseignant-shell/enseignant-shell.component').then(
         (m) => m.EnseignantShellComponent,
       ),
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', loadComponent: () => import('./features/etudiant/home/home.component').then((m) => m.HomeComponent) },
+      { path: 'feed', loadComponent: () => import('./features/etudiant/feed/feed.component').then((m) => m.FeedComponent) },
+      { path: 'directory', loadComponent: () => import('./features/etudiant/directory/directory.component').then((m) => m.DirectoryComponent) },
+      {
+        path: 'groups',
+        loadComponent: () => import('./features/etudiant/groups/groups.component').then(m => m.GroupsComponent),
+        children: [
+          { path: 'create', loadComponent: () => import('./features/etudiant/groups/group-create/group-create.component').then(m => m.GroupCreateComponent) },
+          { path: 'requests', loadComponent: () => import('./features/etudiant/groups/group-requests/group-requests.component').then(m => m.GroupRequestsComponent) },
+          { path: 'edit/:id', loadComponent: () => import('./features/etudiant/groups/group-update/group-update.component').then(m => m.GroupUpdateComponent) },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/etudiant/groups/group-details/group-details.component').then(m => m.GroupDetailsComponent),
+            children: [
+              { path: '', redirectTo: 'feed', pathMatch: 'full' },
+              { path: 'feed', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-feed-tab/group-feed-tab.component').then(m => m.GroupFeedTabComponent) },
+              { path: 'members', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-members-tab/group-members-tab.component').then(m => m.GroupMembersTabComponent) },
+              { path: 'photos-albums', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-photos-tab/group-photos-tab.component').then(m => m.GroupPhotosTabComponent) },
+              { path: 'events', loadComponent: () => import('./features/etudiant/groups/group-details/tabs/group-events-tab/group-events-tab.component').then(m => m.GroupEventsTabComponent) },
+            ]
+          }
+        ]
+      },
+      {
+        path: 'events',
+        children: [
+          { path: '', loadComponent: () => import('./features/etudiant/events/events.component').then((m) => m.EventsComponent) },
+          { path: ':id', loadComponent: () => import('./features/etudiant/events/event-details/event-details.component').then((m) => m.EventDetailsComponent) }
+        ]
+      },
+      { path: 'resources', loadComponent: () => import('./features/etudiant/resources/resources.component').then((m) => m.ResourcesComponent) },
+      { path: 'resources/:id', loadComponent: () => import('./features/etudiant/resources/resources.component').then((m) => m.ResourcesComponent) },
+      { path: 'info-support', loadComponent: () => import('./features/etudiant/info-support/info-support.component').then((m) => m.InfoSupportComponent) },
+      { path: 'profile', loadComponent: () => import('./features/etudiant/profile/profile.component').then(m => m.ProfileComponent) }
+    ]
   },
   {
     path: 'entreprise',
@@ -311,6 +406,13 @@ export const routes: Routes = [
           import(
             './features/etudiant/mentoring/MentorSettings/mentoringSettings.component'
           ).then((m) => m.MentoringSettingsComponent),
+      },
+      {
+        path: 'recommendations',
+        loadComponent: () =>
+          import('./features/entreprise/recommendations/entreprise-recommendations.component').then(
+            (m) => m.EntrepriseRecommendationsComponent
+          ),
       }
     ]
   },

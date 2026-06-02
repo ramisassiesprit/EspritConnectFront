@@ -22,13 +22,13 @@ interface NavItem {
 }
 
 @Component({
-  selector: 'app-etudiant-sidebar',
+  selector: 'app-enseignant-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, CommonModule],
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.css']
+  templateUrl: './enseignant-sidebar.component.html',
+  styleUrls: ['./enseignant-sidebar.component.css']
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class EnseignantSidebarComponent implements OnInit, OnDestroy {
   private groupService = inject(GroupService);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -38,36 +38,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private routerEventsSub?: Subscription;
 
   navItems: NavItem[] = [
-    { label: 'Home', icon: 'home', route: '/etudiant/home' },
-    { label: 'Feed', icon: 'feed', route: '/etudiant/feed' },
-    { label: 'Directory', icon: 'folder', route: '/etudiant/directory' },
+    { label: 'Home', icon: 'home', route: '/enseignant/home' },
+    { label: 'Feed', icon: 'feed', route: '/enseignant/feed' },
+    { label: 'Directory', icon: 'folder', route: '/enseignant/directory' },
     {
-      label: 'Mentoring',
-      icon: 'group',
-      route: '/etudiant/mentoring',
-      hasChevron: true,
-      isOpen: false,
-      subItems: [
-        { label: 'Find a Mentor', route: '/etudiant/mentoring/find' },
-        { label: 'Mentoring Relationships', route: '/etudiant/mentoring/relations' },
-        { label: 'Settings', route: '/etudiant/mentoring/settings' }
-      ]
-    },
-    {
-      label: 'Jobs',
-      icon: 'business_center',
-      route: '/etudiant/jobs',
-      hasChevron: true,
-      isOpen: false,
-      subItems: [
-        { label: 'Job Board', route: '/etudiant/jobs/board' }
-      ]
-    },
-    { label: 'Photos', icon: 'image', route: '/etudiant/photos' },
-    {
-      label: 'Groups',
+      label: 'Groups (Classes)',
       icon: 'groups',
-      route: '/etudiant/groups',
+      route: '/enseignant/groups',
       hasChevron: true,
       isOpen: false,
       subItems: []
@@ -75,33 +52,31 @@ export class SidebarComponent implements OnInit, OnDestroy {
     {
       label: 'Events',
       icon: 'event',
-      route: '/etudiant/events',
+      route: '/enseignant/events',
       hasChevron: true,
       isOpen: false,
       subItems: [
-        { label: 'Event Board', route: '/etudiant/events/board' },
-        { label: 'Post an Event', route: '/etudiant/events/post' }
+        { label: 'Event Board', route: '/enseignant/events/board' },
+        { label: 'Post an Event', route: '/enseignant/events/post' }
       ]
     },
-    { label: 'Resources', icon: 'description', route: '/etudiant/resources' },
-    { label: 'Pour Vous', icon: 'auto_awesome', route: '/etudiant/recommendations' },
+    { label: 'Resources (Courses)', icon: 'description', route: '/enseignant/resources' },
     {
       label: 'Info & Support',
       icon: 'info',
-      route: '/etudiant/info-support',
+      route: '/enseignant/info-support',
       hasChevron: true,
       isOpen: false,
       subItems: [
-        { label: 'Terms of use', route: '/etudiant/info-support/terms' },
-        { label: 'Privacy policy', route: '/etudiant/info-support/privacy' },
-        { label: 'Technical Support', route: '/etudiant/info-support/tech' },
-        { label: 'Submit a ticket', route: '/etudiant/info-support/ticket' }
+        { label: 'Terms of use', route: '/enseignant/info-support/terms' },
+        { label: 'Privacy policy', route: '/enseignant/info-support/privacy' },
+        { label: 'Technical Support', route: '/enseignant/info-support/tech' },
+        { label: 'Submit a ticket', route: '/enseignant/info-support/ticket' }
       ]
     }
   ];
 
   constructor() {
-    // Use effect to react to changes in currentUser signal
     effect(() => {
       const session = this.authService.currentUser();
       if (session?.userId) {
@@ -137,13 +112,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   private syncGroupSubItems() {
-    const groupsItem = this.navItems.find(item => item.label === 'Groups');
+    const groupsItem = this.navItems.find(item => item.label === 'Groups (Classes)');
     if (!groupsItem) return;
 
     groupsItem.subItems = this.joinedGroups.length
       ? this.joinedGroups.map(group => ({
         label: group.groupName,
-        route: `/etudiant/groups/${group.id}/feed`
+        route: `/enseignant/groups/${group.id}/feed`
       }))
       : [];
 

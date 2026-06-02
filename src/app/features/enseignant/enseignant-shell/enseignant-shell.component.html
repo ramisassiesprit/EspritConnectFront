@@ -1,1 +1,15 @@
-<p>enseignant-shell works!</p>
+<div class="shell">
+  <app-navbar></app-navbar>
+
+  <div *ngIf="isHomePage" class="shell__hero">
+    <div class="shell__hero-overlay"></div>
+  </div>
+
+  <div class="shell__layout" [ngClass]="{'shell__layout--no-hero': !isHomePage}">
+    <app-enseignant-sidebar class="shell__sidebar"></app-enseignant-sidebar>
+
+    <main class="shell__main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

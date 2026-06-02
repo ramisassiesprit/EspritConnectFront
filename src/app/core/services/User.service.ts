@@ -25,6 +25,12 @@ export class UserService {
     return this.http.get<User>(`${this.apiUrl}/${userId}`);
   }
 
+  uploadCv(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${environment.apiUrl}cv/upload`, formData);
+  }
+
   // --- Gestion Admin ---
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);

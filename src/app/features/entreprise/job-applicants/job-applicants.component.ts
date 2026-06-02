@@ -6,6 +6,7 @@ import { ApplicationStatus, JobApplication, JobOffer } from '../../../core/model
 import { UserRole } from '../../../core/models/user-role.enum';
 import { AuthService } from '../../../core/services/auth.service';
 import { JobService } from '../../../core/services/job.service';
+import { RecommendationService } from '../../../core/services/recommendation.service';
 
 @Component({
   selector: 'app-job-applicants',
@@ -17,8 +18,10 @@ import { JobService } from '../../../core/services/job.service';
 export class JobApplicantsComponent implements OnInit {
   job: JobOffer | null = null;
   applications: JobApplication[] = [];
+  recommendedCandidates: any[] = [];
   loading = false;
   error = '';
+  activeTab: 'applicants' | 'recommended' = 'applicants';
   backRoute = '/entreprise/jobs';
 
   readonly applicationStatuses: ApplicationStatus[] = ['PENDING', 'REVIEWED', 'SHORTLISTED', 'REJECTED', 'ACCEPTED'];
@@ -27,7 +30,8 @@ export class JobApplicantsComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly authService: AuthService,
-    private readonly jobService: JobService
+    private readonly jobService: JobService,
+    private readonly recommendationService: RecommendationService
   ) {}
 
   ngOnInit(): void {
@@ -86,7 +90,16 @@ export class JobApplicantsComponent implements OnInit {
         this.jobService.getApplicationsByOffer(jobId).subscribe({
           next: (apps) => {
             this.applications = apps;
-            this.loading = false;
+            this.recommendationService.getJobCandidates(jobId).subscribe({
+              next: (candidates) => {
+                this.recommendedCandidates = candidates;
+                this.loading = false;
+              },
+              error: () => {
+                this.error = 'Unable to load recommended candidates.';
+                this.loading = false;
+              }
+            });
           },
           error: () => {
             this.error = 'Unable to load applicants.';

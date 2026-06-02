@@ -26,7 +26,8 @@ export class ProfileComponent implements OnInit {
     lastName: '',
     email: '',
     role: UserRole.ETUDIANT,
-    status: UserStatus.ACTIVE
+    status: UserStatus.ACTIVE,
+    cvUrl:''
   };
 
   espritProfile: EspritProfile = {
@@ -58,6 +59,9 @@ export class ProfileComponent implements OnInit {
   isEditingEsprit: boolean = false;
   avatarPreviewUrl: string | null = null;
   hasPendingAvatarSave: boolean = false;
+
+  cvFile: File | null = null;
+  isUploadingCv: boolean = false;
 
   programOptions = [
     { value: 'ESE-ESPRIT School of Engineering', label: 'ESE - ESPRIT School of Engineering' },
@@ -257,6 +261,31 @@ export class ProfileComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  onCvSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.cvFile = file;
+    }
+  }
+
+  uploadCv(): void {
+    if (!this.cvFile) return;
+    this.isUploadingCv = true;
+    this.userService.uploadCv(this.cvFile).subscribe({
+      next: (res) => {
+        this.isUploadingCv = false;
+        this.user.cvUrl = res.cvUrl; // Update local user model
+        this.cvFile = null;
+        Swal.fire('Succès', 'Votre CV a été uploadé avec succès !', 'success');
+      },
+      error: (err) => {
+        this.isUploadingCv = false;
+        Swal.fire('Erreur', 'Erreur lors de l\'upload du CV', 'error');
+        console.error(err);
+      }
+    });
   }
 
   private resetExperience(): WorkExperience {

@@ -21,14 +21,15 @@
             <i class="bi bi-camera"></i>
           </label>
           <input type="file" id="avatarInput" (change)="onFileSelected($event)" accept="image/*" class="hidden">
-          <button *ngIf="hasPendingAvatarSave" type="button" (click)="saveAvatar()" class="btn-avatar-save">SAVE PHOTO</button>
+          <button *ngIf="hasPendingAvatarSave" type="button" (click)="saveAvatar()" class="btn-avatar-save">SAVE
+            PHOTO</button>
         </div>
 
         <!-- Name + Role + Button + Social -->
         <div class="header-info">
           <h1 class="user-name">{{ user.firstName }} {{ user.lastName }}</h1>
           <p class="user-role">{{ user.role || 'Student' }} - {{ user.code || '—' }}</p>
-          
+
 
           <!-- Additional User Info Display -->
           <div class="user-meta-info" *ngIf="user.jobTitle || user.companyName">
@@ -42,7 +43,7 @@
           <div class="social-links">
             <a *ngIf="user.linkedinUrl" [href]="user.linkedinUrl" target="_blank"><i class="bi bi-linkedin"></i></a>
             <a *ngIf="user.facebookUrl" [href]="user.facebookUrl" target="_blank"><i class="bi bi-facebook"></i></a>
-            <a *ngIf="user.githubUrl"   [href]="user.githubUrl"   target="_blank"><i class="bi bi-github"></i></a>
+            <a *ngIf="user.githubUrl" [href]="user.githubUrl" target="_blank"><i class="bi bi-github"></i></a>
           </div>
         </div>
 
@@ -50,10 +51,9 @@
         <div class="achievements" *ngIf="user.badges && user.badges.length > 0">
           <span class="achievements-title">Achievements</span>
           <div class="badges">
-            <div *ngFor="let badge of user.badges" 
-                 class="badge-hex" 
-                 [ngClass]="badge.name === 'Mentor Pro' ? 'badge-gold' : 'badge-purple'"
-                 [title]="badge.name + ': ' + badge.description">
+            <div *ngFor="let badge of user.badges" class="badge-hex"
+              [ngClass]="badge.name === 'Mentor Pro' ? 'badge-gold' : 'badge-purple'"
+              [title]="badge.name + ': ' + badge.description">
               <i class="bi" [ngClass]="badge.name === 'Mentor Pro' ? 'bi-person-video3' : 'bi-award-fill'"></i>
             </div>
           </div>
@@ -109,6 +109,35 @@
             <input [(ngModel)]="user.githubUrl" placeholder="GitHub URL">
           </div>
         </div>
+
+        <!-- CV Upload Section in Edit Form -->
+        <div class="cv-upload-section mt-4 mb-4 p-4 border border-red-500 rounded-lg bg-gray-50">
+          <h3 class="text-lg font-bold text-red-600 mb-2"><i class="bi bi-file-earmark-pdf me-2"></i> Mon CV Intelligent
+          </h3>
+          <p class="text-sm text-gray-600 mb-3">Uploadez votre CV pour recevoir des recommandations intelligentes de
+            jobs, événements et mentors.</p>
+
+          <div class="flex items-center gap-4">
+            <input type="file" (change)="onCvSelected($event)" accept=".pdf,.doc,.docx" class="form-control" />
+            <button class="btn btn-danger px-4 py-2 rounded shadow-md hover:bg-red-700 transition" (click)="uploadCv()"
+              [disabled]="!cvFile || isUploadingCv">
+              <span *ngIf="isUploadingCv" class="spinner-border spinner-border-sm me-2"></span>
+              Uploader
+            </button>
+          </div>
+
+          <div *ngIf="user.cvUrl"
+            class="mt-3 p-3 bg-green-100 text-green-800 rounded flex justify-between items-center">
+            <span><i class="bi bi-check-circle-fill me-2"></i> CV uploadé avec succès.</span>
+            <a [href]="'http://localhost:8085/' + user.cvUrl" target="_blank"
+              class="text-green-700 underline font-semibold">Voir mon CV</a>
+          </div>
+          <div *ngIf="user.cvKeywords" class="mt-2 text-xs text-gray-500">
+            <i class="bi bi-stars text-yellow-500 me-1"></i> Des mots-clés ont été extraits pour le moteur de
+            recommandation.
+          </div>
+        </div>
+
         <div class="form-actions">
           <button (click)="updateProfile()" class="btn-save">SAVE</button>
           <button (click)="toggleEditProfile()" class="btn-cancel">CANCEL</button>
@@ -139,7 +168,8 @@
         </div>
         <div class="info-row">
           <span class="info-label">Institution/Program</span>
-          <span class="info-value">{{ (espritProfile.institution || '') + (espritProfile.program ? ' / ' + espritProfile.program : '') || '—' }}</span>
+          <span class="info-value">{{ (espritProfile.institution || '') + (espritProfile.program ? ' / ' +
+            espritProfile.program : '') || '—' }}</span>
         </div>
       </div>
 
@@ -186,10 +216,7 @@
             <label>Program (Multiple Choices)</label>
             <div class="program-checkbox-group">
               <div *ngFor="let opt of programOptions" class="program-checkbox-item">
-                <input 
-                  type="checkbox" 
-                  [id]="'opt-' + opt.value"
-                  [checked]="isProgramSelected(opt.value)"
+                <input type="checkbox" [id]="'opt-' + opt.value" [checked]="isProgramSelected(opt.value)"
                   (change)="toggleProgramOption(opt.value)">
                 <label [for]="'opt-' + opt.value">{{ opt.label }}</label>
               </div>
@@ -247,7 +274,8 @@
               <div>
                 <h4 class="timeline-title">{{ exp.jobTitle }}</h4>
                 <p class="timeline-sub">{{ exp.company }}</p>
-                <p class="timeline-date">{{ exp.startDate | date:'MMM yyyy' }} – {{ exp.isCurrent ? 'Present' : (exp.endDate | date:'MMM yyyy') }}</p>
+                <p class="timeline-date">{{ exp.startDate | date:'MMM yyyy' }} – {{ exp.isCurrent ? 'Present' :
+                  (exp.endDate | date:'MMM yyyy') }}</p>
               </div>
               <button (click)="deleteExperience(exp.id)" class="btn-icon text-gray-300 hover:text-red-500">
                 <i class="bi bi-trash"></i>
@@ -375,9 +403,6 @@
 </div>
 
 <!-- Help & Mentoring Edit Card (shown separately) -->
-<app-help-mentoring-form
-  *ngIf="isEditingHelp"
-  [initialHelp]="helps[0]"
-  (save)="onHelpSaved($event)"
+<app-help-mentoring-form *ngIf="isEditingHelp" [initialHelp]="helps[0]" (save)="onHelpSaved($event)"
   (cancel)="toggleEditHelp()">
 </app-help-mentoring-form>
