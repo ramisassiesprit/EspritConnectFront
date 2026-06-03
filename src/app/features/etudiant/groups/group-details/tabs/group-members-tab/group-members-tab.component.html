@@ -52,7 +52,7 @@
           <div class="member-details">
             <div class="member-name-row">
               <h4 class="member-name">{{ member.firstName }} {{ member.lastName }}</h4>
-              <span *ngIf="member.membershipStatus === 'PENDING'" class="pending-badge">Waiting for admin</span>
+
               <span class="member-badges" *ngIf="member.role === 'ALUMNI'">
                 <span class="badge-p" title="Alumni Mentor"><lucide-icon [img]="Users" size="10"></lucide-icon></span>
                 <span class="badge-y" title="Help Available"><lucide-icon [img]="Info" size="10"></lucide-icon></span>

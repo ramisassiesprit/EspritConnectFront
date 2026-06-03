@@ -435,25 +435,17 @@ export class GroupCreateComponent implements OnInit {
             const calls = this.addedMembers.map(m => this.groupService.addMember(group.id, m.id));
             forkJoin(calls).subscribe({
               next: () => {
-                if (payload.privacy === 'PRIVATE') {
-                  Swal.fire('Group created. Added members will be pending approval by group admins.');
-                } else {
-                  Swal.fire('Group created and members added successfully.');
-                }
+                Swal.fire('Group created. It is pending administrator approval and will become visible once approved.');
                 this.router.navigate(['/etudiant/groups']);
               },
               error: (err) => {
                 console.error('Group created but adding members failed:', err);
-                Swal.fire('Group created, but adding some members failed.');
+                Swal.fire('Group created, but adding some members failed. It is pending administrator approval and will become visible once approved.');
                 this.router.navigate(['/etudiant/groups']);
               }
             });
           } else {
-            if (payload.privacy === 'PRIVATE') {
-              Swal.fire('Group created. Members will need admin approval to join.');
-            } else {
-              Swal.fire('Group created successfully!');
-            }
+            Swal.fire('Group created. It is pending administrator approval and will become visible once approved.');
             this.router.navigate(['/etudiant/groups']);
           }
         },

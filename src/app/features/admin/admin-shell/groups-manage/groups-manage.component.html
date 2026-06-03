@@ -21,18 +21,7 @@
       <div class="bg-white p-4 rounded-2xl shadow-sm border">
         <div class="flex items-center justify-between">
           <h3 class="text-sm font-bold text-gray-700">Approved</h3>
-          <span class="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded-full">{{ approvedGroups.length }}</span>
-        </div>
-        <div class="mt-3 space-y-2">
-          <ng-container *ngIf="approvedGroups.length; else noApproved">
-            <ul class="space-y-2">
-              <li *ngFor="let g of approvedGroups | slice:0:6" class="flex items-center justify-between text-sm">
-                <div class="text-gray-800 cursor-pointer hover:text-indigo-600" (click)="viewGroup(g.id)">{{ g.groupName }}</div>
-                <div class="text-xs text-gray-500">{{ g.membersCount || 0 }}</div>
-              </li>
-            </ul>
-          </ng-container>
-          <ng-template #noApproved><p class="text-xs text-gray-500">No approved groups</p></ng-template>
+          <span class="text-xl font-semibold text-green-700 bg-green-50 px-2 py-2 rounded-full">{{ approvedGroups.length }}</span>
         </div>
       </div>
 
@@ -40,23 +29,7 @@
       <div class="bg-white p-4 rounded-2xl shadow-sm border">
         <div class="flex items-center justify-between">
           <h3 class="text-sm font-bold text-gray-700">Pending</h3>
-          <span class="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full">{{ pendingGroups.length }}</span>
-        </div>
-        <div class="mt-3 space-y-2">
-          <ng-container *ngIf="pendingGroups.length; else noPending">
-            <ul class="space-y-2">
-              <li *ngFor="let g of pendingGroups | slice:0:6" class="flex items-center justify-between text-sm">
-                <div class="flex items-center gap-3">
-                  <div class="cursor-pointer text-gray-800 hover:text-indigo-600" (click)="viewGroup(g.id)">{{ g.groupName }}</div>
-                </div>
-                <div class="flex items-center gap-2">
-                  <button (click)="approve(g.id)" class="text-xs px-2 py-1 bg-green-50 text-green-700 rounded">Approve</button>
-                  <button (click)="reject(g.id)" class="text-xs px-2 py-1 bg-red-50 text-red-700 rounded">Reject</button>
-                </div>
-              </li>
-            </ul>
-          </ng-container>
-          <ng-template #noPending><p class="text-xs text-gray-500">No pending groups</p></ng-template>
+          <span class="text-xl font-semibold text-yellow-700 bg-yellow-50 px-2 py-2 rounded-full">{{ pendingGroups.length }}</span>
         </div>
       </div>
 
@@ -64,21 +37,7 @@
       <div class="bg-white p-4 rounded-2xl shadow-sm border">
         <div class="flex items-center justify-between">
           <h3 class="text-sm font-bold text-gray-700">Rejected / Banned</h3>
-          <span class="text-xs font-semibold text-red-700 bg-red-50 px-2 py-1 rounded-full">{{ rejectedGroups.length }}</span>
-        </div>
-        <div class="mt-3 space-y-2">
-          <ng-container *ngIf="rejectedGroups.length; else noRejected">
-            <ul class="space-y-2">
-              <li *ngFor="let g of rejectedGroups | slice:0:6" class="flex items-center justify-between text-sm">
-                <div class="text-gray-800 cursor-pointer hover:text-indigo-600" (click)="viewGroup(g.id)">{{ g.groupName }}</div>
-                <div class="flex items-center gap-2">
-                  <button (click)="approve(g.id)" class="text-xs px-2 py-1 bg-green-50 text-green-700 rounded">Re-Approve</button>
-                  <button (click)="delete(g.id)" class="text-xs px-2 py-1 bg-red-50 text-red-700 rounded">Delete</button>
-                </div>
-              </li>
-            </ul>
-          </ng-container>
-          <ng-template #noRejected><p class="text-xs text-gray-500">No rejected groups</p></ng-template>
+          <span class="text-xl font-semibold text-red-700 bg-red-50 px-2 py-2 rounded-full">{{ rejectedGroups.length }}</span>
         </div>
       </div>
     </div>

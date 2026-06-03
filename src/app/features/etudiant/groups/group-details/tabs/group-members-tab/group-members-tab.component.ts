@@ -137,6 +137,9 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
   applyFiltersAndSorting() {
     let temp = [...this.onlineMembers];
 
+    // Filter out PENDING members
+    temp = temp.filter(m => m.membershipStatus !== 'PENDING');
+
     // Search query filter (matches full name)
     if (this.searchQuery.trim()) {
       const q = this.searchQuery.toLowerCase();

@@ -19,6 +19,8 @@ export class GroupRequestsComponent implements OnInit {
   loading = false;
   ownerGroups: any[] = [];
   pendingByGroup: Record<string, any[] | undefined> = {};
+  expandedGroups: Set<string> = new Set();
+  groupStats: Record<string, any> = {};
   error = '';
 
   readonly Users = Users;
@@ -48,7 +50,13 @@ export class GroupRequestsComponent implements OnInit {
           next: (membersArrays) => {
             membersArrays.forEach((members, idx) => {
               const group = this.ownerGroups[idx];
-              this.pendingByGroup[group.id] = (members || []).filter(m => m.status === 'PENDING');
+              const allMembers = members || [];
+              this.pendingByGroup[group.id] = allMembers.filter(m => m.status === 'PENDING');
+              this.groupStats[group.id] = {
+                totalMembers: allMembers.length,
+                pendingRequests: this.pendingByGroup[group.id]?.length || 0,
+                totalPosts: group.totalPosts || 0
+              };
             });
             this.loading = false;
           },
@@ -86,5 +94,21 @@ export class GroupRequestsComponent implements OnInit {
   private removePending(groupId: string, userId: string) {
     const list = this.pendingByGroup[groupId] || [];
     this.pendingByGroup[groupId] = list.filter(m => String(m.userId || m.id) !== String(userId));
+    // Update stats
+    if (this.groupStats[groupId]) {
+      this.groupStats[groupId].pendingRequests = this.pendingByGroup[groupId].length;
+    }
+  }
+
+  toggleExpand(groupId: string) {
+    if (this.expandedGroups.has(groupId)) {
+      this.expandedGroups.delete(groupId);
+    } else {
+      this.expandedGroups.add(groupId);
+    }
+  }
+
+  isExpanded(groupId: string): boolean {
+    return this.expandedGroups.has(groupId);
   }
 }

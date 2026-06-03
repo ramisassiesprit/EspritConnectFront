@@ -9,17 +9,35 @@
   </ng-container>
 
   <div *ngFor="let g of ownerGroups" class="group-requests-card">
-    <div class="group-header">
-      <img [src]="g.logoUrl || 'assets/default-logo.png'" alt="logo" class="group-logo">
-      <div>
-        <div class="group-name">{{ g.groupName }}</div>
-        <div class="group-meta">{{ pendingByGroup[g.id]?.length || 0 }} pending</div>
+    <div class="card-header" (click)="toggleExpand(g.id)">
+      <div class="card-header-left">
+        <img [src]="g.logoUrl || 'assets/default-logo.png'" alt="logo" class="group-logo">
+        <div class="group-info">
+          <div class="group-name">{{ g.groupName }}</div>
+          <div class="stats-container">
+            <div class="stat-item">
+              <span class="stat-label">Members:</span>
+              <span class="stat-value">{{ groupStats[g.id]?.totalMembers || 0 }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Requests:</span>
+              <span class="stat-value">{{ groupStats[g.id]?.pendingRequests || 0 }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Posts:</span>
+              <span class="stat-value">{{ groupStats[g.id]?.totalPosts || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="expand-arrow" [class.expanded]="isExpanded(g.id)">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
     </div>
 
-    <div *ngIf="(pendingByGroup[g.id] || []).length === 0" class="no-requests">No pending requests</div>
-
-    <ul *ngIf="(pendingByGroup[g.id] || []).length">
+    <ul *ngIf="isExpanded(g.id) && (pendingByGroup[g.id] || []).length" class="requests-list">
       <li *ngFor="let m of pendingByGroup[g.id]" class="request-item">
         <div class="request-left">
           <img [src]="m.avatarUrl || 'assets/default-avatar.png'" class="avatar">
@@ -34,5 +52,9 @@
         </div>
       </li>
     </ul>
+
+    <div *ngIf="isExpanded(g.id) && !(pendingByGroup[g.id] || []).length" class="no-requests">
+      No pending requests
+    </div>
   </div>
 </div>

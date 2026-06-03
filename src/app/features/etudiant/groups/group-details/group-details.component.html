@@ -22,21 +22,15 @@
           <div class="membership-status">
             <ng-container>
               <span *ngIf="isGroupMember" class="status-badge joined" (click)="exitGroup()">
-                <lucide-icon [img]="ChevronDown" size="14" class="badge-arrow"></lucide-icon>
                 Joined
               </span>
               <span *ngIf="!isGroupMember && isRequestPending" class="status-badge pending">
-                <lucide-icon [img]="ChevronDown" size="14" class="badge-arrow"></lucide-icon>
                 Request sent
               </span>
               <span *ngIf="!isGroupMember && !isRequestPending" class="status-badge joinable" (click)="joinGroup()">
-                <lucide-icon [img]="ChevronDown" size="14" class="badge-arrow"></lucide-icon>
                 Join
               </span>
             </ng-container>
-            <button class="icon-btn-info">
-              <lucide-icon [img]="Info" size="18"></lucide-icon>
-            </button>
           </div>
         </div>
       </div>
@@ -69,6 +63,7 @@
             <h4 class="owner-title">Administrators</h4>
             <div *ngIf="owner; else ownerPlaceholder" class="owner-details">
               <img [src]="owner.avatarUrl || 'assets/default-avatar.png'" alt="Owner" class="owner-avatar">
+            
               <div>
                 <div class="owner-name">{{ owner.firstName }} {{ owner.lastName }}</div>
                 <div class="owner-role">{{ owner.institution || owner.jobTitle || '' }}</div>
