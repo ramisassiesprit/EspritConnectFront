@@ -1,202 +1,298 @@
-<div class="bg-[#f3f3f3] min-h-screen p-6">
+<div class="bg-[#f4f5f7] min-h-screen p-6">
   <!-- Loading State -->
   <div *ngIf="loading" class="flex flex-col items-center justify-center min-h-[400px]">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ED1C24]"></div>
+    <div class="animate-spin rounded-full h-12 w-12 border-[3px] border-gray-200 border-t-[#ED1C24]"></div>
     <p class="mt-4 text-gray-500 font-medium">Loading profile...</p>
   </div>
 
   <!-- User Not Found -->
-  <div *ngIf="!loading && !user" class="text-center py-20">
-    <h2 class="text-2xl font-bold text-gray-700 mb-2">User not found</h2>
+  <div *ngIf="!loading && !user" class="flex flex-col items-center justify-center text-center py-20">
+    <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-[#ED1C24] mb-5">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">User not found</h2>
     <p class="text-gray-500 mb-8">This user doesn't exist or has been removed.</p>
-    <button routerLink="/etudiant/home" class="px-8 py-3 bg-[#ED1C24] text-white rounded-full font-bold">Go Back Home</button>
+    <button routerLink="/etudiant/home"
+      class="px-8 py-3 bg-[#ED1C24] text-white rounded-full font-bold shadow-sm transition hover:bg-[#C8161D]">Go Back
+      Home</button>
   </div>
 
   <!-- Profile Content -->
-  <div *ngIf="!loading && user" class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <div *ngIf="!loading && user" class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4 animate-fadeIn">
 
-    <!-- LEFT MAIN COLUMN (col-span-2) -->
+    <!-- LEFT MAIN COLUMN -->
     <div class="lg:col-span-2 space-y-4">
 
-      <!-- Header Card: Avatar + Name + Buttons -->
-      <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-        <div class="flex items-start gap-6">
-          <!-- Avatar -->
-          <div class="relative flex-shrink-0">
-            <img [src]="user.avatarUrl || 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&size=200'"
-                 class="w-24 h-24 rounded-full object-cover border border-gray-100 shadow-sm">
-            <div *ngIf="user.isOnline"
-                 class="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+      <!-- Header Card -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <!-- Cover -->
+        <div class="relative h-28 bg-gradient-to-r from-[#ED1C24] to-[#ff6a63]">
+          <div class="absolute inset-0 opacity-25"
+            style="background-image:radial-gradient(circle at 18px 18px, #fff 1.5px, transparent 1.6px); background-size:26px 26px;">
           </div>
+        </div>
 
-          <!-- Name, Role, Achievements -->
-          <div class="flex-1 min-w-0">
-            <div class="flex flex-wrap items-start justify-between gap-4">
-              <!-- Name & Role -->
-              <div>
-                <h1 class="text-2xl font-semibold text-gray-900">{{user.firstName}} {{user.lastName}}</h1>
-                <p class="text-gray-600 text-base mt-1">{{user.role | titlecase}}</p>
-                <p class="text-gray-500 text-sm mt-1" *ngIf="user.jobTitle">{{user.jobTitle}}<span *ngIf="user.companyName"> · {{user.companyName}}</span></p>
-              </div>
-
-              <!-- Achievements / Badges -->
-              <div class="text-center" *ngIf="user.badges && user.badges.length > 0">
-                <p class="text-sm font-medium text-gray-700 mb-2">Achievements</p>
-                <div class="flex gap-3 flex-wrap justify-center">
-                  <div *ngFor="let badge of user.badges" class="flex flex-col items-center group cursor-pointer" [title]="badge.description || badge.name">
-                    <img [src]="badge.iconUrl || 'https://img.icons8.com/color/96/prize.png'"
-                         class="w-8 h-8 transition-transform group-hover:scale-110">
-                    <span class="text-xs text-gray-600 mt-1">{{badge.name}}</span>
-                  </div>
-                </div>
-              </div>
+        <div class="px-6 pb-6">
+          <!-- Avatar (overlapping cover) + action buttons -->
+          <div class="-mt-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div class="relative flex-shrink-0">
+              <img
+                [src]="user.avatarUrl || 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&size=200'"
+                class="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-md bg-white">
+              <span *ngIf="user.isOnline"
+                class="absolute bottom-1.5 right-1.5 w-4 h-4 bg-green-500 ring-2 ring-white rounded-full"></span>
             </div>
 
-            <!-- Social Links -->
-            <div class="flex items-center gap-3 mt-4" *ngIf="user.linkedinUrl || user.githubUrl || user.facebookUrl">
-              <a *ngIf="user.linkedinUrl" [href]="user.linkedinUrl" target="_blank" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-[#0A66C2] hover:text-white transition-colors" title="LinkedIn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-              </a>
-              <a *ngIf="user.githubUrl" [href]="user.githubUrl" target="_blank" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-[#181717] hover:text-white transition-colors" title="GitHub">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-              </a>
-              <a *ngIf="user.facebookUrl" [href]="user.facebookUrl" target="_blank" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-[#1877F2] hover:text-white transition-colors" title="Facebook">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
-              </a>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-wrap gap-4 mt-6">
+            <!-- Action buttons -->
+            <div class="flex flex-wrap gap-2">
               <button [routerLink]="['/etudiant/chat', user.id]"
-                      class="flex items-center gap-2 px-6 py-2.5 bg-[#ED1C24] text-white rounded-md font-medium text-[15px] shadow-sm hover:bg-[#D31920] transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                class="inline-flex items-center gap-2 rounded-lg bg-[#ED1C24] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#D31920]">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
                 Message
               </button>
-              <button (click)="openVideoChatModal()" class="flex items-center gap-2 px-6 py-2.5 border border-[#ED1C24] text-[#ED1C24] rounded-md font-medium text-[15px] hover:bg-gray-50 transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+              <button (click)="openVideoChatModal()"
+                class="inline-flex items-center gap-2 rounded-lg border border-[#ED1C24] px-5 py-2.5 text-sm font-semibold text-[#ED1C24] transition hover:bg-red-50">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="23 7 16 12 23 17 23 7" />
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                </svg>
                 Video Chat
               </button>
-              <button  disabled class="flex cursor-not-allowed items-center gap-2 px-6 py-2.5 border border-gray-300 text-gray-700 rounded-md font-medium text-[15px] shadow-sm hover:border-gray-400 transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <button disabled
+                class="inline-flex cursor-not-allowed items-center gap-2 rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-400">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
                 Schedule
               </button>
             </div>
           </div>
+
+          <!-- Name + role (below avatar, fully on white) -->
+          <div class="mt-3 min-w-0">
+            <h1 class="font-display text-2xl font-bold text-gray-900 leading-tight">{{user.firstName}} {{user.lastName}}
+            </h1>
+            <p class="text-gray-600 mt-0.5">{{user.role | titlecase}}</p>
+            <p class="text-sm text-gray-500 mt-0.5" *ngIf="user.jobTitle">{{user.jobTitle}}<span
+                *ngIf="user.companyName"> · {{user.companyName}}</span></p>
+          </div>
+
+          <!-- Social + badges row -->
+          <div class="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 pt-4"
+            *ngIf="user.linkedinUrl || user.githubUrl || user.facebookUrl || (user.badges && user.badges.length > 0)">
+            <!-- Social -->
+            <div class="flex items-center gap-2" *ngIf="user.linkedinUrl || user.githubUrl || user.facebookUrl">
+              <a *ngIf="user.linkedinUrl" [href]="user.linkedinUrl" target="_blank" title="LinkedIn"
+                class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 text-gray-500 transition hover:bg-[#0A66C2] hover:text-white">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+              </a>
+              <a *ngIf="user.githubUrl" [href]="user.githubUrl" target="_blank" title="GitHub"
+                class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 text-gray-500 transition hover:bg-[#181717] hover:text-white">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                </svg>
+              </a>
+              <a *ngIf="user.facebookUrl" [href]="user.facebookUrl" target="_blank" title="Facebook"
+                class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 text-gray-500 transition hover:bg-[#1877F2] hover:text-white">
+                <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Badges -->
+            <div class="flex gap-4 flex-wrap" *ngIf="user.badges && user.badges.length > 0">
+              <div *ngFor="let badge of user.badges" class="flex flex-col items-center group cursor-pointer"
+                [title]="badge.description || badge.name">
+                <img [src]="badge.iconUrl || 'https://img.icons8.com/color/96/prize.png'"
+                  class="w-8 h-8 transition-transform group-hover:scale-110">
+                <span class="text-xs text-gray-500 mt-1">{{badge.name}}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Summary (Bio) -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm" *ngIf="user.bio">
-        <h2 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"></path><path d="M14 3v5h5M16 13H8M16 17H8M10 9H8"></path></svg>
-          Summary
-        </h2>
+      <!-- Summary -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" *ngIf="user.bio">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
+              <path d="M14 3v5h5M16 13H8M16 17H8M10 9H8" />
+            </svg>
+          </span>
+          <h2 class="font-display text-lg font-bold text-gray-900">Summary</h2>
+        </div>
         <p class="text-gray-600 leading-relaxed whitespace-pre-wrap">{{user.bio}}</p>
       </div>
 
-      <!-- Esprit Profile / Education Card -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm" *ngIf="espritProfile?.fieldOfStudy || espritProfile?.institution">
-        <div class="flex items-center gap-3 mb-5">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span class="font-bold text-gray-800 text-lg">{{espritProfile?.institution || 'Esprit'}}</span>
+      <!-- Esprit Profile / Education -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+        *ngIf="espritProfile?.fieldOfStudy || espritProfile?.institution">
+        <div class="flex items-center gap-2.5 mb-5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </span>
+          <h2 class="font-display text-lg font-bold text-gray-900">{{espritProfile?.institution || 'Esprit'}}</h2>
         </div>
-        <div class="space-y-4 pl-9">
+        <div class="grid sm:grid-cols-2 gap-5 pl-12">
           <div *ngIf="espritProfile?.fieldOfStudy">
-            <p class="text-xs font-semibold text-[#ED1C24] mb-0.5">Field of study</p>
+            <p class="text-[11px] uppercase tracking-wide font-semibold text-[#ED1C24] mb-1">Field of study</p>
             <p class="text-gray-800 font-semibold">{{espritProfile?.fieldOfStudy}}</p>
           </div>
           <div *ngIf="espritProfile?.degree">
-            <p class="text-xs font-semibold text-[#ED1C24] mb-0.5">Degree</p>
-            <p class="text-gray-800 font-semibold">{{espritProfile?.degree}} <span *ngIf="espritProfile?.graduationYear" class="text-gray-400 font-normal">({{espritProfile?.graduationYear}})</span></p>
+            <p class="text-[11px] uppercase tracking-wide font-semibold text-[#ED1C24] mb-1">Degree</p>
+            <p class="text-gray-800 font-semibold">{{espritProfile?.degree}} <span *ngIf="espritProfile?.graduationYear"
+                class="text-gray-400 font-normal">({{espritProfile?.graduationYear}})</span></p>
           </div>
           <div *ngIf="espritProfile?.program">
-            <p class="text-xs font-semibold text-[#ED1C24] mb-0.5">Institution / Program</p>
+            <p class="text-[11px] uppercase tracking-wide font-semibold text-[#ED1C24] mb-1">Institution / Program</p>
             <p class="text-gray-800 font-semibold">{{espritProfile?.program}}</p>
           </div>
         </div>
       </div>
 
       <!-- Other Education -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm" *ngIf="educations.length > 0">
-        <h2 class="text-lg font-bold text-gray-800 mb-5 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
-          Education
-        </h2>
-        <div *ngFor="let edu of educations; let last = last" [class.pb-5]="!last" [class.mb-5]="!last" [class.border-b]="!last" class="border-gray-100 pl-9 space-y-4">
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" *ngIf="educations.length > 0">
+        <div class="flex items-center gap-2.5 mb-5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </span>
+          <h2 class="font-display text-lg font-bold text-gray-900">Education</h2>
+        </div>
+        <div *ngFor="let edu of educations; let last = last" [class.pb-5]="!last" [class.mb-5]="!last"
+          [class.border-b]="!last" class="border-gray-100 pl-12 grid sm:grid-cols-3 gap-4">
           <div *ngIf="edu.institutionName">
-            <p class="text-xs font-semibold text-[#ED1C24] mb-0.5">Educational institution</p>
+            <p class="text-[11px] uppercase tracking-wide font-semibold text-[#ED1C24] mb-1">Educational institution</p>
             <p class="text-gray-800 font-semibold">{{edu.institutionName}}</p>
           </div>
           <div *ngIf="edu.degree">
-            <p class="text-xs font-semibold text-[#ED1C24] mb-0.5">Degree</p>
+            <p class="text-[11px] uppercase tracking-wide font-semibold text-[#ED1C24] mb-1">Degree</p>
             <p class="text-gray-800 font-semibold">{{edu.degree}}</p>
           </div>
           <div *ngIf="edu.graduationYear">
-            <p class="text-xs font-semibold text-[#ED1C24] mb-0.5">Graduation year</p>
+            <p class="text-[11px] uppercase tracking-wide font-semibold text-[#ED1C24] mb-1">Graduation year</p>
             <p class="text-gray-800 font-semibold">{{edu.graduationYear}}</p>
           </div>
         </div>
       </div>
 
       <!-- Industry & Job Function -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-4" *ngIf="user.industry || user.jobFunction">
-        <div class="flex items-center gap-6" *ngIf="user.industry">
-          <div class="flex items-center gap-2 min-w-[150px]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
-            <h2 class="text-lg font-bold text-gray-800">Industry</h2>
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" *ngIf="user.industry || user.jobFunction">
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div *ngIf="user.industry">
+            <div class="flex items-center gap-2.5 mb-3">
+              <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+                  <rect x="9" y="9" width="6" height="6" />
+                  <line x1="9" y1="1" x2="9" y2="4" />
+                  <line x1="15" y1="1" x2="15" y2="4" />
+                  <line x1="9" y1="20" x2="9" y2="23" />
+                  <line x1="15" y1="20" x2="15" y2="23" />
+                  <line x1="20" y1="9" x2="23" y2="9" />
+                  <line x1="20" y1="14" x2="23" y2="14" />
+                  <line x1="1" y1="9" x2="4" y2="9" />
+                  <line x1="1" y1="14" x2="4" y2="14" />
+                </svg>
+              </span>
+              <h2 class="font-display text-base font-bold text-gray-900">Industry</h2>
+            </div>
+            <span
+              class="inline-block rounded-full bg-gray-100 px-4 py-1.5 text-sm font-semibold text-gray-700">{{user.industry}}</span>
           </div>
-          <ul class="list-disc pl-5 text-gray-600">
-            <li>{{user.industry}}</li>
-          </ul>
-        </div>
-        
-        <hr class="border-gray-100" *ngIf="user.industry && user.jobFunction">
-        
-        <div class="flex items-center gap-6" *ngIf="user.jobFunction">
-          <div class="flex items-center gap-2 min-w-[150px]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-            <h2 class="text-lg font-bold text-gray-800">Job function</h2>
+          <div *ngIf="user.jobFunction">
+            <div class="flex items-center gap-2.5 mb-3">
+              <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg>
+              </span>
+              <h2 class="font-display text-base font-bold text-gray-900">Job function</h2>
+            </div>
+            <span
+              class="inline-block rounded-full bg-gray-100 px-4 py-1.5 text-sm font-semibold text-gray-700">{{user.jobFunction}}</span>
           </div>
-          <ul class="list-disc pl-5 text-gray-600">
-            <li>{{user.jobFunction}}</li>
-          </ul>
         </div>
       </div>
 
       <!-- Work Experience -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm" *ngIf="experiences.length > 0">
-        <h2 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-          Experience
-        </h2>
-        <div class="relative border-l-2 border-gray-200 ml-3 pl-6 space-y-8">
-          <div *ngFor="let exp of experiences" class="relative">
-            <!-- Timeline Dot -->
-            <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-gray-400 border-4 border-white"></div>
-            
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4 mb-1">
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" *ngIf="experiences.length > 0">
+        <div class="flex items-center gap-2.5 mb-6">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+            </svg>
+          </span>
+          <h2 class="font-display text-lg font-bold text-gray-900">Experience</h2>
+        </div>
+        <div class="relative border-l-2 border-gray-100 ml-2 pl-6 space-y-7">
+          <div *ngFor="let exp of experiences; let first = first" class="relative">
+            <span class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full ring-4 ring-white"
+              [ngClass]="first ? 'bg-[#ED1C24]' : 'bg-gray-300'"></span>
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4">
               <div>
                 <p class="font-bold text-gray-900">{{exp.company}}</p>
-                <p class="text-sm font-semibold text-gray-700">{{exp.jobTitle}}</p>
+                <p class="text-sm font-semibold text-gray-600">{{exp.jobTitle}}</p>
               </div>
-              <span class="text-xs text-gray-500 font-medium whitespace-nowrap">
+              <span class="text-xs text-gray-400 font-medium whitespace-nowrap">
                 {{formatDate(exp.startDate)}} - {{exp.isCurrent ? 'Present' : formatDate(exp.endDate)}}
               </span>
             </div>
-            <p class="text-sm text-gray-500 mb-2" *ngIf="exp.industry">{{exp.industry}}</p>
-            <p class="text-sm text-gray-600 leading-relaxed" *ngIf="exp.description">{{exp.description}}</p>
+            <p class="text-sm text-gray-500 mt-1" *ngIf="exp.industry">{{exp.industry}}</p>
+            <p class="text-sm text-gray-600 leading-relaxed mt-2" *ngIf="exp.description">{{exp.description}}</p>
           </div>
         </div>
       </div>
 
       <!-- Skills -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm" *ngIf="skills.length > 0">
-        <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          Skills
-        </h2>
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" *ngIf="skills.length > 0">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </span>
+          <h2 class="font-display text-lg font-bold text-gray-900">Skills</h2>
+        </div>
         <div class="flex flex-wrap gap-2">
-          <span *ngFor="let skill of skills" class="px-4 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-red-50 hover:text-[#ED1C24] transition-colors cursor-default">
+          <span *ngFor="let skill of skills"
+            class="px-4 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-red-50 hover:text-[#ED1C24] transition-colors cursor-default">
             {{skill.name}}
           </span>
         </div>
@@ -207,89 +303,164 @@
     <!-- RIGHT SIDEBAR -->
     <div class="space-y-4">
 
-      <!-- Offering Help Card -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-gray-400">
-        <div class="flex items-center gap-2 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <h3 class="font-medium text-gray-800 text-lg">Offering Help</h3>
+      <!-- Offering Help -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <h3 class="font-display font-bold text-gray-900">Offering Help</h3>
         </div>
-        <ul class="space-y-1 mb-5 text-[14px] text-gray-600" *ngIf="getOfferHelpItems().length > 0">
-          <li *ngFor="let item of getOfferHelpItems()">• {{item}}</li>
-        </ul>
-        <p *ngIf="getOfferHelpItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">No help offered</p>
-        <button 
-          (click)="openRequestHelpModal()"
-          class="w-full bg-gray-600 text-white rounded-md py-2 font-medium text-sm hover:bg-gray-700 transition-all">
+        <div class="flex flex-wrap gap-2 mb-4" *ngIf="getOfferHelpItems().length > 0">
+          <span *ngFor="let item of getOfferHelpItems()"
+            class="rounded-full bg-slate-50 border border-slate-100 px-3 py-1 text-xs font-medium text-slate-600">{{item}}</span>
+        </div>
+        <p *ngIf="getOfferHelpItems().length === 0" class="text-sm text-gray-400 italic mb-4">No help offered</p>
+        <button (click)="openRequestHelpModal()"
+          class="w-full rounded-lg bg-slate-800 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-900">
           Request Help
         </button>
       </div>
 
-      <!-- Seeking Help Card -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-gray-400">
-        <div class="flex items-center gap-2 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <h3 class="font-medium text-gray-800 text-lg">Seeking Help</h3>
+      <!-- Seeking Help -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <h3 class="font-display font-bold text-gray-900">Seeking Help</h3>
         </div>
-        <ul class="space-y-1 mb-5 text-[14px] text-gray-600" *ngIf="getSeekHelpItems().length > 0">
-          <li *ngFor="let item of getSeekHelpItems()">• {{item}}</li>
-        </ul>
-        <p *ngIf="getSeekHelpItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">Not seeking help</p>
-        <button 
-          (click)="openOfferHelpModal()"
-          class="w-full border-2 border-gray-600 text-gray-600 rounded-md py-2 font-medium text-sm hover:bg-gray-50 transition-all">
+        <div class="flex flex-wrap gap-2 mb-4" *ngIf="getSeekHelpItems().length > 0">
+          <span *ngFor="let item of getSeekHelpItems()"
+            class="rounded-full bg-slate-50 border border-slate-100 px-3 py-1 text-xs font-medium text-slate-600">{{item}}</span>
+        </div>
+        <p *ngIf="getSeekHelpItems().length === 0" class="text-sm text-gray-400 italic mb-4">Not seeking help</p>
+        <button (click)="openOfferHelpModal()"
+          class="w-full rounded-lg border border-slate-300 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
           Offer Help
         </button>
       </div>
 
-      <!-- Offering Mentoring Card -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-[#ED1C24]">
-        <div class="flex items-center gap-2 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <h3 class="font-medium text-gray-800 text-lg">Offering Mentoring</h3>
+      <!-- Offering Mentoring -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <h3 class="font-display font-bold text-gray-900">Offering Mentoring</h3>
         </div>
-        <ul class="space-y-1 mb-5 text-[14px] text-gray-600" *ngIf="getOfferMentoringItems().length > 0">
-          <li *ngFor="let item of getOfferMentoringItems()">• {{item}}</li>
-        </ul>
-        <p *ngIf="getOfferMentoringItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">No mentoring offered</p>
-        <button *ngIf="getOfferMentoringItems().length > 0" (click)="requestMentoring()" class="w-full bg-[#ED1C24] text-white rounded-md py-2 font-medium text-sm hover:bg-[#D31920] transition-all">
+        <div class="flex flex-wrap gap-2 mb-4" *ngIf="getOfferMentoringItems().length > 0">
+          <span *ngFor="let item of getOfferMentoringItems()"
+            class="rounded-full bg-red-50 border border-red-100 px-3 py-1 text-xs font-medium text-[#ED1C24]">{{item}}</span>
+        </div>
+        <p *ngIf="getOfferMentoringItems().length === 0" class="text-sm text-gray-400 italic mb-4">No mentoring offered
+        </p>
+        <button *ngIf="getOfferMentoringItems().length > 0" (click)="requestMentoring()"
+          class="w-full rounded-lg bg-[#ED1C24] py-2.5 text-sm font-semibold text-white transition hover:bg-[#D31920]">
           Request Mentoring
         </button>
       </div>
 
-      <!-- Seeking Mentoring Card -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border-2 border-[#ED1C24]">
-        <div class="flex items-center gap-2 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ED1C24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <h3 class="font-medium text-gray-800 text-lg">Seeking Mentoring</h3>
+      <!-- Seeking Mentoring -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#ED1C24]">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </span>
+          <h3 class="font-display font-bold text-gray-900">Seeking Mentoring</h3>
         </div>
-        <ul class="space-y-1 mb-5 text-[14px] text-gray-600" *ngIf="getSeekMentoringItems().length > 0">
-          <li *ngFor="let item of getSeekMentoringItems()">• {{item}}</li>
-        </ul>
-        <p *ngIf="getSeekMentoringItems().length === 0" class="text-[14px] text-gray-400 italic mb-5">Not seeking mentoring</p>
-        <button *ngIf="getSeekMentoringItems().length > 0" (click)="offerMentoring()" class="w-full border-2 border-[#ED1C24] text-[#ED1C24] rounded-md py-2 font-medium text-sm hover:bg-red-50 transition-all">
+        <div class="flex flex-wrap gap-2 mb-4" *ngIf="getSeekMentoringItems().length > 0">
+          <span *ngFor="let item of getSeekMentoringItems()"
+            class="rounded-full bg-red-50 border border-red-100 px-3 py-1 text-xs font-medium text-[#ED1C24]">{{item}}</span>
+        </div>
+        <p *ngIf="getSeekMentoringItems().length === 0" class="text-sm text-gray-400 italic mb-4">Not seeking mentoring
+        </p>
+        <button *ngIf="getSeekMentoringItems().length > 0" (click)="offerMentoring()"
+          class="w-full rounded-lg border border-[#ED1C24] py-2.5 text-sm font-semibold text-[#ED1C24] transition hover:bg-red-50">
           Offer Mentoring
         </button>
       </div>
 
-      <!-- Contact Information Card -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 class="font-medium text-gray-800 text-lg mb-4">Contact information</h3>
-        <div class="space-y-3 text-[15px]">
-          <div class="flex items-start gap-4">
-            <span class="text-gray-500 min-w-[65px]">Email</span>
-            <a [href]="'mailto:' + user.email" class="text-[#ED1C24] font-medium hover:underline break-all">{{user.email}}</a>
+      <!-- Contact Information -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <h3 class="font-display font-bold text-gray-900 mb-4">Contact information</h3>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 7-10 5L2 7" />
+              </svg>
+            </span>
+            <div class="min-w-0">
+              <p class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Email</p>
+              <a [href]="'mailto:' + user.email"
+                class="text-sm font-medium text-[#ED1C24] hover:underline break-all">{{user.email}}</a>
+            </div>
           </div>
-          <div *ngIf="user.linkedinUrl" class="flex items-start gap-4">
-            <span class="text-gray-500 min-w-[65px]">LinkedIn</span>
-            <a [href]="user.linkedinUrl" target="_blank" class="text-[#ED1C24] font-medium hover:underline">View Profile</a>
+          <div *ngIf="user.linkedinUrl" class="flex items-center gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+            </span>
+            <div class="min-w-0">
+              <p class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">LinkedIn</p>
+              <a [href]="user.linkedinUrl" target="_blank"
+                class="text-sm font-medium text-[#ED1C24] hover:underline">View Profile</a>
+            </div>
           </div>
-          <div *ngIf="user.githubUrl" class="flex items-start gap-4">
-            <span class="text-gray-500 min-w-[65px]">GitHub</span>
-            <a [href]="user.githubUrl" target="_blank" class="text-[#ED1C24] font-medium hover:underline">View Profile</a>
+          <div *ngIf="user.githubUrl" class="flex items-center gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+            </span>
+            <div class="min-w-0">
+              <p class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">GitHub</p>
+              <a [href]="user.githubUrl" target="_blank" class="text-sm font-medium text-[#ED1C24] hover:underline">View
+                Profile</a>
+            </div>
           </div>
-          <div *ngIf="user.facebookUrl" class="flex items-start gap-4">
-            <span class="text-gray-500 min-w-[65px]">Facebook</span>
-            <a [href]="user.facebookUrl" target="_blank" class="text-[#ED1C24] font-medium hover:underline">View Profile</a>
+          <div *ngIf="user.facebookUrl" class="flex items-center gap-3">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+              </svg>
+            </span>
+            <div class="min-w-0">
+              <p class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Facebook</p>
+              <a [href]="user.facebookUrl" target="_blank"
+                class="text-sm font-medium text-[#ED1C24] hover:underline">View Profile</a>
+            </div>
           </div>
         </div>
       </div>
@@ -299,31 +470,16 @@
 </div>
 
 <!-- Request Help Modal -->
-<app-request-help-modal
-  *ngIf="user"
-  [isOpen]="isRequestHelpModalOpen"
-  [user]="user"
-  [helpOptions]="getOfferHelpItems()"
-  (close)="closeRequestHelpModal()"
-  (send)="handleSendRequestHelp($event)">
+<app-request-help-modal *ngIf="user" [isOpen]="isRequestHelpModalOpen" [user]="user" [helpOptions]="getOfferHelpItems()"
+  (close)="closeRequestHelpModal()" (send)="handleSendRequestHelp($event)">
 </app-request-help-modal>
 
 <!-- Offer Help Modal -->
-<app-offer-help-modal
-  *ngIf="user"
-  [isOpen]="isOfferHelpModalOpen"
-  [user]="user"
-  [helpOptions]="getSeekHelpItems()"
-  (close)="closeOfferHelpModal()"
-  (send)="handleSendOfferHelp($event)">
+<app-offer-help-modal *ngIf="user" [isOpen]="isOfferHelpModalOpen" [user]="user" [helpOptions]="getSeekHelpItems()"
+  (close)="closeOfferHelpModal()" (send)="handleSendOfferHelp($event)">
 </app-offer-help-modal>
 
 <!-- Video Chat Modal -->
-<app-video-chat-modal
-  *ngIf="user"
-  [isOpen]="isVideoChatModalOpen"
-  [user]="user"
-  (close)="closeVideoChatModal()"
+<app-video-chat-modal *ngIf="user" [isOpen]="isVideoChatModalOpen" [user]="user" (close)="closeVideoChatModal()"
   (scheduled)="handleVideoChatScheduled($event)">
 </app-video-chat-modal>
-

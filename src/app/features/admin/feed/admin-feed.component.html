@@ -1,0 +1,254 @@
+<div class="feed-admin-container">
+  <header class="feed-header">
+    <div class="header-content">
+      <h1>Gestion du Flux d'Actualités (Feed)</h1>
+      <p>Modérez les publications de la communauté et gérez le contenu du feed.</p>
+    </div>
+  </header>
+
+  <!-- Statistics Panel -->
+  <section class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon posts-icon">
+        <i class="bi bi-card-text"></i>
+      </div>
+      <div class="stat-details">
+        <span class="stat-label">Total Publications</span>
+        <h3 class="stat-value">{{ totalPosts() }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon media-icon">
+        <i class="bi bi-image"></i>
+      </div>
+      <div class="stat-details">
+        <span class="stat-label">Publications Média</span>
+        <h3 class="stat-value">{{ mediaPostsCount() }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon likes-icon">
+        <i class="bi bi-hand-thumbs-up"></i>
+      </div>
+      <div class="stat-details">
+        <span class="stat-label">Total Réactions</span>
+        <h3 class="stat-value">{{ totalLikes() }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon comments-icon">
+        <i class="bi bi-chat-dots"></i>
+      </div>
+      <div class="stat-details">
+        <span class="stat-label">Total Commentaires</span>
+        <h3 class="stat-value">{{ totalComments() }}</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls (Search & Filter) -->
+  <div class="feed-controls">
+    <div class="search-box">
+      <i class="bi bi-search search-icon"></i>
+      <input 
+        type="text" 
+        placeholder="Rechercher par auteur ou contenu..." 
+        [(ngModel)]="searchQuery" 
+        (ngModelChange)="onSearchChange()"
+        class="search-input"
+      />
+    </div>
+
+    <div class="filter-tabs">
+      <button 
+        [class.active]="filterType() === 'ALL'" 
+        (click)="onFilterChange('ALL')" 
+        class="filter-btn"
+      >
+        Toutes
+      </button>
+      <button 
+        [class.active]="filterType() === 'MEDIA'" 
+        (click)="onFilterChange('MEDIA')" 
+        class="filter-btn"
+      >
+        Avec Média
+      </button>
+      <button 
+        [class.active]="filterType() === 'NO_MEDIA'" 
+        (click)="onFilterChange('NO_MEDIA')" 
+        class="filter-btn"
+      >
+        Texte Uniquement
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="feed-content">
+    <div *ngIf="loading()" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des publications...</p>
+    </div>
+
+    <div *ngIf="error()" class="error-state">
+      <i class="bi bi-exclamation-triangle"></i>
+      <p>{{ error() }}</p>
+      <button (click)="loadPosts()" class="btn-retry">Réessayer</button>
+    </div>
+
+    <div *ngIf="!loading() && !error() && posts().length === 0" class="empty-state">
+      <i class="bi bi-chat-square-text"></i>
+      <p>Aucune publication correspondante.</p>
+    </div>
+
+    <!-- Posts Table -->
+    <div *ngIf="!loading() && !error() && posts().length > 0" class="table-container">
+      <table class="feed-table">
+        <thead>
+          <tr>
+            <th>Auteur</th>
+            <th>Contenu</th>
+            <th>Média / Pièces Jointes</th>
+            <th>Statistiques</th>
+            <th>Date</th>
+            <th class="actions-header">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let post of posts()">
+            <tr [class.expanded-row]="openCommentsPostIds()[post.id]">
+              <td>
+                <div class="author-info">
+                  <img [src]="getFullUrl(post.user.avatarUrl) || 'assets/default-avatar.png'" alt="Avatar" class="author-avatar" />
+                  <div class="author-details">
+                    <span class="author-name">{{ post.user.firstName }} {{ post.user.lastName }}</span>
+                    <span class="author-role-badge">{{ post.user.role }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="post-text-content" [title]="post.content">
+                  {{ getSnippet(post.content) }}
+                </div>
+              </td>
+              <td>
+                <!-- Media Indicator or Thumbnail -->
+                <div class="media-container" *ngIf="post.mediaUrl || (post.images && post.images.length > 0)">
+                  <img *ngIf="post.mediaUrl" [src]="getFullUrl(post.mediaUrl)" class="media-thumb" alt="Thumbnail" />
+                  <img *ngIf="post.images && post.images.length > 0" [src]="getFullUrl(post.images[0])" class="media-thumb" alt="Thumbnail" />
+                  <span class="media-badge" *ngIf="(post.images && post.images.length > 1) || (post.files && post.files.length > 0)">
+                    +{{ (post.images?.length || 0) + (post.files?.length || 0) - 1 }}
+                  </span>
+                </div>
+                <span class="no-media-label" *ngIf="!post.mediaUrl && (!post.images || post.images.length === 0)">
+                  Aucun média
+                </span>
+              </td>
+              <td>
+                <div class="post-stats">
+                  <span class="stat-item" title="Réactions/Likes">
+                    <i class="bi bi-hand-thumbs-up-fill"></i> {{ post.likesCount || 0 }}
+                  </span>
+                  <button 
+                    class="stat-item comment-toggle-btn" 
+                    [class.has-comments]="(post.commentsCount || 0) > 0"
+                    [class.active]="openCommentsPostIds()[post.id]"
+                    (click)="toggleComments(post)" 
+                    title="Modérer les commentaires"
+                  >
+                    <i class="bi bi-chat-fill"></i> {{ post.commentsCount || 0 }}
+                  </button>
+                </div>
+              </td>
+              <td>
+                <span class="post-date">{{ post.createdAt | date:'short' }}</span>
+              </td>
+              <td class="actions-cell">
+                <button (click)="confirmDeletePost(post)" class="btn-delete" title="Supprimer la publication">
+                  <i class="bi bi-trash3"></i>
+                  <span>Supprimer</span>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Expanded Comments Moderation Panel -->
+            <tr *ngIf="openCommentsPostIds()[post.id]" class="comments-row">
+              <td colspan="6">
+                <div class="comments-expansion-panel">
+                  <div class="comments-panel-header">
+                    <h4><i class="bi bi-chat-dots-fill"></i> Modération des commentaires ({{ post.commentsCount || 0 }})</h4>
+                  </div>
+                  
+                  <div *ngIf="!postComments()[post.id]" class="comments-loading">
+                    <div class="spinner-small"></div>
+                    <span>Chargement des commentaires...</span>
+                  </div>
+
+                  <div *ngIf="postComments()[post.id] && postComments()[post.id].length === 0" class="no-comments-msg">
+                    <i class="bi bi-chat-left-dots"></i> Aucun commentaire sur cette publication.
+                  </div>
+
+                  <div *ngIf="postComments()[post.id] && postComments()[post.id].length > 0" class="comments-list">
+                    <div *ngFor="let comment of postComments()[post.id]" class="comment-item">
+                      <div class="comment-author">
+                        <img [src]="getFullUrl(comment.user.avatarUrl) || 'assets/default-avatar.png'" alt="Avatar" class="comment-avatar" />
+                        <div class="comment-author-details">
+                          <span class="comment-author-name">{{ comment.user.firstName }} {{ comment.user.lastName }}</span>
+                          <span class="comment-author-email">{{ comment.user.email }}</span>
+                        </div>
+                      </div>
+                      
+                      <div class="comment-content">
+                        <p class="comment-text">{{ comment.content }}</p>
+                        <span class="comment-date-text">{{ comment.createdAt | date:'short' }}</span>
+                      </div>
+                      
+                      <div class="comment-actions">
+                        <button (click)="confirmDeleteComment(post, comment.id)" class="btn-delete-comment" title="Supprimer le commentaire">
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="isDeleteModalOpen()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="bi bi-exclamation-triangle-fill warning-icon"></i> Confirmation de suppression</h3>
+        <button (click)="closeDeleteModal()" class="btn-close-modal"><i class="bi bi-x-lg"></i></button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="modal-description" *ngIf="deleteType() === 'POST'">
+          Êtes-vous sûr de vouloir supprimer définitivement cette publication ? Toutes les réactions et commentaires associés seront également supprimés de la base de données.
+        </p>
+        <p class="modal-description" *ngIf="deleteType() === 'COMMENT'">
+          Êtes-vous sûr de vouloir supprimer définitivement ce commentaire ? Cette action supprimera l'élément de la base de données de manière irréversible.
+        </p>
+        
+        <div class="target-snippet" *ngIf="deleteType() === 'POST' && targetPost()">
+          <strong>Publication de {{ targetPost()?.user?.firstName }} {{ targetPost()?.user?.lastName }} :</strong>
+          <p class="snippet-text">"{{ getSnippet(targetPost()!.content, 120) }}"</p>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button (click)="closeDeleteModal()" class="btn-cancel">Annuler</button>
+        <button (click)="executeDelete()" class="btn-confirm-delete">Supprimer définitivement</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -444,6 +444,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'feed',
+        loadComponent: () =>
+          import('./features/admin/feed/admin-feed.component').then(
+            (m) => m.AdminFeedComponent,
+          ),
+      },
+      {
         path: 'resources',
         loadComponent: () =>
           import('./features/admin/resources/admin-resources.component').then(
