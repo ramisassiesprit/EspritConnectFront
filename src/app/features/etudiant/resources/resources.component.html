@@ -1,27 +1,59 @@
 <div class="resources-page">
-  <section class="resources-card intro">
-    <h1>Resources</h1>
-    <p>The space to organize all of your knowledge resources in a simple and intuitive way.</p>
+  <!-- Intro -->
+  <section class="intro-card">
+    <span class="accent-bar"></span>
+    <div>
+      <h1>Resources</h1>
+      <p>The space to organize all of your knowledge resources in a simple and intuitive way.</p>
+    </div>
   </section>
 
-  <section class="resources-card" *ngIf="!selectedFolder">
+  <!-- Folder explorer -->
+  <section class="panel" *ngIf="!selectedFolder">
     <div class="toolbar">
       <div class="left">
         <h2>Explore Folders</h2>
         <div class="sort">
-          <span>Sort:</span>
-          <button [class.active]="sortType === 'LAST_UPDATED'" (click)="setSortType('LAST_UPDATED')">Last updated</button>
-          <button [class.active]="sortType === 'A_TO_Z'" (click)="setSortType('A_TO_Z')">A-Z</button>
+          <span class="sort-label">Sort:</span>
+          <div class="segmented">
+            <button [class.active]="sortType === 'LAST_UPDATED'" (click)="setSortType('LAST_UPDATED')">Last
+              updated</button>
+            <button [class.active]="sortType === 'A_TO_Z'" (click)="setSortType('A_TO_Z')">A-Z</button>
+          </div>
         </div>
       </div>
 
       <div class="right">
         <div class="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
           <input type="text" [(ngModel)]="searchTerm" placeholder="Search for a folder, file, link, etc." />
         </div>
-        <div class="view-switch">
-          <button [class.active]="viewMode === 'GRID'" (click)="setViewMode('GRID')">Grid</button>
-          <button [class.active]="viewMode === 'LIST'" (click)="setViewMode('LIST')">List</button>
+        <div class="segmented view-switch">
+          <button [class.active]="viewMode === 'GRID'" (click)="setViewMode('GRID')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3" y="3" width="7" height="7" rx="1.5" />
+              <rect x="14" y="3" width="7" height="7" rx="1.5" />
+              <rect x="3" y="14" width="7" height="7" rx="1.5" />
+              <rect x="14" y="14" width="7" height="7" rx="1.5" />
+            </svg>
+            Grid
+          </button>
+          <button [class.active]="viewMode === 'LIST'" (click)="setViewMode('LIST')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+            List
+          </button>
         </div>
       </div>
     </div>
@@ -29,16 +61,23 @@
     <div class="state" *ngIf="loading">Loading resources...</div>
     <div class="state error" *ngIf="!loading && error">{{ error }}</div>
 
+    <!-- Grid -->
     <div class="folders-grid" *ngIf="!loading && !error && viewMode === 'GRID'">
       <article class="folder-tile" *ngFor="let folder of filteredFolders" (click)="openFolder(folder.id)">
-        <img [src]="resolveCoverUrl(folder.coverImageUrl)" alt="folder cover" />
-        <span class="items-pill">{{ folder.itemsCount }} {{ folder.itemsCount > 1 ? 'Items' : 'Item' }}</span>
+        <div class="tile-img"><img [src]="resolveCoverUrl(folder.coverImageUrl)" alt="folder cover" /></div>
+        <span class="items-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2 2 7l10 5 10-5-10-5z" />
+          </svg>
+          {{ folder.itemsCount }} {{ folder.itemsCount > 1 ? 'Items' : 'Item' }}
+        </span>
         <div class="overlay">
           <h3>{{ folder.name }}</h3>
         </div>
       </article>
     </div>
 
+    <!-- List -->
     <div class="folders-list" *ngIf="!loading && !error && viewMode === 'LIST'">
       <article class="folder-row" *ngFor="let folder of filteredFolders" (click)="openFolder(folder.id)">
         <img [src]="resolveCoverUrl(folder.coverImageUrl)" alt="folder cover" />
@@ -46,13 +85,24 @@
           <h3>{{ folder.name }}</h3>
           <p>Created by <strong>{{ folder.creatorName }}</strong> on {{ formatDate(folder.createdAt) }}</p>
         </div>
-        <span class="items-pill">{{ folder.itemsCount }} {{ folder.itemsCount > 1 ? 'Items' : 'Item' }}</span>
+        <span class="items-pill solid">{{ folder.itemsCount }} {{ folder.itemsCount > 1 ? 'Items' : 'Item' }}</span>
+        <svg class="row-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
       </article>
     </div>
   </section>
 
-  <section class="resources-card" *ngIf="selectedFolder">
-    <button class="back-btn" (click)="backToAllResources()">Back to all resources</button>
+  <!-- Folder detail -->
+  <section class="panel" *ngIf="selectedFolder">
+    <button class="back-btn" (click)="backToAllResources()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Back to all resources
+    </button>
 
     <div class="folder-header">
       <img [src]="resolveCoverUrl(selectedFolder.coverImageUrl)" alt="folder cover" />
@@ -68,13 +118,21 @@
     <div class="toolbar details-toolbar">
       <div class="left">
         <div class="sort">
-          <span>Sort:</span>
-          <button [class.active]="sortType === 'LAST_UPDATED'" (click)="setSortType('LAST_UPDATED')">Last updated</button>
-          <button [class.active]="sortType === 'A_TO_Z'" (click)="setSortType('A_TO_Z')">A-Z</button>
+          <span class="sort-label">Sort:</span>
+          <div class="segmented">
+            <button [class.active]="sortType === 'LAST_UPDATED'" (click)="setSortType('LAST_UPDATED')">Last
+              updated</button>
+            <button [class.active]="sortType === 'A_TO_Z'" (click)="setSortType('A_TO_Z')">A-Z</button>
+          </div>
         </div>
       </div>
       <div class="right">
         <div class="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
           <input type="text" [(ngModel)]="folderSearchTerm" placeholder="Search within the folder" />
         </div>
       </div>
@@ -85,14 +143,28 @@
 
     <div class="files-list" *ngIf="!loading && !error">
       <article class="file-row" *ngFor="let file of filteredFiles">
-        <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=300&auto=format&fit=crop" alt="file" />
+        <span class="file-thumb">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <path d="M14 2v6h6" />
+          </svg>
+        </span>
         <div class="meta">
           <h3>{{ file.name }}</h3>
-          <p>{{ file.mimeType || 'File' }} &middot; Created: {{ formatDate(file.createdAt) }} &middot; Last updated: {{ formatDate(file.updatedAt) }}</p>
+          <p>{{ file.mimeType || 'File' }} &middot; Created: {{ formatDate(file.createdAt) }} &middot; Last updated: {{
+            formatDate(file.updatedAt) }}</p>
         </div>
-        <button class="download" (click)="downloadFile(file)">Download</button>
+        <button class="download" (click)="downloadFile(file)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download
+        </button>
       </article>
     </div>
   </section>
 </div>
-

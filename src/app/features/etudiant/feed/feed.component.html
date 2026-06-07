@@ -1,255 +1,183 @@
 <div class="content-layout">
-  <!-- Left Column -->
+  <!-- ============ MAIN COLUMN ============ -->
   <div class="main-column">
-    <!-- My Feed Header -->
-    <div class="section-card feed-header-card">
-      <h2>My Feed</h2>
+
+    <!-- Feed Header -->
+    <div class="card feed-header">
+      <div class="title-wrap">
+        <span class="accent-bar"></span>
+        <div>
+          <h2>My Feed</h2>
+          <span class="feed-sub">Latest from the ESPRIT community</span>
+        </div>
+      </div>
       <div class="mini-search">
         <lucide-icon [img]="Search" size="16"></lucide-icon>
         <input type="text" placeholder="Search by name..." [(ngModel)]="searchQuery" (input)="searchPosts()"
           (keydown.escape)="searchQuery = ''; searchPosts()">
-        <!-- Clear button -->
-        <button *ngIf="searchQuery" (click)="searchQuery = ''; searchPosts()"
-          style="background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 14px; padding: 0 4px; line-height: 1;"
+        <button *ngIf="searchQuery" class="search-clear" (click)="searchQuery = ''; searchPosts()"
           title="Clear search">✕</button>
       </div>
     </div>
 
     <!-- Post Creator trigger -->
-    <div class="section-card creator-card">
-      <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl" class="creator-avatar"
-        alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-      <div class="creator-avatar" *ngIf="!currentUser()?.avatarUrl"
-        style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af; width: 40px; height: 40px;">
-        <i class="bi bi-person-fill" style="font-size: 20px; line-height: 1;"></i>
+    <div class="card creator">
+      <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl" class="avatar a-40"
+        alt="Avatar">
+      <div class="avatar a-40 avatar-placeholder" *ngIf="!currentUser()?.avatarUrl">
+        <i class="bi bi-person-fill"></i>
       </div>
-      <div class="creator-input-wrapper">
-        <input type="text" [placeholder]="'What\'s on your mind, ' + (currentUser()?.firstName || 'User') + '?'"
-          [(ngModel)]="newPostContent" (click)="openPostModal()" readonly style="cursor: pointer;">
+      <div class="creator-input" (click)="openPostModal()">
+        {{ 'What\'s on your mind, ' + (currentUser()?.firstName || 'User') + '?' }}
       </div>
+      <button class="btn-primary" (click)="openPostModal()">
+        <i class="bi bi-pencil-square"></i> Post
+      </button>
     </div>
 
     <!-- Who's Online -->
-    <div class="section-card online-card">
-      <div class="online-header">
-        <div class="online-title">
-          <span class="dot-green"></span>
-          <p>Who's online <span class="subtitle">· {{ onlineUsers.length }} online now</span></p>
+    <div class="card online">
+      <div class="online-head">
+        <div class="online-left">
+          <span class="live-dot"></span>
+          <h3>Who's online <span class="online-count">· {{ onlineUsers.length }} online now</span></h3>
         </div>
-        <a href="#" class="see-all-link">SEE ALL LIVE MEMBERS ›</a>
+        <a href="#" class="see-all">SEE ALL ›</a>
       </div>
 
-      <!-- Live list with avatars — single row, swipeable -->
       <div class="online-list">
-        <div *ngIf="onlineUsers.length === 0"
-          style="padding: 10px; font-size: 13px; color: #65676b; font-style: italic;">
+        <div *ngIf="onlineUsers.length === 0" class="empty-inline">
           No members currently online
         </div>
-        <div *ngFor="let member of onlineUsers" class="online-member-badge"
-          [title]="member.firstName + ' ' + member.lastName">
-
-          <div class="online-avatar-wrapper">
-            <img [src]="getFullUrl(member.avatarUrl)" *ngIf="member.avatarUrl" class="online-avatar-img" alt="Avatar">
-            <div *ngIf="!member.avatarUrl" class="online-avatar-placeholder">
-              <i class="bi bi-person-fill"></i>
-            </div>
-            <span class="online-status-dot"></span>
-          </div>
-
-          <span class="online-member-name">
-            {{ member.firstName }} {{ member.lastName }}
+        <div *ngFor="let member of onlineUsers" class="online-chip" [title]="member.firstName + ' ' + member.lastName">
+          <span class="online-avatar-wrap">
+            <img [src]="getFullUrl(member.avatarUrl)" *ngIf="member.avatarUrl" class="avatar a-28" alt="Avatar">
+            <span *ngIf="!member.avatarUrl" class="avatar a-28 avatar-placeholder"><i
+                class="bi bi-person-fill"></i></span>
+            <span class="online-status"></span>
           </span>
+          <span class="online-name">{{ member.firstName }} {{ member.lastName }}</span>
         </div>
       </div>
     </div>
 
     <!-- Feed Posts -->
     <div class="posts-list">
-      <div *ngIf="posts.length === 0"
-        style="text-align: center; padding: 40px; background: white; border-radius: 12px; color: #6b7280; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <i class="bi bi-mailbox" style="font-size: 40px; color: #d1d5db; display: block; margin-bottom: 12px;"></i>
-        <p style="font-size: 15px; font-weight: 500;">No posts in the feed yet.</p>
-        <p style="font-size: 13px; color: #9ca3af; margin-top: 4px;">Be the first to share your thoughts!</p>
+      <div *ngIf="posts.length === 0" class="card empty-state">
+        <i class="bi bi-mailbox"></i>
+        <p class="empty-title">No posts in the feed yet.</p>
+        <p class="empty-sub">Be the first to share your thoughts!</p>
       </div>
 
-      <article *ngFor="let post of posts" class="section-card post-card">
-        <div class="post-header">
-          <div class="post-meta"
-            style="display: flex !important; flex-direction: row !important; gap: 12px; align-items: flex-start;">
-            <div style="flex-shrink: 0; width: 48px; height: 48px;">
-              <img [src]="getFullUrl(post.user.avatarUrl)" *ngIf="post.user.avatarUrl" class="post-author-img"
-                style="object-fit: cover; width: 100%; height: 100%; border-radius: 50%; display: block;" alt="Avatar">
-              <div class="post-author-img" *ngIf="!post.user.avatarUrl"
-                style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af; width: 100%; height: 100%;">
-                <i class="bi bi-person-fill" style="font-size: 24px; line-height: 1;"></i>
-              </div>
+      <article *ngFor="let post of posts" class="card post">
+        <!-- Post header -->
+        <div class="post-head">
+          <div class="post-meta">
+            <img [src]="getFullUrl(post.user.avatarUrl)" *ngIf="post.user.avatarUrl" class="avatar a-48" alt="Avatar">
+            <div class="avatar a-48 avatar-placeholder" *ngIf="!post.user.avatarUrl"><i class="bi bi-person-fill"></i>
             </div>
 
-            <div class="post-author-details"
-              style="display: flex; flex-direction: column; justify-content: center; padding-top: 2px;">
-              <div class="name-row" style="flex-wrap: nowrap; gap: 4px;">
-                <span class="author-name" style="color: #ED1C24;">{{ post.user.firstName }} {{ post.user.lastName
-                  }}</span>
-                <span style="color: #65676b; margin: 0 2px;">·</span>
-                <span class="author-badges" style="display: flex; gap: 6px; align-items: center;">
-                  <span class="badge-p" style="font-size: 11px;">
-                    <i class="bi bi-people-fill"></i>
-                  </span>
-                  <span class="badge-y" style="font-size: 11px;">
-                    <i class="bi bi-flag-fill"></i>
-                  </span>
-                </span>
+            <div class="post-author">
+              <div class="name-row">
+                <span class="author-name">{{ post.user.firstName }} {{ post.user.lastName }}</span>
+                <span class="name-sep">·</span>
+                <span class="badge-hex p"><i class="bi bi-people-fill"></i></span>
+                <span class="badge-hex y"><i class="bi bi-flag-fill"></i></span>
               </div>
-              <p class="author-sub" style="margin-top: 4px;">{{ post.user.role || 'STUDENT' }}, ESPRIT (Ecole Supérieure
-                Privée d'Ingénierie et de Technologies)</p>
-              <p class="post-date" style="margin-top: 2px;">{{ post.createdAt | date: 'dd MMM yyyy, HH:mm' }}</p>
+              <p class="author-school">{{ post.user.role || 'STUDENT' }}, ESPRIT (Ecole Supérieure Privée d'Ingénierie
+                et de Technologies)</p>
+              <p class="author-date">{{ post.createdAt | date: 'dd MMM yyyy, HH:mm' }}</p>
             </div>
           </div>
-          <div class="dropdown-wrapper" style="position: relative; display: inline-block;">
-            <button class="btn-more" (click)="togglePostMenu(post.id, $event)">
+
+          <div class="dropdown-wrapper">
+            <button class="icon-btn" (click)="togglePostMenu(post.id, $event)">
               <lucide-icon [img]="MoreVertical" size="18"></lucide-icon>
             </button>
-            <div *ngIf="activePostMenuId === post.id" class="dropdown-menu-custom"
-              style="position: absolute; right: 0; top: 32px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 50; min-width: 140px; display: flex; flex-direction: column; overflow: hidden; padding: 4px 0;">
-              <button class="dropdown-item-custom"
-                style="background: none; border: none; padding: 10px 16px; font-size: 13px; text-align: left; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #374151; transition: background 0.2s; width: 100%;"
-                onmouseover="this.style.backgroundColor='#f3f4f6'"
-                onmouseout="this.style.backgroundColor='transparent'">
-                <i class="bi bi-exclamation-circle" style="color: #4b5563;"></i> Report
-              </button>
-              <button class="dropdown-item-custom"
-                style="background: none; border: none; padding: 10px 16px; font-size: 13px; text-align: left; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #374151; transition: background 0.2s; width: 100%;"
-                onmouseover="this.style.backgroundColor='#f3f4f6'"
-                onmouseout="this.style.backgroundColor='transparent'">
-                <i class="bi bi-link-45deg"></i> Copy Link
-              </button>
+            <div *ngIf="activePostMenuId === post.id" class="dropdown-menu">
+              <button class="dropdown-item"><i class="bi bi-exclamation-circle"></i> Report</button>
+              <button class="dropdown-item"><i class="bi bi-link-45deg"></i> Copy Link</button>
             </div>
           </div>
         </div>
 
-        <!-- Post Content Block -->
+        <!-- Post body -->
         <div class="post-body">
-          <p class="post-text" style="white-space: pre-wrap;">{{ post.content }}</p>
+          <p class="post-text">{{ post.content }}</p>
 
-          <div *ngIf="post.images && post.images.length > 0" class="post-images-grid"
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 12px;">
-            <img *ngFor="let imgUrl of post.images" [src]="getFullUrl(imgUrl)"
-              style="width: 100%; border-radius: 8px; object-fit: cover; max-height: 300px;" alt="Post image">
+          <div *ngIf="post.images && post.images.length > 0" class="post-images-grid">
+            <img *ngFor="let imgUrl of post.images" [src]="getFullUrl(imgUrl)" class="post-image" alt="Post image">
           </div>
 
           <!-- Attached Files -->
-          <div *ngIf="post.files && post.files.length > 0" class="post-attached-files"
-            style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-            <div *ngFor="let file of post.files" class="post-file-card">
-              <div class="file-icon-box">
-                <i class="bi bi-file-earmark-arrow-down-fill"></i>
-              </div>
+          <div *ngIf="post.files && post.files.length > 0" class="post-files">
+            <div *ngFor="let file of post.files" class="file-card">
+              <span class="file-icon"><i class="bi bi-file-earmark-arrow-down-fill"></i></span>
               <div class="file-info">
                 <span class="file-name">{{ file.name }}</span>
                 <span class="file-size">{{ (file.size / 1024) | number:'1.0-2' }} KB</span>
               </div>
-              <a [href]="getFullUrl(file.url)" target="_blank" download class="btn-download-file"
-                style="display: flex; align-items: center; justify-content: center; height: 32px; width: 32px; border-radius: 50%; color: #ef4444; background: #fee2e2;">
+              <a [href]="getFullUrl(file.url)" target="_blank" download class="file-dl">
                 <i class="bi bi-download"></i>
               </a>
             </div>
           </div>
         </div>
 
-        <div class="post-footer" style="display: flex; flex-direction: column; gap: 12px; padding: 12px 16px;">
-          <div class="post-actions"
-            style="display: flex; gap: 16px; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">
-            <button class="action-btn" (click)="toggleLike(post)"
-              style="background: none; border: none; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #4b5563; font-size: 13.5px; padding: 6px 12px; border-radius: 6px; transition: all 0.2s;"
-              onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
-              <lucide-icon [img]="ThumbsUp" size="16" [style.color]="post.liked ? '#ef4444' : '#4b5563'"></lucide-icon>
-              <span [style.color]="post.liked ? '#ef4444' : '#4b5563'"
-                [style.fontWeight]="post.liked ? '600' : '400'">Like ({{ post.likesCount || 0 }})</span>
+        <!-- Post footer -->
+        <div class="post-footer">
+          <div class="actions">
+            <button class="action" [class.on]="post.liked" (click)="toggleLike(post)">
+              <lucide-icon [img]="ThumbsUp" size="16"></lucide-icon>
+              Like ({{ post.likesCount || 0 }})
             </button>
-            <button class="action-btn" (click)="toggleComments(post)"
-              style="background: none; border: none; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #4b5563; font-size: 13.5px; padding: 6px 12px; border-radius: 6px; transition: all 0.2s;"
-              onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
-              <i class="bi bi-chat-left-text" [style.color]="openCommentsPostIds[post.id] ? '#ef4444' : '#4b5563'"></i>
-              <span [style.color]="openCommentsPostIds[post.id] ? '#ef4444' : '#4b5563'"
-                [style.fontWeight]="openCommentsPostIds[post.id] ? '600' : '400'">Comment ({{ post.commentsCount || 0
-                }})</span>
+            <button class="action" [class.on]="openCommentsPostIds[post.id]" (click)="toggleComments(post)">
+              <i class="bi bi-chat-left-text"></i>
+              Comment ({{ post.commentsCount || 0 }})
             </button>
           </div>
 
-          <!-- Expanding Comments Drawer -->
-          <div *ngIf="openCommentsPostIds[post.id]" class="comments-drawer" style="width: 100%; padding-top: 4px;">
-            <!-- Custom Premium Comment Input Box -->
-            <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; width: 100%;">
-              <!-- User Avatar -->
-              <div style="flex-shrink: 0; width: 36px; height: 36px;">
-                <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl"
-                  style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;"
-                  alt="Avatar">
-                <div *ngIf="!currentUser()?.avatarUrl"
-                  style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af; width: 100%; height: 100%;">
-                  <i class="bi bi-person-fill" style="font-size: 18px; line-height: 1;"></i>
-                </div>
+          <!-- Comments drawer -->
+          <div *ngIf="openCommentsPostIds[post.id]" class="comments-drawer">
+            <div class="comment-compose">
+              <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl" class="avatar a-36"
+                alt="Avatar">
+              <div class="avatar a-36 avatar-placeholder" *ngIf="!currentUser()?.avatarUrl"><i
+                  class="bi bi-person-fill"></i></div>
+
+              <div class="comment-field">
+                <label>Write a comment...<span class="req">*</span></label>
+                <input type="text" placeholder="Be supportive and helpful..." [(ngModel)]="newCommentInputs[post.id]"
+                  (keyup.enter)="submitComment(post)" maxlength="4000">
+                <div class="comment-counter">{{ (newCommentInputs[post.id] || '').length }} / 4000</div>
               </div>
 
-              <!-- Input Area Container -->
-              <div style="flex: 1; display: flex; flex-direction: column; position: relative;">
-                <div
-                  style="border-bottom: 2px solid #ef4444; padding-bottom: 4px; display: flex; flex-direction: column; text-align: left; width: 100%;">
-                  <span style="font-size: 12px; font-weight: 500; color: #ef4444; margin-bottom: 4px;">Write a
-                    comment...*</span>
-                  <input type="text" placeholder="Be supportive and helpful..." [(ngModel)]="newCommentInputs[post.id]"
-                    (keyup.enter)="submitComment(post)" maxlength="4000"
-                    style="border: none; outline: none; background: transparent; font-size: 14px; color: #374151; width: 100%; padding: 4px 0;">
-                </div>
-                <!-- Char counter -->
-                <div style="text-align: left; font-size: 11px; color: #ef4444; margin-top: 4px; font-weight: 500;">
-                  {{ (newCommentInputs[post.id] || '').length }} / 4000
-                </div>
-              </div>
-
-              <!-- Action Icons -->
-              <div style="display: flex; align-items: center; gap: 12px; height: 36px; margin-left: 8px;">
-                <button
-                  style="background: none; border: none; padding: 0; cursor: pointer; color: #ef4444; display: flex; align-items: center; justify-content: center;">
-                  <i class="bi bi-emoji-smile-fill" style="font-size: 22px;"></i>
-                </button>
-                <button (click)="toggleComments(post)"
-                  style="background: none; border: none; padding: 0; cursor: pointer; color: #4b5563; display: flex; align-items: center; justify-content: center;"
-                  onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#4b5563'">
-                  <i class="bi bi-x-lg" style="font-size: 20px; font-weight: bold;"></i>
-                </button>
+              <div class="comment-compose-actions">
+                <button class="compose-icon" title="Emoji"><i class="bi bi-emoji-smile"></i></button>
+                <button class="compose-icon" (click)="toggleComments(post)" title="Close"><i
+                    class="bi bi-x-lg"></i></button>
               </div>
             </div>
 
-            <!-- Comments List -->
-            <div class="comments-list"
-              style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 4px;">
-              <div *ngIf="!postComments[post.id] || postComments[post.id].length === 0"
-                style="text-align: center; color: #9ca3af; font-size: 13px; font-style: italic; padding: 12px 0;">
+            <!-- Comments list -->
+            <div class="comments-list">
+              <div *ngIf="!postComments[post.id] || postComments[post.id].length === 0" class="comments-empty">
                 No comments yet. Share your thoughts!
               </div>
-              <div *ngFor="let comment of postComments[post.id]" class="comment-item"
-                style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background-color: #f9fafb; border-radius: 12px; border: 1px solid #f3f4f6; transition: background 0.2s; box-sizing: border-box;">
-                <img [src]="getFullUrl(comment.user.avatarUrl)" *ngIf="comment.user.avatarUrl"
-                  style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px;">
-                <div *ngIf="!comment.user.avatarUrl"
-                  style="display: flex; align-items: center; justify-content: center; background-color: #e5e7eb; border-radius: 50%; color: #9ca3af; width: 32px; height: 32px; flex-shrink: 0; margin-top: 2px;">
-                  <i class="bi bi-person-fill" style="font-size: 16px;"></i>
-                </div>
-                <div style="flex: 1; display: flex; flex-direction: column; text-align: left;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                    <span style="font-size: 12.5px; font-weight: 700; color: #1f2937;">{{ comment.user.firstName }} {{
-                      comment.user.lastName }}</span>
-                    <button *ngIf="currentUser()?.userId === comment.user.id" (click)="deleteComment(post, comment.id)"
-                      style="background: none; border: none; color: #9ca3af; cursor: pointer; padding: 2px; transition: color 0.2s;"
-                      onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#9ca3af'"
-                      title="Delete Comment">
-                      <i class="bi bi-trash-fill" style="font-size: 11px;"></i>
+              <div *ngFor="let comment of postComments[post.id]" class="comment-item">
+                <img [src]="getFullUrl(comment.user.avatarUrl)" *ngIf="comment.user.avatarUrl" class="avatar a-32"
+                  alt="Avatar">
+                <div class="avatar a-32 avatar-placeholder" *ngIf="!comment.user.avatarUrl"><i
+                    class="bi bi-person-fill"></i></div>
+                <div class="comment-content">
+                  <div class="comment-top">
+                    <span class="comment-author">{{ comment.user.firstName }} {{ comment.user.lastName }}</span>
+                    <button *ngIf="currentUser()?.userId === comment.user.id" class="comment-delete"
+                      (click)="deleteComment(post, comment.id)" title="Delete Comment">
+                      <i class="bi bi-trash-fill"></i>
                     </button>
                   </div>
-                  <p
-                    style="font-size: 13px; color: #4b5563; margin: 4px 0 0 0; word-break: break-word; line-height: 1.4;">
-                    {{ comment.content }}</p>
+                  <p class="comment-text">{{ comment.content }}</p>
                 </div>
               </div>
             </div>
@@ -259,139 +187,108 @@
     </div>
   </div>
 
-  <!-- Right Column (Sidebar) -->
+  <!-- ============ SIDEBAR ============ -->
   <div class="side-column">
     <!-- Recent Jobs -->
-    <div class="section-card sidebar-card">
-      <div class="sidebar-header">
+    <div class="card side-card">
+      <div class="side-head">
         <h3>Recent jobs</h3>
         <span class="badge-count" *ngIf="recentJobs.length > 0">{{ recentJobs.length }}</span>
       </div>
-      <div class="sidebar-body">
-        <div *ngIf="recentJobs.length === 0"
-          style="padding: 12px; font-size: 13px; color: #6b7280; font-style: italic; text-align: center;">
-          No active job offers available
-        </div>
-        <div *ngFor="let job of recentJobs" class="job-item" [routerLink]="['/etudiant/jobs', job.id]"
-          style="cursor: pointer;">
+      <div class="side-body">
+        <div *ngIf="recentJobs.length === 0" class="empty-inline">No active job offers available</div>
+        <div *ngFor="let job of recentJobs" class="job" [routerLink]="['/etudiant/jobs', job.id]">
+          <span class="job-logo"><i class="bi bi-buildings-fill"></i></span>
           <div class="job-info">
-            <div class="job-title" style="color: #1c1e21; font-weight: 700; transition: color 0.2s;"
-              onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#1c1e21'">{{ job.title }}</div>
-            <div class="job-company">{{ job.company }} · <span class="job-location">{{ job.location || 'Remote'
-                }}</span></div>
+            <div class="job-title">{{ job.title }}</div>
+            <div class="job-company">{{ job.company }} · {{ job.location || 'Remote' }}</div>
           </div>
-          <div class="job-date" style="font-size: 11px; color: #9ca3af; font-weight: 700;">{{ job.createdAt | date: 'dd
-            MMM' }}</div>
+          <span class="job-date">{{ job.createdAt | date: 'dd MMM' }}</span>
         </div>
       </div>
+      <div class="side-foot"><a href="#" class="side-link">VIEW ALL JOBS ›</a></div>
     </div>
 
     <!-- Recent Members -->
-    <div class="section-card sidebar-card">
-      <div class="members-header-block">
-        <div class="members-badge-row">
-          <span class="members-badge-pill">{{ totalUsersCount }}</span>
-          <span class="members-badge-text">NEW</span>
-        </div>
-        <h3 class="members-heading">Recent members</h3>
+    <div class="card side-card">
+      <div class="members-badge">
+        <span class="pill">{{ totalUsersCount }}</span>
+        <span class="pill-txt">NEW</span>
       </div>
-      <div class="sidebar-body member-grid">
-        <div *ngIf="recentMembers.length === 0"
-          style="padding: 12px; font-size: 13px; color: #6b7280; font-style: italic; text-align: center; grid-column: span 4;">
-          No members registered yet
-        </div>
-        <div *ngFor="let m of recentMembers" class="member-item" [title]="m.firstName + ' ' + m.lastName">
-          <img *ngIf="m.avatarUrl" [src]="getFullUrl(m.avatarUrl)" alt="avatar">
-          <div *ngIf="!m.avatarUrl" class="member-avatar-placeholder">
+      <h3 class="members-heading">Recent members</h3>
+      <div class="member-grid">
+        <div *ngIf="recentMembers.length === 0" class="empty-inline members-empty">No members registered yet</div>
+        <img *ngFor="let m of recentMembers" [src]="getFullUrl(m.avatarUrl)" [hidden]="!m.avatarUrl"
+          class="avatar member-tile" [title]="m.firstName + ' ' + m.lastName" alt="avatar">
+        <ng-container *ngFor="let m of recentMembers">
+          <div *ngIf="!m.avatarUrl" class="avatar member-tile avatar-placeholder"
+            [title]="m.firstName + ' ' + m.lastName">
             <i class="bi bi-person-fill"></i>
           </div>
-        </div>
+        </ng-container>
       </div>
-      <div class="members-footer-row">
-        <a href="#" class="view-members-btn">VIEW MEMBERS</a>
-      </div>
+      <div class="side-foot"><a href="#" class="side-link">VIEW MEMBERS ›</a></div>
     </div>
 
-    <!-- Esprit Facebook Posts -->
-    <div class="section-card sidebar-card">
-      <div class="sidebar-header">
+    <!-- Esprit Facebook -->
+    <div class="card side-card">
+      <div class="side-head">
         <h3>Esprit Facebook</h3>
-        <a href="#" class="see-all-link">VIEW PAGE</a>
+        <a href="#" class="side-link">VIEW PAGE</a>
       </div>
-      <div class="sidebar-body fb-posts">
+      <div class="side-body">
         <div *ngFor="let fb of espritFbPosts" class="fb-post">
-          <div class="fb-post-title">{{ fb.title }}</div>
-          <div class="fb-post-excerpt">{{ fb.excerpt }}</div>
-          <div class="fb-post-date">{{ fb.date }}</div>
+          <div class="fb-title">{{ fb.title }}</div>
+          <div class="fb-excerpt">{{ fb.excerpt }}</div>
+          <div class="fb-date">{{ fb.date }}</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- POST MODAL -->
+<!-- ============ POST MODAL ============ -->
 <div *ngIf="isPostModalOpen()" class="modal-overlay" (click)="closePostModal()">
   <div class="modal-card" (click)="$event.stopPropagation()">
-    <!-- Modal Header -->
     <div class="modal-header">
       <div class="modal-author">
-        <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl" class="modal-avatar"
+        <img [src]="getFullUrl(currentUser()?.avatarUrl)" *ngIf="currentUser()?.avatarUrl" class="avatar a-40"
           alt="Avatar">
-        <div class="modal-avatar" *ngIf="!currentUser()?.avatarUrl"
-          style="display: flex; align-items: center; justify-content: center; background-color: #f3f4f6; border-radius: 50%; color: #9ca3af;">
-          <i class="bi bi-person-fill" style="font-size: 20px; line-height: 1;"></i>
+        <div class="avatar a-40 avatar-placeholder" *ngIf="!currentUser()?.avatarUrl"><i class="bi bi-person-fill"></i>
         </div>
         <span class="modal-title">What's on your mind, {{ currentUser()?.firstName }}?</span>
       </div>
       <button class="modal-close" (click)="closePostModal()">✕</button>
     </div>
-    <!-- Modal Content -->
-    <div class="modal-body">
-      <textarea [(ngModel)]="newPostContent" placeholder="Share your thoughts..."
-        style="width: 100%; min-height: 150px; padding: 16px; border: none; outline: none; font-size: 15px; resize: vertical;"></textarea>
 
-      <!-- Selected Files Preview -->
-      <div *ngIf="selectedFiles.length > 0"
-        style="padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #f3f4f6; max-height: 150px; overflow-y: auto;">
-        <div *ngFor="let file of selectedFiles; let i = index"
-          style="display: flex; align-items: center; justify-content: space-between; background-color: #f8f9fa; padding: 8px 12px; border-radius: 6px; border: 1px solid #e5e7eb;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <i class="bi bi-file-earmark-check-fill" style="color: #ef4444; font-size: 16px;"></i>
-            <div style="display: flex; flex-direction: column; text-align: left;">
-              <span style="font-size: 13px; font-weight: 600; color: #374151;">{{ file.name }}</span>
-              <span style="font-size: 11px; color: #6b7280;">{{ formatBytes(file.size) }}</span>
+    <div class="modal-body">
+      <textarea class="modal-textarea" [(ngModel)]="newPostContent" placeholder="Share your thoughts..."></textarea>
+
+      <!-- Selected files preview -->
+      <div *ngIf="selectedFiles.length > 0" class="modal-files">
+        <div *ngFor="let file of selectedFiles; let i = index" class="modal-file">
+          <div class="modal-file-left">
+            <i class="bi bi-file-earmark-check-fill"></i>
+            <div class="modal-file-info">
+              <span class="n">{{ file.name }}</span>
+              <span class="s">{{ formatBytes(file.size) }}</span>
             </div>
           </div>
-          <button (click)="removeFile(i)"
-            style="background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 14px; transition: color 0.2s;"
-            onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#9ca3af'">✕</button>
+          <button class="modal-file-remove" (click)="removeFile(i)">✕</button>
         </div>
       </div>
 
-      <div
-        style="display: flex; gap: 8px; align-items: center; padding: 12px 16px; border-top: 1px solid #e5e7eb; justify-content: space-between;">
-        <!-- File Input button -->
+      <div class="modal-toolbar">
         <div>
-          <input type="file" #fileInputAttachment multiple accept="*/*" style="display: none;"
-            (change)="onFilesAttached($event)">
-          <button type="button" (click)="fileInputAttachment.click()"
-            style="background: none; border: none; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #ef4444; font-size: 13.5px; padding: 8px 12px; border-radius: 6px; transition: all 0.2s;"
-            onmouseover="this.style.backgroundColor='#fee2e2'" onmouseout="this.style.backgroundColor='transparent'">
-            <i class="bi bi-paperclip" style="font-size: 18px;"></i>
-            <span style="font-weight: 600;">Attach files</span>
+          <input type="file" #fileInputAttachment multiple accept="*/*" hidden (change)="onFilesAttached($event)">
+          <button type="button" class="attach-btn" (click)="fileInputAttachment.click()">
+            <i class="bi bi-paperclip"></i> Attach files
           </button>
         </div>
-
-        <div style="display: flex; gap: 8px;">
-          <button (click)="closePostModal()"
-            style="padding: 10px 16px; border: 1px solid #e5e7eb; background: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;"
-            onmouseover="this.style.backgroundColor='#f3f4f6'"
-            onmouseout="this.style.backgroundColor='white'">Cancel</button>
-          <button (click)="publishPost()" [disabled]="!newPostContent.trim() && selectedFiles.length === 0"
-            style="padding: 10px 16px; border: none; background: #ef4444; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;"
-            [style.opacity]="(!newPostContent.trim() && selectedFiles.length === 0) ? '0.5' : '1'"
-            onmouseover="this.style.backgroundColor='#dc2626'"
-            onmouseout="this.style.backgroundColor='#ef4444'">Post</button>
+        <div class="modal-actions">
+          <button class="btn-ghost" (click)="closePostModal()">Cancel</button>
+          <button class="btn-primary" (click)="publishPost()"
+            [disabled]="!newPostContent.trim() && selectedFiles.length === 0">Post</button>
         </div>
       </div>
     </div>

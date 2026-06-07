@@ -1,63 +1,73 @@
-<div class="home-container space-y-5">
-  <section class="rounded-[20px] bg-gradient-to-r from-[#ffc9d4] via-[#fde0e5] to-[#fde8ec] p-2.5 shadow-sm border border-white/50">
-    <div class="flex flex-col xl:flex-row items-stretch gap-2.5">
-      <!-- Profile Info (Left) -->
-      <div class="flex flex-1 items-center gap-3 px-3 py-1">
-        <div class="relative flex h-[66px] w-[66px] shrink-0 items-center justify-center">
-          <!-- Progress Ring SVG -->
-          <svg viewBox="0 0 66 66" class="absolute inset-0 h-full w-full -rotate-90">
-            <!-- Background track -->
-            <circle
-              cx="33"
-              cy="33"
-              r="30"
-              fill="white"
-              stroke="#e5e7eb"
-              stroke-width="3"
-            />
-            <!-- Progress arc -->
-            <circle
-              cx="33"
-              cy="33"
-              r="30"
-              fill="transparent"
-              stroke="#22c55e"
-              stroke-width="3"
-              stroke-linecap="round"
-              [attr.stroke-dasharray]="188.5"
-              [attr.stroke-dashoffset]="188.5 * (1 - completionPercentage / 100)"
-              class="transition-all duration-700 ease-out"
-            />
+<div class="home-container space-y-6">
+  <!-- ===== WELCOME HEADER ===== -->
+  <section
+    class="relative overflow-hidden rounded-2xl border border-rose-100 bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04),0_8px_24px_rgba(225,29,42,.05)]">
+    <!-- soft brand accents -->
+    <div
+      class="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-gradient-to-br from-rose-100 via-rose-50 to-transparent blur-2xl">
+    </div>
+    <div
+      class="pointer-events-none absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#e60028] via-rose-400 to-transparent opacity-70">
+    </div>
+
+    <div class="relative flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+      <!-- Profile (Left) -->
+      <div class="flex items-center gap-4">
+        <div class="relative h-[72px] w-[72px] shrink-0">
+          <!-- Progress Ring -->
+          <svg viewBox="0 0 72 72" class="h-full w-full -rotate-90">
+            <circle cx="36" cy="36" r="32" fill="none" stroke="#EEF1F5" stroke-width="4" />
+            <circle cx="36" cy="36" r="32" fill="none" stroke="#22c55e" stroke-width="4" stroke-linecap="round"
+              [attr.stroke-dasharray]="201" [attr.stroke-dashoffset]="201 * (1 - completionPercentage / 100)"
+              class="transition-all duration-700 ease-out" />
           </svg>
 
-          <!-- Avatar Circle -->
-          <div class="relative z-10 flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full bg-[#e8e8ec]">
+          <!-- Avatar -->
+          <div
+            class="absolute inset-0 m-auto flex h-[58px] w-[58px] items-center justify-center overflow-hidden rounded-full bg-[#e8e8ec]">
             <img *ngIf="user?.avatarUrl" [src]="user?.avatarUrl" class="h-full w-full object-cover" alt="Avatar">
-            <svg *ngIf="!user?.avatarUrl" class="h-[38px] w-[38px] text-[#b0b0bc]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            <svg *ngIf="!user?.avatarUrl" class="h-[36px] w-[36px] text-[#b0b0bc]" viewBox="0 0 24 24"
+              fill="currentColor">
+              <path
+                d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
             </svg>
           </div>
+
+          <!-- Completion badge anchored to ring -->
+          <span
+            class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-[#15181E] px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+            {{ completionPercentage }}%
+          </span>
         </div>
-        <div class="flex flex-col gap-0.5">
-          <div class="inline-flex w-max items-center rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold tracking-wide text-gray-600 shadow-sm border border-[#ffe1e6]">
-            {{ completionPercentage }}% complete
-          </div>
-          <h2 class="text-lg font-bold text-gray-800">Good Afternoon, {{ user?.firstName || 'User' }}</h2>
+
+        <div class="flex flex-col gap-1">
+          <span
+            class="inline-flex w-max items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-0.5 text-[11px] font-semibold text-[#e60028]">
+            <span class="h-1.5 w-1.5 rounded-full bg-[#e60028]"></span> Profile {{ completionPercentage }}% complete
+          </span>
+          <h2 class="text-xl font-bold text-slate-800">Good afternoon, {{ user?.firstName || 'User' }}</h2>
+          <p class="text-[12.5px] text-slate-500">Here's what's happening in your community today.</p>
         </div>
       </div>
 
       <!-- Action Cards (Right) -->
-      <div class="flex w-full flex-col sm:flex-row items-stretch gap-2.5 xl:w-auto xl:min-w-[62%]">
-        
-        <!-- Update Profile Card -->
-        <div class="flex flex-1 flex-col justify-between rounded-[14px] bg-white/95 px-3.5 py-3 shadow-[0_2px_8px_rgba(229,0,67,0.04)]">
-          <div class="flex items-start gap-2.5">
-            <svg class="mt-[1px] h-4 w-4 shrink-0 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <p class="text-[12px] leading-[1.3] text-gray-700">Complete your missing profile information so other members can easily find you</p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:w-[58%]">
+
+        <!-- Update Profile -->
+        <div
+          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 transition hover:border-rose-200 hover:shadow-md">
+          <div class="flex items-start gap-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-[#e60028]">
+              <svg class="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </span>
+            <p class="text-[12.5px] leading-snug text-slate-600">Complete your missing profile information so other
+              members can easily find you</p>
           </div>
-          <a (click)="navigateToProfile()" class="mt-2.5 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#e60028] cursor-pointer hover:underline">
+          <a (click)="navigateToProfile()"
+            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-[#e60028] transition-all group-hover:gap-1.5 cursor-pointer">
             Update profile
             <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -65,27 +75,47 @@
           </a>
         </div>
 
-        <!-- Badges Card -->
-        <div class="flex flex-1 flex-col justify-between rounded-[14px] bg-white/95 px-3.5 py-3 shadow-[0_2px_8px_rgba(229,0,67,0.04)]">
-          <div class="flex items-start gap-2.5">
-            <svg class="h-[17px] w-[17px] shrink-0 text-gray-600" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <path fill="#fff" d="M12 16l-3.5 2 1-4.2-3-2.8 4.2-.3L12 7l1.3 3.7 4.2.3-3 2.8 1 4.2z"/>
-            </svg>
-            <p class="text-[12px] leading-[1.3] text-gray-700">{{ user?.badges?.length || 0 }} Badges achieved!</p>
+        <!-- Badges -->
+        <div
+          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 transition hover:border-rose-200 hover:shadow-md">
+          <div class="flex items-start gap-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+              <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path fill="#fffbeb" d="M12 16l-3.5 2 1-4.2-3-2.8 4.2-.3L12 7l1.3 3.7 4.2.3-3 2.8 1 4.2z" />
+              </svg>
+            </span>
+            <p class="text-[12.5px] leading-snug text-slate-600"><span class="font-bold text-slate-800">{{
+                user?.badges?.length || 0 }}</span> badges achieved!</p>
           </div>
-          <a (click)="openBadgeModal()" class="mt-2.5 text-[11px] font-bold uppercase tracking-wider text-[#e60028] cursor-pointer hover:underline">See all</a>
+          <a (click)="openBadgeModal()"
+            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-[#e60028] transition-all group-hover:gap-1.5 cursor-pointer">
+            See all
+            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
 
-        <!-- Share Card -->
-        <div class="flex flex-1 flex-col justify-between rounded-[14px] bg-white/95 px-3.5 py-3 shadow-[0_2px_8px_rgba(229,0,67,0.04)]">
-          <div class="flex items-start gap-2.5">
-            <svg class="h-[17px] w-[17px] shrink-0 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-            </svg>
-            <p class="text-[12px] leading-[1.3] text-gray-700">Share something!</p>
+        <!-- Share -->
+        <div
+          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 transition hover:border-rose-200 hover:shadow-md">
+          <div class="flex items-start gap-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+              <svg class="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+            </span>
+            <p class="text-[12.5px] leading-snug text-slate-600">Share something with your community</p>
           </div>
-          <a href="#" class="mt-2.5 text-[11px] font-bold uppercase tracking-wider text-[#e60028]">Start sharing</a>
+          <a href="#"
+            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-[#e60028] transition-all group-hover:gap-1.5">
+            Start sharing
+            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
 
       </div>
@@ -106,9 +136,6 @@
   </div>
 
   <!-- Badge Modal -->
-  <app-badge-modal 
-    [isOpen]="isBadgeModalOpen" 
-    [badges]="userBadges" 
-    (close)="isBadgeModalOpen = false">
+  <app-badge-modal [isOpen]="isBadgeModalOpen" [badges]="userBadges" (close)="isBadgeModalOpen = false">
   </app-badge-modal>
 </div>
