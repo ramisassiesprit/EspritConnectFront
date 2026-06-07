@@ -165,3 +165,8 @@
   scrollbar-width: thin;
   scrollbar-color: #ccc transparent;
 }
+
+/* Hide desktop sidebar on small screens; mobile menu will provide navigation */
+@media (max-width: 768px) {
+  .sidebar { display: none !important; }
+}

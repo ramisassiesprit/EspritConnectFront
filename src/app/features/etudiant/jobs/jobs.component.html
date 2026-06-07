@@ -1,65 +1,106 @@
 <div class="jobs-page" *ngIf="!selectedJob">
   <section class="jobs-main">
-    <div class="jobs-header">
-      <div class="jobs-heading-row">
-        <h1>Jobs</h1>
-        <div class="search-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" [(ngModel)]="search" placeholder="Search jobs" />
-        </div>
+    
+    <!-- Hero Banner -->
+    <section class="jobs-hero animate-fadeIn">
+      <div>
+        <p class="jobs-kicker">Career Hub</p>
+        <h1>Job Board</h1>
+        <p class="jobs-copy">Explore internship, CDI, CDD, and freelance opportunities posted by our network of company partners and alumni.</p>
       </div>
-      <p class="jobs-result">Found {{ filteredJobs.length }} job opportunities</p>
+    </section>
 
-      <div class="recommend-toggle-wrap" *ngIf="studentFieldOfStudy">
-        <button
-          type="button"
-          class="recommend-toggle-btn"
-          [class.active]="showRecommendedOnly"
-          (click)="toggleRecommendedOnly()"
-        >
-          {{ showRecommendedOnly ? 'Showing Recommended Only' : 'Show Recommended Jobs' }}
-        </button>
-        <span class="recommend-caption">Based on your field: <strong>{{ studentFieldOfStudy }}</strong></span>
+    <!-- Actions Row: Tabs & Search -->
+    <div class="jobs-actions-row">
+      <!-- Tabs matching mentoring pills -->
+      <nav class="jobs-tabs" aria-label="Job categories" *ngIf="studentFieldOfStudy">
+        <button (click)="showRecommendedOnly = false" [class.active]="!showRecommendedOnly">All Opportunities</button>
+        <button (click)="showRecommendedOnly = true" [class.active]="showRecommendedOnly">Recommended</button>
+      </nav>
+      <div *ngIf="!studentFieldOfStudy" class="jobs-tabs-placeholder">
+        <span class="jobs-tabs-title">Opportunities</span>
+      </div>
+
+      <div class="search-container">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" 
+               [(ngModel)]="search" 
+               (input)="toggleRecommendedOnly"
+               placeholder="Search jobs..." 
+               class="search-input">
       </div>
     </div>
 
-    <p class="inline-state error" *ngIf="error">{{ error }}</p>
-    <p class="inline-state loading" *ngIf="loading">Loading jobs...</p>
+    <!-- Info Banner (Count & Recommendation Status) -->
+    <div class="info-bar flex items-center justify-between">
+      <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Found {{ displayedJobs.length }} job opportunities</span>
+      <span class="text-xs font-bold text-gray-400" *ngIf="showRecommendedOnly && studentFieldOfStudy">
+        Field: <span class="text-[#ED1C24]">{{ studentFieldOfStudy }}</span>
+      </span>
+    </div>
 
-    <p class="inline-state" *ngIf="!loading && showRecommendedOnly && displayedJobs.length === 0">No recommended jobs for your field right now.</p>
+    <!-- State Messages -->
+    <p class="error-msg text-sm" *ngIf="error"><i class="bi bi-exclamation-triangle-fill"></i> {{ error }}</p>
+    <p class="ok-msg text-sm" *ngIf="loading"><i class="bi bi-arrow-repeat animate-spin inline-block mr-1"></i> Loading jobs...</p>
+    
+    <!-- Empty State -->
+    <div *ngIf="!loading && displayedJobs.length === 0" class="job-card text-center py-16 animate-fadeInUp">
+      <i class="bi bi-briefcase text-5xl text-gray-300 mb-4 block"></i>
+      <h3 class="text-lg font-bold text-gray-700 mb-1">No job offers found</h3>
+      <p class="text-gray-400 mb-6 text-sm">No listings match your filter or selected category right now.</p>
+      <button (click)="resetFilters()" class="px-6 py-2 bg-[#ED1C24] text-white rounded-full font-bold text-sm hover:bg-[#d9262b] transition-colors shadow-md shadow-red-200">
+        Reset filters
+      </button>
+    </div>
 
+    <!-- Job Cards List -->
     <div class="job-list" *ngIf="!loading && displayedJobs.length > 0">
-      <article class="job-card" [class.job-card--recommended]="showRecommendedOnly" *ngFor="let job of displayedJobs" (click)="openJob(job.id)">
+      <article class="job-card animate-fadeInUp" 
+               [class.job-card--recommended]="job.targetFields && studentFieldOfStudy && job.targetFields.includes(studentFieldOfStudy)" 
+               *ngFor="let job of displayedJobs" 
+               (click)="openJob(job.id)">
         <div class="job-card-top">
           <img
             class="company-logo"
             [src]="resolveImageUrl(job.imageUrl)"
-            alt="Job image"
+            alt="Company logo"
           />
           <div class="job-card-info">
             <h3>{{ job.title }}</h3>
             <p class="company-name">{{ job.company || 'Company N/A' }}</p>
           </div>
         </div>
+        
         <div class="job-card-meta">
-          <span>Posted {{ job.createdAt | date:'dd/MM/yyyy' }}</span>
-          <span>{{ job.location || 'Location N/A' }}</span>
+          <span>📅 Posted {{ job.createdAt | date:'dd/MM/yyyy' }}</span>
+          <span>📍 {{ job.location || 'Location N/A' }}</span>
+          <span class="contract-badge" *ngIf="job.contractType">{{ job.contractType }}</span>
           <span class="applied-chip" [ngClass]="applicationStateClass(job.id)" *ngIf="hasApplied(job.id)">
             Applied - {{ applicationStatusLabel(job.id) }}
           </span>
         </div>
+
         <p class="job-card-desc">{{ job.description }}</p>
       </article>
     </div>
   </section>
 
-  <aside class="filters-card">
-    <h2>Filter by</h2>
-    <input type="text" [(ngModel)]="filterCompany" placeholder="Company" />
-    <input type="text" [(ngModel)]="filterTitle" placeholder="Job title" />
+  <!-- Sidebar Filters Panel -->
+  <aside class="filters-card sticky top-6 space-y-6">
+    <h2>Filter options</h2>
+
+    <div>
+      <label class="input-label mb-1">Company</label>
+      <input type="text" [(ngModel)]="filterCompany" placeholder="e.g. Google" />
+    </div>
+
+    <div>
+      <label class="input-label mb-1">Job title</label>
+      <input type="text" [(ngModel)]="filterTitle" placeholder="e.g. Developer" />
+    </div>
 
     <div class="filter-field">
-      <label>Employment type</label>
+      <label class="input-label">Employment type</label>
       <div class="multi-select">
         <button
           type="button"
@@ -68,7 +109,7 @@
           (click)="toggleDropdown('contract')"
         >
           <span class="multi-select-value">
-            {{ selectedContractTypes.length ? selectedContractTypes.join(', ') : 'Select' }}
+            {{ selectedContractTypes.length ? selectedContractTypes.join(', ') : 'Select Contract' }}
           </span>
           <span class="arrow" [class.open]="isContractDropdownOpen"></span>
         </button>
@@ -77,7 +118,7 @@
           <input
             type="text"
             class="multi-search"
-            placeholder="Search"
+            placeholder="Search contract..."
             [(ngModel)]="contractSearch"
             (click)="$event.stopPropagation()"
           />
@@ -94,7 +135,7 @@
     </div>
 
     <div class="filter-field">
-      <label>Study fields</label>
+      <label class="input-label">Study fields</label>
       <div class="multi-select">
         <button
           type="button"
@@ -103,7 +144,7 @@
           (click)="toggleDropdown('studyField')"
         >
           <span class="multi-select-value">
-            {{ selectedStudyFieldOptions.length ? selectedStudyFieldOptions.join(', ') : 'Select' }}
+            {{ selectedStudyFieldOptions.length ? selectedStudyFieldOptions.join(', ') : 'Select fields' }}
           </span>
           <span class="arrow" [class.open]="isStudyFieldDropdownOpen"></span>
         </button>
@@ -112,7 +153,7 @@
           <input
             type="text"
             class="multi-search"
-            placeholder="Search"
+            placeholder="Search fields..."
             [(ngModel)]="studyFieldSearch"
             (click)="$event.stopPropagation()"
           />
@@ -129,7 +170,7 @@
     </div>
 
     <div class="filter-field">
-      <label>Location</label>
+      <label class="input-label">Location</label>
       <div class="multi-select">
         <button
           type="button"
@@ -147,7 +188,7 @@
           <input
             type="text"
             class="multi-search"
-            placeholder="Search"
+            placeholder="Search locations..."
             [(ngModel)]="locationSearch"
             (click)="$event.stopPropagation()"
           />
@@ -163,12 +204,15 @@
       </div>
     </div>
 
-    <button class="reset" (click)="resetFilters()">RESET</button>
+    <button class="reset" (click)="resetFilters()">RESET ALL FILTERS</button>
   </aside>
 </div>
 
-<div class="job-detail" *ngIf="selectedJob">
-  <button class="back" (click)="backToList()">Back to job board</button>
+<!-- Job Details View -->
+<div class="job-detail animate-fadeIn" *ngIf="selectedJob">
+  <button class="back-btn" (click)="backToList()">
+    <i class="bi bi-arrow-left"></i> Back to job board
+  </button>
 
   <div class="job-detail-layout">
     <article class="detail-card">
@@ -178,18 +222,20 @@
           [src]="resolveImageUrl(selectedJob.imageUrl)"
           alt="Job image"
         />
-        <div>
+        <div class="detail-head-info">
+          <p class="detail-kicker" *ngIf="selectedJob.contractType">{{ selectedJob.contractType }}</p>
           <h1>{{ selectedJob.title }}</h1>
+          
           <div class="detail-grid">
-            <div>
+            <div class="detail-grid-item">
               <label>Organisation</label>
               <p>{{ selectedJob.company || 'N/A' }}</p>
             </div>
-            <div>
-              <label>Employment type</label>
-              <p>{{ selectedJob.contractType || 'N/A' }}</p>
+            <div class="detail-grid-item">
+              <label>Location</label>
+              <p>{{ selectedJob.location || 'N/A' }}</p>
             </div>
-            <div>
+            <div class="detail-grid-item">
               <label>Posted</label>
               <p>{{ selectedJob.createdAt | date:'dd/MM/yyyy' }}</p>
             </div>
@@ -213,98 +259,104 @@
       ></iframe>
 
       <div class="job-meta">
-        <p><strong>📍</strong> {{ selectedJob.location || 'Location N/A' }}</p>
+        <p><strong>📅 Closing Date:</strong> {{ selectedJob.deadline | date:'dd/MM/yyyy' }}</p>
         <p *ngIf="selectedJob.attachmentUrl">
-          <strong>📎</strong>
-          <a [href]="selectedJob.attachmentUrl" target="_blank" rel="noopener noreferrer">Attached file / post sheet</a>
+          <strong>📎 Attached sheet:</strong>
+          <a [href]="selectedJob.attachmentUrl" target="_blank" rel="noopener noreferrer">Download PDF File</a>
         </p>
-        <p><strong>Closing date for applications:</strong> {{ selectedJob.deadline | date:'dd/MM/yyyy' }}</p>
       </div>
 
-      <div class="description">{{ selectedJob.description }}</div>
+      <div class="description-content">{{ selectedJob.description }}</div>
 
+      <!-- Apply Zone Cards -->
       <div class="apply-zone">
+        <!-- External Application -->
         <div class="apply-card apply-card--external">
           <div class="apply-card__head">
-            <h3>External Application</h3>
-            <span class="apply-badge">Company Site</span>
+            <h3>External Apply</h3>
+            <span class="apply-badge">Company Portal</span>
           </div>
-          <p class="apply-text">Use the company website to apply directly if they manage applications externally.</p>
-          <button class="apply-btn apply-btn--external" *ngIf="selectedJob.applyUrl" (click)="openApplyLink()">Open external apply link</button>
+          <p class="apply-text">Redirects you to the company website to apply through their system.</p>
+          <button class="apply-btn apply-btn--external" *ngIf="selectedJob.applyUrl" (click)="openApplyLink()">
+            Apply Externally <i class="bi bi-box-arrow-up-right text-xs ml-1"></i>
+          </button>
           <p class="apply-muted" *ngIf="!selectedJob.applyUrl">No external apply URL for this job.</p>
         </div>
 
+        <!-- Platform Application -->
         <div class="apply-card apply-card--platform">
           <div class="apply-card__head">
-            <h3>Apply on Esprit Connect</h3>
+            <h3>On platform Apply</h3>
             <span class="apply-badge apply-badge--platform">Recommended</span>
           </div>
 
           <ng-container *ngIf="hasApplied(selectedJob.id); else platformApplyForm">
             <div class="applied-summary" [ngClass]="applicationStateClass(selectedJob.id)">
               <p class="apply-state applied">
-                You already applied to this job.
+                <i class="bi bi-check-circle-fill mr-1"></i> You already applied to this job.
               </p>
               <p class="applied-status-line">
-                Current status: <strong>{{ applicationStatusLabel(selectedJob.id) }}</strong>
+                Current status: <span class="status-badge uppercase">{{ applicationStatusLabel(selectedJob.id) }}</span>
               </p>
-              <p class="applied-help">
+              <p class="applied-help mt-2 text-xs leading-relaxed">
                 {{ applicationStatusMessage(selectedJob.id) }}
               </p>
             </div>
           </ng-container>
 
           <ng-template #platformApplyForm>
-            <p class="apply-state">
-              Current status: <strong>Not applied yet</strong>
+            <p class="apply-state text-xs text-gray-500 font-semibold mb-2">
+              Status: <span class="text-gray-400">Not applied yet</span>
             </p>
-            <p class="apply-text">Upload your CV. Your profile details are sent automatically to the company.</p>
+            <p class="apply-text text-xs leading-normal">Upload your CV to apply. Motivation letter is optional.</p>
 
-            <div class="apply-form-grid">
-              <div class="input-group">
-                <label for="cv-upload">CV (PDF, DOC, DOCX)</label>
+            <div class="apply-form-grid space-y-3">
+              <div>
+                <label for="cv-upload" class="input-label mb-1">CV File (PDF, DOC)*</label>
                 <input
                   id="cv-upload"
                   type="file"
-                  class="apply-input"
+                  class="apply-file-input"
                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   (change)="onCvSelected($event)"
                 />
               </div>
 
-              <div class="input-group">
-                <label for="cover-letter-text">Cover letter (optional)</label>
+              <div>
+                <label for="cover-letter-text" class="input-label mb-1">Motivation Paragraph</label>
                 <textarea
                   id="cover-letter-text"
-                  class="apply-input apply-textarea"
+                  class="apply-textarea-input"
                   [(ngModel)]="coverLetterText"
-                  rows="5"
-                  placeholder="Write a short motivation paragraph..."
+                  rows="4"
+                  placeholder="Introduce yourself to the hiring team..."
                 ></textarea>
               </div>
             </div>
 
             <button class="apply-btn apply-btn--platform" (click)="submitOnPlatform()" [disabled]="applying || hasApplied(selectedJob.id)">
-              {{ applying ? 'Submitting...' : 'Submit application on platform' }}
+              {{ applying ? 'Submitting...' : 'Submit Application' }}
             </button>
           </ng-template>
         </div>
       </div>
-      <p class="ok" *ngIf="message">{{ message }}</p>
-      <p class="error" *ngIf="error">{{ error }}</p>
+      <p class="ok-msg mt-4" *ngIf="message"><i class="bi bi-check-circle-fill"></i> {{ message }}</p>
+      <p class="error-msg mt-4" *ngIf="error"><i class="bi bi-exclamation-triangle-fill"></i> {{ error }}</p>
     </article>
 
+    <!-- Sidebar Added By Publisher Card -->
     <aside class="added-by-card">
-      <h3>Added by</h3>
+      <h3 class="added-by-title">Added by</h3>
       <div class="added-by-user">
         <img
-          [src]="selectedJob.publisherAvatarUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"
+          [src]="selectedJob.publisherAvatarUrl || 'https://ui-avatars.com/api/?name=' + (selectedJob.publisherName || 'User')"
           alt="Publisher avatar"
+          class="added-by-avatar"
         />
-        <div>
-          <p class="name">{{ selectedJob.publisherName || 'Unknown' }}</p>
-          <p class="title">{{ selectedJob.publisherJobTitle || '' }}</p>
-          <p class="title">{{ selectedJob.publisherCompanyName || '' }}</p>
+        <div class="added-by-info">
+          <p class="added-by-name">{{ selectedJob.publisherName || 'Unknown' }}</p>
+          <p class="added-by-meta" *ngIf="selectedJob.publisherJobTitle">{{ selectedJob.publisherJobTitle }}</p>
+          <p class="added-by-meta" *ngIf="selectedJob.publisherCompanyName">{{ selectedJob.publisherCompanyName }}</p>
         </div>
       </div>
     </aside>

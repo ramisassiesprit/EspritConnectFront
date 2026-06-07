@@ -1,27 +1,42 @@
 <div class="groups-page" [class.groups-page--subroute]="isCreateRoute || isFeedRoute || isEditRoute">
   <ng-container *ngIf="!isCreateRoute && !isFeedRoute && !isEditRoute">
-    <!-- Header Card -->
-    <header class="groups-section-card">
-      <div class="header-top">
+    
+    <!-- Hero Banner -->
+    <section class="groups-hero animate-fadeIn">
+      <div>
+        <p class="groups-kicker">Esprit Communities</p>
         <h1>Groups</h1>
+        <p class="groups-copy">Collaborate, share knowledge, and connect with peers by joining student clubs, interest groups, and communities.</p>
       </div>
+    </section>
 
-      <div class="search-row">
-        <div class="search-bar-wrapper">
-          <lucide-icon [img]="Search" class="search-icon" size="20"></lucide-icon>
-          <input type="text" placeholder="Search" [(ngModel)]="searchQuery" name="search" class="search-input">
+    <!-- Actions Row: Tabs, Search and New Group Button -->
+    <div class="groups-actions-row animate-fadeIn">
+      <nav class="groups-tabs" aria-label="Groups sections">
+        <button type="button" [class.active]="activeTab === 'your'" (click)="setActiveTab('your')">Your Groups</button>
+        <button type="button" [class.active]="activeTab === 'requests'" (click)="setActiveTab('requests')">Requests</button>
+      </nav>
+
+      <div class="groups-search-group">
+        <div class="search-container">
+          <lucide-icon [img]="Search" class="search-icon" size="16"></lucide-icon>
+          <input type="text" placeholder="Search groups..." [(ngModel)]="searchQuery" name="search" class="search-input">
         </div>
+
         <a routerLink="/etudiant/groups/create" class="btn-new-group">
-          <lucide-icon [img]="UserPlus" size="18"></lucide-icon>
-          <span>New group</span>
+          <lucide-icon [img]="Plus" size="16"></lucide-icon>
+          <span>New Group</span>
         </a>
       </div>
+    </div>
 
-      <div class="labels-filter" *ngIf="availableLabels.length">
-        <span class="labels-label">Labels:</span>
+    <!-- Labels Filter Row -->
+    <div class="labels-filter-card animate-fadeIn" *ngIf="availableLabels.length">
+      <div class="labels-filter">
+        <span class="labels-label">Filter by Tag:</span>
         <div class="labels-scroll-wrapper">
-          <button class="nav-arrow" (click)="scrollLabels('left')">
-            <lucide-icon [img]="ChevronLeft" size="16"></lucide-icon>
+          <button class="nav-arrow" (click)="scrollLabels('left')" aria-label="Scroll left">
+            <lucide-icon [img]="ChevronLeft" size="14"></lucide-icon>
           </button>
           
           <div class="labels-track" #labelsTrack>
@@ -32,42 +47,40 @@
             </span>
           </div>
 
-          <button class="nav-arrow" (click)="scrollLabels('right')">
-            <lucide-icon [img]="ChevronRight" size="16"></lucide-icon>
+          <button class="nav-arrow" (click)="scrollLabels('right')" aria-label="Scroll right">
+            <lucide-icon [img]="ChevronRight" size="14"></lucide-icon>
           </button>
         </div>
       </div>
-    </header>
+    </div>
 
     <div *ngIf="loading" class="groups-loading">
       <div class="spinner"></div>
       <p>Loading groups…</p>
     </div>
-    
-    <div class="groups-tabs">
-      <nav>
-        <button type="button" class="tab-link" [class.active]="activeTab === 'your'" (click)="setActiveTab('your')">Your Groups</button>
-        <button type="button" class="tab-link" [class.active]="activeTab === 'requests'" (click)="setActiveTab('requests')">Requests</button>
-      </nav>
-    </div>
 
     <div *ngIf="error" class="groups-error">
-      <lucide-icon [img]="Info" class="error-icon"></lucide-icon>
+      <lucide-icon [img]="Info" class="empty-icon" size="24"></lucide-icon>
       <p>{{ error }}</p>
     </div>
 
     <!-- Your Groups / Requests Section (tab switch) -->
-    <section class="groups-section-card" *ngIf="!loading && !error">
+    <section class="groups-section animate-fadeIn" *ngIf="!loading && !error">
       <ng-container *ngIf="activeTab === 'your'">
-        <h2 class="section-title">Your Groups</h2>
+        <div class="section-header-row mb-6">
+          <h2 class="section-title">Your Joined Groups</h2>
+        </div>
 
-        <div *ngIf="!filteredJoinedGroups.length" class="empty-state">
+        <div *ngIf="!filteredJoinedGroups.length" class="groups-empty-card">
+          <lucide-icon [img]="Info" class="empty-icon" size="24"></lucide-icon>
           <p>{{ selectedLabel || searchQuery ? 'No groups match your search.' : 'You are not a member of any groups yet.' }}</p>
         </div>
 
         <div class="your-groups-grid" *ngIf="filteredJoinedGroups.length">
-            <article *ngFor="let group of filteredJoinedGroups" class="your-group-card" (click)="navigateToGroupFeed(group.id)">
-              <img [src]="group.logoUrl" [alt]="group.groupName" class="your-group-img">
+            <article *ngFor="let group of filteredJoinedGroups" class="your-group-card animate-fadeInUp" (click)="navigateToGroupFeed(group.id)">
+              <div class="your-group-img-wrapper">
+                <img [src]="group.logoUrl" [alt]="group.groupName" class="your-group-img">
+              </div>
               <div class="your-group-info">
                 <span class="your-group-name">{{ group.groupName }}</span>
               </div>
@@ -75,10 +88,10 @@
               <!-- Management Buttons for Owners -->
               <div class="group-management-overlay" *ngIf="isOwner(group)">
                 <button class="mgmt-btn edit" (click)="editGroup($event, group)" title="Edit">
-                  <lucide-icon [img]="Edit" size="14"></lucide-icon>
+                  <lucide-icon [img]="Edit" size="12"></lucide-icon>
                 </button>
                 <button class="mgmt-btn delete" (click)="deleteGroup($event, group)" title="Delete">
-                  <lucide-icon [img]="Trash" size="14"></lucide-icon>
+                  <lucide-icon [img]="Trash" size="12"></lucide-icon>
                 </button>
               </div>
             </article>
@@ -91,25 +104,28 @@
     </section>
 
     <!-- Suggested Groups Section -->
-    <section class="groups-section-card" *ngIf="!loading && !error">
-      <h2 class="section-title">Suggested for you</h2>
+    <section class="groups-section animate-fadeIn" *ngIf="!loading && !error">
+      <div class="section-header-row mb-6">
+        <h2 class="section-title">Suggested Communities</h2>
+      </div>
 
-      <div *ngIf="!filteredAllGroups.length" class="empty-state">
+      <div *ngIf="!filteredAllGroups.length" class="groups-empty-card">
+        <lucide-icon [img]="Info" class="empty-icon" size="24"></lucide-icon>
         <p>{{ selectedLabel || searchQuery ? 'No groups match your search.' : 'No more suggested groups available.' }}</p>
       </div>
 
       <div class="more-groups-list" *ngIf="filteredAllGroups.length">
-        <article *ngFor="let group of filteredAllGroups" class="group-list-item" (click)="navigateToGroupFeed(group.id)">
+        <article *ngFor="let group of filteredAllGroups" class="group-list-item animate-fadeInUp" (click)="navigateToGroupFeed(group.id)">
           <div class="group-list-avatar">
             <img *ngIf="group.logoUrl && !group.logoUrl.endsWith('default-logo.png')" [src]="group.logoUrl" [alt]="group.groupName">
-            <lucide-icon *ngIf="!group.logoUrl || group.logoUrl.endsWith('default-logo.png')" [img]="Users" class="list-icon-placeholder"></lucide-icon>
+            <lucide-icon *ngIf="!group.logoUrl || group.logoUrl.endsWith('default-logo.png')" [img]="Users" class="list-icon-placeholder" size="28"></lucide-icon>
           </div>
           
           <div class="group-list-details">
             <div class="group-list-header">
               <span class="group-list-name">{{ group.groupName }}</span>
               <div class="group-list-meta">
-                <lucide-icon [img]="Users" size="14"></lucide-icon>
+                <lucide-icon [img]="Users" size="12"></lucide-icon>
                 <span>{{ group.membersCount || 0 }} members</span>
               </div>
             </div>
@@ -124,10 +140,10 @@
             <!-- Management Buttons for Owners -->
             <ng-container *ngIf="isOwner(group)">
               <button class="mgmt-btn edit" (click)="editGroup($event, group)" title="Edit">
-                <lucide-icon [img]="Edit" size="16"></lucide-icon>
+                <lucide-icon [img]="Edit" size="12"></lucide-icon>
               </button>
               <button class="mgmt-btn delete" (click)="deleteGroup($event, group)" title="Delete">
-                <lucide-icon [img]="Trash" size="16"></lucide-icon>
+                <lucide-icon [img]="Trash" size="12"></lucide-icon>
               </button>
             </ng-container>
             <button class="btn-join" (click)="joinGroup($event, group.id)" title="Join Group">
@@ -137,6 +153,7 @@
         </article>
       </div>
     </section>
+
   </ng-container>
 
   <router-outlet></router-outlet>
