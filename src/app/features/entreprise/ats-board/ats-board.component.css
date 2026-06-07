@@ -1,0 +1,98 @@
+.board-wrapper {
+  padding: 24px;
+  height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+}
+
+.board-header {
+  margin-bottom: 24px;
+}
+
+.board-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.board-header p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.board {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  flex-grow: 1;
+  padding-bottom: 12px;
+}
+
+.column {
+  background: #f1f5f9;
+  border-radius: 12px;
+  width: 300px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.column-header {
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.column-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.badge {
+  background: #cbd5e1;
+  color: #475569;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.accepted-col h3 { color: #059669; }
+.accepted-col .badge { background: #d1fae5; color: #059669; }
+
+.rejected-col h3 { color: #e11d48; }
+.rejected-col .badge { background: #ffe4e6; color: #e11d48; }
+
+.card-list {
+  padding: 12px;
+  flex-grow: 1;
+  overflow-y: auto;
+  min-height: 100px;
+}
+
+/* CDK Drag & Drop styles */
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  border: 2px dashed #cbd5e1;
+  background: transparent;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.card-list.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

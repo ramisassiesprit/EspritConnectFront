@@ -52,6 +52,7 @@ export interface JobApplication {
   applicantFieldOfStudy?: string;
   applicantInstitution?: string;
   status?: ApplicationStatus;
+  aiSummary?:string;
   appliedAt?: string;
   updatedAt?: string;
 }

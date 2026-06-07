@@ -1,0 +1,88 @@
+<div class="board-wrapper">
+  <div class="board-header">
+    <h2>Suivi des Candidatures (Mini-ATS)</h2>
+    <p>Glissez et déposez les candidats pour mettre à jour leur statut. L'IA a pré-analysé les CV pour vous.</p>
+    
+    <div class="job-selector" *ngIf="jobs.length > 0">
+      <label for="jobSelect">Sélectionner une offre : </label>
+      <select id="jobSelect" (change)="onJobChange($event)" [(ngModel)]="selectedJobId">
+        <option *ngFor="let job of jobs" [value]="job.id">{{ job.title }}</option>
+      </select>
+    </div>
+    <div *ngIf="jobs.length === 0" class="no-jobs-alert">
+      Vous n'avez pas encore publié d'offres d'emploi.
+    </div>
+  </div>
+
+  <div class="board" cdkDropListGroup>
+    <!-- Colonne PENDING -->
+    <div class="column">
+      <div class="column-header">
+        <h3>Nouveau <span class="badge">{{pending.length}}</span></h3>
+      </div>
+      <div
+        cdkDropList
+        [cdkDropListData]="pending"
+        class="card-list"
+        (cdkDropListDropped)="drop($event, 'PENDING')">
+        <app-ats-card *ngFor="let item of pending" [application]="item" cdkDrag></app-ats-card>
+      </div>
+    </div>
+
+    <!-- Colonne REVIEWED -->
+    <div class="column">
+      <div class="column-header">
+        <h3>En Revue <span class="badge">{{reviewed.length}}</span></h3>
+      </div>
+      <div
+        cdkDropList
+        [cdkDropListData]="reviewed"
+        class="card-list"
+        (cdkDropListDropped)="drop($event, 'REVIEWED')">
+        <app-ats-card *ngFor="let item of reviewed" [application]="item" cdkDrag></app-ats-card>
+      </div>
+    </div>
+
+    <!-- Colonne SHORTLISTED -->
+    <div class="column">
+      <div class="column-header">
+        <h3>Shortlisté <span class="badge">{{shortlisted.length}}</span></h3>
+      </div>
+      <div
+        cdkDropList
+        [cdkDropListData]="shortlisted"
+        class="card-list"
+        (cdkDropListDropped)="drop($event, 'SHORTLISTED')">
+        <app-ats-card *ngFor="let item of shortlisted" [application]="item" cdkDrag></app-ats-card>
+      </div>
+    </div>
+
+    <!-- Colonne ACCEPTED -->
+    <div class="column">
+      <div class="column-header accepted-col">
+        <h3>Accepté <span class="badge">{{accepted.length}}</span></h3>
+      </div>
+      <div
+        cdkDropList
+        [cdkDropListData]="accepted"
+        class="card-list"
+        (cdkDropListDropped)="drop($event, 'ACCEPTED')">
+        <app-ats-card *ngFor="let item of accepted" [application]="item" cdkDrag></app-ats-card>
+      </div>
+    </div>
+    
+    <!-- Colonne REJECTED -->
+    <div class="column">
+      <div class="column-header rejected-col">
+        <h3>Rejeté <span class="badge">{{rejected.length}}</span></h3>
+      </div>
+      <div
+        cdkDropList
+        [cdkDropListData]="rejected"
+        class="card-list"
+        (cdkDropListDropped)="drop($event, 'REJECTED')">
+        <app-ats-card *ngFor="let item of rejected" [application]="item" cdkDrag></app-ats-card>
+      </div>
+    </div>
+  </div>
+</div>
