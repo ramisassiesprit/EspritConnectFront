@@ -40,6 +40,7 @@ export class TalentInsightsComponent implements AfterViewInit, OnDestroy {
     this.http.get<any>(`${environment.apiUrl}analytics/skills-trend`).subscribe(data => {
       // Générer l'insight dynamiquement
       if (data.labels.length > 0) {
+        console.log("data:",data);
         const topSkill = data.labels[0];
         this.skillsInsight = `La compétence "${topSkill}" est actuellement la plus répandue parmi les profils. Ciblez vos offres en conséquence !`;
       } else {

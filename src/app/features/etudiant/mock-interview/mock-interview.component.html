@@ -43,22 +43,39 @@
   <div class="scorecard-phase" *ngIf="scorecard">
     <div class="scorecard-header">
       <h2>Votre Scorecard 📊</h2>
-      <div class="score-circle">
+      <div class="score-circle" *ngIf="scorecard.score !== undefined">
         <span class="score-number">{{ scorecard.score }}/10</span>
       </div>
     </div>
     
-    <div class="feedback-card">
+    <div class="feedback-card" *ngIf="scorecard.feedback; else noFeedback">
       <h3>Feedback Général</h3>
       <p>{{ scorecard.feedback }}</p>
     </div>
+    <ng-template #noFeedback>
+      <div class="feedback-card" *ngIf="!scorecard.error">
+        <h3>Feedback Général</h3>
+        <p style="color:#94a3b8">Aucun feedback disponible pour cet entretien.</p>
+      </div>
+    </ng-template>
 
-    <div class="tips-card">
+    <div class="tips-card" *ngIf="scorecard.tips; else noTips">
       <h3>💡 Conseils pour l'entretien réel</h3>
       <p>{{ scorecard.tips }}</p>
     </div>
+    <ng-template #noTips>
+      <div class="tips-card" *ngIf="!scorecard.error">
+        <h3>💡 Conseils pour l'entretien réel</h3>
+        <p style="color:#94a3b8">Aucun conseil disponible pour le moment.</p>
+      </div>
+    </ng-template>
+
+    <div class="feedback-card" *ngIf="scorecard.error" style="border-left: 4px solid #ef4444;">
+      <h3>⚠️ Erreur</h3>
+      <p>{{ scorecard.error }}</p>
+    </div>
     
-    <button class="btn-outline" (click)="questions = []; scorecard = null; jobDescription = '';">
+    <button class="btn-outline" (click)="questions = []; scorecard = null; jobDescription = ''; answers = []">
       Recommencer un autre entretien
     </button>
   </div>
