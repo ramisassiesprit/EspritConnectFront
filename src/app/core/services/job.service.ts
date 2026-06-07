@@ -78,4 +78,8 @@ export class JobService {
   updateApplicationStatus(applicationId: string, status: ApplicationStatus): Observable<JobApplication> {
     return this.http.patch<JobApplication>(`${this.applicationsUrl}/${applicationId}/status?status=${status}`, {});
   }
+
+  regenerateApplicationSummary(applicationId: string): Observable<JobApplication> {
+    return this.http.patch<JobApplication>(`${this.applicationsUrl}/${applicationId}/regenerate-summary`, {});
+  }
 }

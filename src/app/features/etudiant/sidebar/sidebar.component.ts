@@ -60,7 +60,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       hasChevron: true,
       isOpen: false,
       subItems: [
-        { label: 'Job Board', route: '/etudiant/jobs/board' }
+        { label: 'Job Board', route: '/etudiant/jobs/board' },
+        { label: 'Mock Interview (IA)', route: '/etudiant/mock-interview' }
       ]
     },
     { label: 'Photos', icon: 'image', route: '/etudiant/photos' },

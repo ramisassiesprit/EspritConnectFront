@@ -1,0 +1,25 @@
+<div class="card">
+  <div class="card-header">
+    <div class="avatar">
+      {{application?.applicantFirstName?.charAt(0)}}{{application?.applicantLastName?.charAt(0)}}
+    </div>
+    <div class="info">
+      <h4>{{application?.applicantFirstName}} {{application?.applicantLastName}}</h4>
+      <span class="role">{{application?.applicantJobTitle || 'Étudiant Esprit'}}</span>
+    </div>
+  </div>
+  
+  <div class="ai-summary-container">
+    <div class="ai-badge">✨ Résumé IA</div>
+    <div class="ai-content" [innerHTML]="application?.aiSummary">
+      <!-- Le HTML généré par Gemini sera injecté ici -->
+    </div>
+  </div>
+  
+  <div class="card-footer">
+    <button class="btn-regenerate" (click)="regenerateSummary()" [disabled]="isGenerating">
+      {{ isGenerating ? '🔄' : '🔄 Actualiser IA' }}
+    </button>
+    <button class="btn-cv" *ngIf="application?.cvUrl" [attr.onclick]="'window.open(\'' + application?.cvUrl + '\', \'_blank\')'">Voir CV</button>
+  </div>
+</div>

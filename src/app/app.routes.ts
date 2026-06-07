@@ -253,6 +253,10 @@ export const routes: Routes = [
       {
         path: 'user/:id',
         loadComponent: () => import('./features/etudiant/user-details/user-details.component').then(m => m.UserDetailsComponent)
+      },
+      {
+        path: 'mock-interview',
+        loadComponent: () => import('./features/etudiant/mock-interview/mock-interview.component').then(m => m.MockInterviewComponent)
       }
     ]
   },
@@ -412,6 +416,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/entreprise/recommendations/entreprise-recommendations.component').then(
             (m) => m.EntrepriseRecommendationsComponent
+          ),
+      },
+      {
+        path: 'ats-board',
+        loadComponent: () =>
+          import('./features/entreprise/ats-board/ats-board.component').then(
+            (m) => m.AtsBoardComponent
+          ),
+      },
+      {
+        path: 'insights',
+        loadComponent: () =>
+          import('./features/entreprise/talent-insights/talent-insights.component').then(
+            (m) => m.TalentInsightsComponent
           ),
       }
     ]
