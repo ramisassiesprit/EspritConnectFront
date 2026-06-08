@@ -26,4 +26,11 @@ export class CommentService {
   deleteComment(commentId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${encodeURIComponent(commentId)}`);
   }
+  updateComment(commentId: string, content: string): Observable<CommentDTO> {
+  const url = `${this.apiUrl}/${encodeURIComponent(commentId)}`;
+  const body = { content: content.trim() };
+  
+  return this.http.put<CommentDTO>(url, body);
+}
+
 }

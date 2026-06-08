@@ -76,9 +76,18 @@ export class FeedComponent implements OnInit, OnDestroy {
   searchQuery = '';
   newPostContent = '';
 
+  isEditModalOpen = signal(false);
+  editingPostId: string | null = null;
+  editPostContent = '';
+
   openCommentsPostIds: { [postId: string]: boolean } = {};
   newCommentInputs: { [postId: string]: string } = {};
   postComments: { [postId: string]: CommentDTO[] } = {};
+
+  isCommentEditModalOpen = signal(false);
+  editingCommentId: string | null = null;
+  editCommentContent = '';
+  editingCommentPostId: string | null = null;
 
   readonly Search = Search;
   readonly Users = Users;
@@ -164,7 +173,7 @@ export class FeedComponent implements OnInit, OnDestroy {
   }
 
   loadRecentMembers() {
-    this.userService.getAllUsers().subscribe({
+    this.userService.getUsers().subscribe({
       next: (users) => {
         this.totalUsersCount = users.length;
         // Sort by registration/createdAt descending and take 12
@@ -320,7 +329,6 @@ export class FeedComponent implements OnInit, OnDestroy {
       error: (err) => console.error('Failed to submit comment', err)
     });
   }
-
   deleteComment(post: PostDTO, commentId: string) {
     this.commentService.deleteComment(commentId).subscribe({
       next: () => {
@@ -339,4 +347,90 @@ export class FeedComponent implements OnInit, OnDestroy {
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
     return environment.apiUrl + (url.startsWith('/') ? url.substring(1) : url);
   }
+  getRoleNavigationPath(): string {
+  const role = this.currentUser()?.role;
+  return  role === 'ETUDIANT' ? 'etudiant' : 'enseignant';
 }
+// Ouvre la modale d'édition avec le contenu actuel du post
+updateComment(comment: CommentDTO, postId: string) {
+  this.editingCommentId = comment.id;
+  this.editingCommentPostId = postId; // On sauvegarde l'ID du post ici
+  this.editCommentContent = comment.content;
+  this.isCommentEditModalOpen.set(true);
+  this.activePostMenuId = null;
+}
+
+closeCommentEditModal() {
+  this.isCommentEditModalOpen.set(false);
+  this.editingCommentId = null;
+  this.editingCommentPostId = null; // Reset
+  this.editCommentContent = '';
+}
+
+// Plus besoin de passer de paramètre ici !
+submitCommentUpdate() {
+  if (!this.editingCommentId || !this.editingCommentPostId || !this.editCommentContent.trim()) return;
+
+  const postId = this.editingCommentPostId;
+
+  this.commentService.updateComment(this.editingCommentId, this.editCommentContent).subscribe({
+    next: (updatedComment) => {
+      if (this.postComments[postId]) {
+        // Met à jour le commentaire dans le bon tableau grâce à l'ID sauvegardé
+        this.postComments[postId] = this.postComments[postId].map(c => 
+          c.id === this.editingCommentId ? { ...c, content: updatedComment.content } : c
+        );
+      }
+      this.closeCommentEditModal();
+    },
+    error: (err) => console.error('Failed to update comment', err)
+  });
+}
+openEditModal(post: PostDTO, event: Event) {
+  event.stopPropagation();
+  this.editingPostId = post.id;
+  this.editPostContent = post.content;
+  this.isEditModalOpen.set(true);
+  this.activePostMenuId = null;
+}
+
+closeEditModal() {
+  this.isEditModalOpen.set(false);
+  this.editingPostId = null;
+  this.editPostContent = '';
+}
+
+// Enregistre les modifications sur le serveur
+updatePost() {
+  if (!this.editingPostId || !this.editPostContent.trim()) return;
+
+  this.postService.updatePost(this.editingPostId, this.editPostContent).subscribe({
+    next: (updatedPost) => {
+      // Met à jour le post en temps réel dans la liste locale
+      this.allPosts = this.allPosts.map(p => p.id === this.editingPostId ? { ...p, content: updatedPost.content } : p);
+      this.posts = this.posts.map(p => p.id === this.editingPostId ? { ...p, content: updatedPost.content } : p);
+      this.closeEditModal();
+    },
+    error: (err) => console.error('Failed to update post', err)
+  });
+}
+
+// Supprime définitivement un post
+deletePost(postId: string, event: Event) {
+  event.stopPropagation();
+  
+  if (confirm('Are you sure you want to delete this post?')) {
+    this.postService.deletePost(postId).subscribe({
+      next: () => {
+        // Filtre et retire le post de l'affichage local
+        this.allPosts = this.allPosts.filter(p => p.id !== postId);
+        this.posts = this.posts.filter(p => p.id !== postId);
+        this.activePostMenuId = null;
+      },
+      error: (err) => console.error('Failed to delete post', err)
+    });
+  }
+  
+}
+}
+

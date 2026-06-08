@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 interface NavItem {
@@ -15,6 +15,21 @@ interface NavItem {
   styleUrl: './admin-sidebar.component.css'
 })
 export class AdminSidebarComponent {
+  private router = inject(Router);
+
+  isStudentView = localStorage.getItem('viewMode') === 'etudiant';
+
+  switchView() {
+    if (this.isStudentView) {
+      this.isStudentView = false;
+      localStorage.removeItem('viewMode');
+      this.router.navigate(['/admin/home']);
+    } else {
+      this.isStudentView = true;
+      localStorage.setItem('viewMode', 'etudiant');
+      this.router.navigate(['/etudiant/feed']);
+    }
+  }
   navItems: NavItem[] = [
     { label: 'Dashboard', route: '/admin/home' },
     { label: 'Users', route: '/admin/users' },

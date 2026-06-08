@@ -19,7 +19,7 @@ import { VideoChatModalComponent } from '../user-details/video-chat-modal/video-
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('scrollMe') private myScrollContainer!: ElementRef;
-  
+
   private chatService = inject(ChatService);
   private userService = inject(UserService);
   private route = inject(ActivatedRoute);
@@ -32,7 +32,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   newMessage: string = '';
   contacts: User[] = [];
   private messageSub?: Subscription;
-  
+
+  // Edit state
+  editingMessageId: string | null = null;
+  editingContent: string = '';
+
   isVideoChatModalOpen = false;
 
   openVideoChatModal() {
@@ -53,15 +57,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.userService.getCurrentUser().subscribe(user => {
       this.currentUser = user;
       this.chatService.connect(user.id);
-      
+
       this.loadContacts();
-      
+
       this.route.params.subscribe(params => {
         this.receiverId = params['id'];
         if (this.receiverId) {
           this.loadReceiverInfo();
           this.loadChatHistory();
-          
+
           // Check for auto-send message from navigation state
           const autoSendMsg = history.state.autoSendMsg;
           if (autoSendMsg) {
@@ -81,7 +85,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (msg) {
         const isFromReceiver = msg.senderId === this.receiverId && msg.receiverId === this.currentUser?.id;
         const isFromMe = msg.senderId === this.currentUser?.id && msg.receiverId === this.receiverId;
-        
+
         if (isFromReceiver || isFromMe) {
           // Find and replace temporary message or add new one
           const tempIndex = this.messages.findIndex(m => !m.id && m.content === msg.content && m.senderId === msg.senderId);
@@ -132,7 +136,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.currentUser && this.receiverId) {
       this.chatService.getChatHistory(this.currentUser.id, this.receiverId)
         .subscribe(history => {
-          this.messages = [...history].sort((a, b) => 
+          this.messages = [...history].sort((a, b) =>
             new Date(a.sentAt!).getTime() - new Date(b.sentAt!).getTime()
           );
           this.scrollToBottom();
@@ -149,7 +153,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         sentAt: new Date().toISOString(),
         senderName: this.currentUser.firstName + ' ' + this.currentUser.lastName
       };
-      
+
       this.chatService.sendMessage(msg);
       // Push temporary message for instant feedback
       this.messages.push(msg);
@@ -158,6 +162,43 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
+  // ---- Edit / Delete ----
+  startEdit(msg: Message): void {
+    if (!msg.id) return;
+    this.editingMessageId = msg.id;
+    this.editingContent = msg.content;
+  }
+
+  cancelEdit(): void {
+    this.editingMessageId = null;
+    this.editingContent = '';
+  }
+
+  confirmEdit(msg: Message): void {
+    const trimmed = this.editingContent.trim();
+    if (!trimmed || !msg.id) { this.cancelEdit(); return; }
+
+    const updated: Message = { ...msg, content: trimmed, edited: true };
+    this.chatService.updateMessage(msg.id, updated).subscribe({
+      next: (res) => {
+        const idx = this.messages.findIndex(m => m.id === msg.id);
+        if (idx !== -1) this.messages[idx] = res;
+        this.cancelEdit();
+      },
+      error: () => this.cancelEdit()
+    });
+  }
+
+  deleteMessage(msg: Message): void {
+    if (!msg.id) return;
+    this.chatService.deleteMessage(msg.id).subscribe({
+      next: () => {
+        this.messages = this.messages.filter(m => m.id !== msg.id);
+      }
+    });
+  }
+  // -------------------------
+
   ngAfterViewChecked() {
     this.scrollToBottom();
   }
@@ -165,7 +206,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   scrollToBottom(): void {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-    } catch(err) { }
+    } catch (err) { }
   }
 
   getSafeHtml(content: string): SafeHtml {

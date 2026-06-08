@@ -1300,3 +1300,48 @@
     padding: 11px 14px;
   }
 }
+.delete-option {
+  color: #ef4444 !important; /* Rouge pour la suppression */
+}
+
+.delete-option:hover {
+  background-color: #fef2f2 !important;
+}
+
+.edit-option {
+  color: #3b82f6 !important; /* Bleu pour l'édition */
+}
+
+.edit-option:hover {
+  background-color: #eff6ff !important;
+}
+
+.dropdown-divider {
+  height: 1px;
+  margin: 4px 0;
+  background-color: #e2e8f0;
+}
+.comment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-actions-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-edit {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.comment-edit:hover {
+  color: #3b82f6; /* Bleu au survol */
+}
