@@ -38,8 +38,8 @@ export class TalentInsightsComponent implements AfterViewInit, OnDestroy {
 
   initSkillsChart() {
     this.http.get<any>(`${environment.apiUrl}analytics/skills-trend`).subscribe(data => {
-      // Générer l'insight dynamiquement
       if (data.labels.length > 0) {
+        console.log("data:", data);
         const topSkill = data.labels[0];
         this.skillsInsight = `La compétence "${topSkill}" est actuellement la plus répandue parmi les profils. Ciblez vos offres en conséquence !`;
       } else {
@@ -59,7 +59,20 @@ export class TalentInsightsComponent implements AfterViewInit, OnDestroy {
         },
         options: {
           responsive: true,
-          plugins: { legend: { position: 'right' } }
+          maintainAspectRatio: false, // 🛠️ Permet au graphique de s'adapter aux dimensions du conteneur CSS
+          plugins: { 
+            legend: { 
+              position: 'bottom',    // 🛠️ Déplace la légende en bas pour libérer l'espace horizontal
+              align: 'start',        // 🛠️ Aligne au début pour éviter les chevauchements
+              labels: {
+                boxWidth: 12,        // 🛠️ Rapproche les indicateurs de couleur
+                padding: 16,
+                font: {
+                  size: 11           // 🛠️ Taille de police optimisée pour les labels longs
+                }
+              }
+            } 
+          }
         }
       };
       if (this.skillsCanvas) {
@@ -76,7 +89,6 @@ export class TalentInsightsComponent implements AfterViewInit, OnDestroy {
           this.activityInsight = `Pas assez de données pour générer l'analyse d'activité.`;
           data = { labels: ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'], values: Array(12).fill(0) };
         } else {
-          // Trouver le mois avec le plus d'activité
           const maxIndex = data.values.indexOf(Math.max(...data.values));
           const peakMonth = data.labels[maxIndex];
           const peakValue = data.values[maxIndex];
@@ -100,7 +112,21 @@ export class TalentInsightsComponent implements AfterViewInit, OnDestroy {
           },
           options: {
             responsive: true,
-            scales: { y: { beginAtZero: true } }
+            maintainAspectRatio: false, // 🛠️ Crucial pour un affichage stable
+            plugins: {
+              legend: {
+                display: false          // 🛠️ Masque la légende du dataset (le titre H3 de ta carte suffit amplement)
+              }
+            },
+            scales: { 
+              y: { 
+                beginAtZero: true,
+                grid: { color: '#f1f5f9' }
+              },
+              x: {
+                grid: { display: false }
+              }
+            }
           }
         };
         if (this.activityCanvas) {
@@ -125,6 +151,10 @@ export class TalentInsightsComponent implements AfterViewInit, OnDestroy {
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
             scales: { y: { beginAtZero: true } }
           }
         };

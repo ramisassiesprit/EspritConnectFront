@@ -330,6 +330,8 @@ export const routes: Routes = [
       { path: 'home', loadComponent: () => import('./features/etudiant/home/home.component').then((m) => m.HomeComponent) },
       { path: 'feed', loadComponent: () => import('./features/etudiant/feed/feed.component').then((m) => m.FeedComponent) },
       { path: 'directory', loadComponent: () => import('./features/etudiant/directory/directory.component').then((m) => m.DirectoryComponent) },
+      { path: 'jobs', loadComponent: () => import('./features/etudiant/jobs/jobs.component').then((m) => m.JobsComponent) },
+      { path: 'jobs/:id', loadComponent: () => import('./features/etudiant/jobs/jobs.component').then((m) => m.JobsComponent) },
       {
         path: 'groups',
         loadComponent: () => import('./features/etudiant/groups/groups.component').then(m => m.GroupsComponent),

@@ -27,9 +27,7 @@
   /* System */
   --radius: 16px;
   --radius-sm: 10px;
-  --radius-pill: 999px;
-  --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 4px 16px rgba(16, 24, 40, .05);
-  --shadow-lg: 0 8px 30px rgba(16, 24, 40, .10);
+  --radius-pill: 999px; 
   --ring: 0 0 0 3px rgba(225, 29, 42, .12);
   --t: .2s cubic-bezier(.4, 0, .2, 1);
 
@@ -1299,4 +1297,49 @@
   .creator .btn-primary {
     padding: 11px 14px;
   }
+}
+.delete-option {
+  color: #ef4444 !important; /* Rouge pour la suppression */
+}
+
+.delete-option:hover {
+  background-color: #fef2f2 !important;
+}
+
+.edit-option {
+  color: #3b82f6 !important; /* Bleu pour l'édition */
+}
+
+.edit-option:hover {
+  background-color: #eff6ff !important;
+}
+
+.dropdown-divider {
+  height: 1px;
+  margin: 4px 0;
+  background-color: #e2e8f0;
+}
+.comment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-actions-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-edit {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.comment-edit:hover {
+  color: #3b82f6; /* Bleu au survol */
 }

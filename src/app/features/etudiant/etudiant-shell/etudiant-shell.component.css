@@ -73,3 +73,67 @@
     margin-bottom: 20px;
   }
 }
+
+/* ── Role View Banner (shown when non-student browses in student view) ── */
+.role-view-banner {
+  position: sticky;
+  top: var(--navbar-height, 80px);
+  z-index: 100;
+  background: linear-gradient(90deg, #fff7ed 0%, #fef3c7 100%);
+  border-bottom: 1.5px solid #fde68a;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
+}
+
+.role-view-banner__inner {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 10px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.role-view-banner__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.role-view-banner__left strong {
+  font-weight: 700;
+  color: #78350f;
+}
+
+.role-view-banner__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.role-view-banner__btn:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .role-view-banner__inner {
+    padding: 10px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

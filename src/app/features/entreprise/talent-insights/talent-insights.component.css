@@ -22,8 +22,8 @@
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 32px;
 }
 
 .chart-card {
@@ -32,6 +32,8 @@
   padding: 24px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
 }
 
 .chart-card h3 {
@@ -45,18 +47,17 @@
 
 .chart-container {
   position: relative;
-  height: 300px;
+  height: 320px; /* Augmenté légèrement pour accueillir la légende en bas */
   width: 100%;
-  display: flex;
-  justify-content: center;
+  margin-bottom: 16px;
 }
 
 .doughnut-container {
-  height: 250px;
+  height: 340px; /* Un peu plus de hauteur pour les longs textes du bas */
 }
 
 .insight-text {
-  margin-top: 24px;
+  margin-top: auto; /* Pousse le bloc tout en bas de la carte si le graphique est plus petit */
   padding: 16px;
   background: #f0fdf4;
   border-left: 4px solid #22c55e;

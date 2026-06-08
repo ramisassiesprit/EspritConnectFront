@@ -6,7 +6,7 @@
 .create-card {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   overflow: hidden;
   padding-bottom: 40px;
 }
@@ -159,13 +159,6 @@
   font-weight: 500;
 }
 
-/* Upload Section - Exact Match */
-.upload-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin-top: 20px;
-}
 
 .upload-placeholder {
   background: #f1f5f9;

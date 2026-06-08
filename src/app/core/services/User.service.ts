@@ -30,6 +30,9 @@ export class UserService {
     formData.append('file', file);
     return this.http.post(`${environment.apiUrl}cv/upload`, formData);
   }
+  getUsers():Observable<User[]>{
+    return this.http.get<User[]>(`${this.apiUrl}/allUsers`);
+  }
 
   // --- Gestion Admin ---
   getAllUsers(): Observable<User[]> {

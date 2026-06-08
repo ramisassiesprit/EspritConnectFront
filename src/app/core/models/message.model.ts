@@ -8,4 +8,5 @@ export interface Message {
   content: string;
   isRead?: boolean;
   sentAt?: string;
+  edited?: boolean;
 }

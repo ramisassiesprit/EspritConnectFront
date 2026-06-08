@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,20 +25,29 @@ export class MockInterviewComponent {
   constructor(private http: HttpClient) {}
 
   generateQuestions() {
-    if (!this.jobDescription) return;
+    if (!this.jobDescription.trim()) return;
     this.isLoading = true;
+
     this.http.post<any>(`${environment.apiUrl}interviews/generate-questions`, { jobDescription: this.jobDescription })
       .subscribe({
         next: (res) => {
-          if (res.questions) {
+          this.isLoading = false;
+          if (res && res.questions && Array.isArray(res.questions) && res.questions.length > 0) {
             this.questions = res.questions;
             this.currentQuestionIndex = 0;
             this.answers = [];
             this.scorecard = null;
+          } else if (res && res.error) {
+            Swal.fire('Erreur IA', res.error, 'error');
+          } else {
+            Swal.fire('Erreur', 'L\'IA n\'a pas pu générer de questions. Réessayez.', 'warning');
           }
-          this.isLoading = false;
         },
-        error: () => this.isLoading = false
+        error: (err) => {
+          this.isLoading = false;
+          console.error('Erreur génération questions:', err);
+          Swal.fire('Erreur Serveur', `Impossible de contacter le serveur (${err.status || 'inconnu'})`, 'error');
+        }
       });
   }
 
@@ -57,13 +67,17 @@ export class MockInterviewComponent {
 
   evaluate() {
     this.isLoading = true;
-    this.http.post<any>(`${environment.apiUrl}/interviews/evaluate`, { qna: this.answers })
+    this.http.post<any>(`${environment.apiUrl}interviews/evaluate`, { qna: this.answers })
       .subscribe({
         next: (res) => {
           this.scorecard = res;
           this.isLoading = false;
         },
-        error: () => this.isLoading = false
+        error: (err) => {
+          this.isLoading = false;
+          console.error('Erreur évaluation:', err);
+          Swal.fire('Erreur', 'Impossible d\'évaluer vos réponses.', 'error');
+        }
       });
   }
 }

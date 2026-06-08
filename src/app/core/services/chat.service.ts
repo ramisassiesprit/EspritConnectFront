@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Message } from '../models/message.model';import { Client, Stomp } from '@stomp/stompjs';
+import { Message } from '../models/message.model'; import { Client, Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class ChatService {
   private stompClient: any = null;
   private messageSubject = new BehaviorSubject<Message | null>(null);
 
-  constructor() {}
+  constructor() { }
 
   connect(userId: string): void {
     const socket = new SockJS(`${this.baseUrl}/ws-chat`);
@@ -68,6 +68,12 @@ export class ChatService {
 
   markAsRead(messageId: string): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/read/${messageId}`, {});
+  }
+  deleteMessage(messageId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${messageId}`);
+  }
+  updateMessage(messageId: string, message: Message): Observable<Message> {
+    return this.http.put<Message>(`${this.apiUrl}/${messageId}`, message);
   }
 
   disconnect(): void {

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../../../navbar/navbar.component';
 
 @Component({
@@ -11,6 +11,21 @@ import { NavbarComponent } from '../../../navbar/navbar.component';
   styleUrl: './entreprise-shell.component.css'
 })
 export class EntrepriseShellComponent {
+  private router = inject(Router);
+
+  isStudentView = localStorage.getItem('viewMode') === 'etudiant';
+
+  switchView() {
+    if (this.isStudentView) {
+      this.isStudentView = false;
+      localStorage.removeItem('viewMode');
+      this.router.navigate(['/entreprise/jobs']);
+    } else {
+      this.isStudentView = true;
+      localStorage.setItem('viewMode', 'etudiant');
+      this.router.navigate(['/etudiant/feed']);
+    }
+  }
   readonly menu = [
     {
       label: 'Jobs',

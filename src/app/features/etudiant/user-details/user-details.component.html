@@ -119,12 +119,14 @@
             </div>
 
             <!-- Badges -->
-            <div class="flex gap-4 flex-wrap" *ngIf="user.badges && user.badges.length > 0">
-              <div *ngFor="let badge of user.badges" class="flex flex-col items-center group cursor-pointer"
-                [title]="badge.description || badge.name">
-                <img [src]="badge.iconUrl || 'https://img.icons8.com/color/96/prize.png'"
-                  class="w-8 h-8 transition-transform group-hover:scale-110">
-                <span class="text-xs text-gray-500 mt-1">{{badge.name}}</span>
+            <div class="flex gap-1.5 flex-wrap items-center" *ngIf="user.badges && user.badges.length > 0">
+              <div *ngFor="let badge of user.badges"
+                   [title]="badge.name"
+                   class="transition-transform hover:scale-110 text-[#ED1C24] cursor-help flex items-center">
+                <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path fill="#fffbeb" d="M12 16l-3.5 2 1-4.2-3-2.8 4.2-.3L12 7l1.3 3.7 4.2.3-3 2.8 1 4.2z" />
+                </svg>
               </div>
             </div>
           </div>

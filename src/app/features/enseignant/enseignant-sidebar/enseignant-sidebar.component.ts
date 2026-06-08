@@ -36,6 +36,19 @@ export class EnseignantSidebarComponent implements OnInit, OnDestroy {
   joinedGroups: Group[] = [];
   private membershipSub?: Subscription;
   private routerEventsSub?: Subscription;
+  isStudentView = localStorage.getItem('viewMode') === 'etudiant';
+
+  switchView() {
+    if (this.isStudentView) {
+      this.isStudentView = false;
+      localStorage.removeItem('viewMode');
+      this.router.navigate(['/enseignant/home']);
+    } else {
+      this.isStudentView = true;
+      localStorage.setItem('viewMode', 'etudiant');
+      this.router.navigate(['/etudiant/feed']);
+    }
+  }
 
   navItems: NavItem[] = [
     { label: 'Home', icon: 'home', route: '/enseignant/home' },

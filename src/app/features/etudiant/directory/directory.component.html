@@ -71,12 +71,17 @@
                 <h3 class="text-[#ED1C24] font-bold text-[15px] truncate group-hover:underline">{{ user.firstName }} {{ user.lastName }}</h3>
                 
                 <!-- Badges -->
-                <div class="flex gap-1">
-                  <img *ngFor="let badge of (user.badges || []).slice(0, 3)" 
-                       [src]="badge.iconUrl || 'https://img.icons8.com/color/48/prize.png'" 
-                       class="w-4 h-4 transition-transform hover:scale-110" 
-                       [title]="badge.name">
-                </div>
+                <div class="flex gap-1.5 items-center">
+  <div *ngFor="let badge of (user.badges || []).slice(0, 3)"
+       [title]="badge.name"
+class="transition-transform hover:scale-110 text-[#ED1C24] cursor-help flex items-center">    
+   <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path fill="#fffbeb" d="M12 16l-3.5 2 1-4.2-3-2.8 4.2-.3L12 7l1.3 3.7 4.2.3-3 2.8 1 4.2z" />
+    </svg>
+
+  </div>
+</div>
               </div>
 
               <!-- Role Badge -->
