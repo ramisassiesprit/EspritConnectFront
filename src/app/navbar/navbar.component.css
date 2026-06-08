@@ -1,5 +1,5 @@
 .navbar {
-  height: var(--navbar-height, 80px); /* Increased height for wider navbar vertically */
+  height: var(--navbar-height, 65px); /* Increased height for wider navbar vertically */
   background: var(--esprit-red, #ffffff); /* Solid color accent */
   display: flex;
   align-items: center;
@@ -9,7 +9,7 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1); /* Subtle border for separation */
   color: white; /* Contrast text against solid red */
 }
 
@@ -29,7 +29,7 @@
 }
 
 .navbar__logo-icon {
-  height: 60px; /* Larger logo to match espritconnect.com */
+  height: 50px; /* Larger logo to match espritconnect.com */
   width: auto;
   object-fit: contain;
 }
