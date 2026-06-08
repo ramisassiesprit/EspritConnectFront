@@ -1,3 +1,5 @@
+@import './styles/_tokens.scss';
+
 @import 'quill/dist/quill.snow.css';
 @tailwind base;
 @tailwind components;
@@ -15,30 +17,35 @@ body {
   @apply box-border;
 }
 
-/* CSS Print styles for Certificates (Global to bypass Angular Component Encapsulation) */
+/* Print styles unchanged (copy from original) */
 @media print {
   /* 1. Hide all elements outside the printed certificate */
-  app-navbar, 
-  app-etudiant-sidebar, 
+  app-navbar,
+  app-etudiant-sidebar,
   .shell__sidebar,
   .shell__hero,
   .shell__hero-overlay,
-  .back-navigation-bar, 
+  .back-navigation-bar,
   .btn-back,
-  .details-page-card, 
+  .details-page-card,
   .sticky-registration-card,
-  .organizer-scanner-card, 
+  .organizer-scanner-card,
   .winners-podium-card,
-  .participants-section-wrapper, 
+  .participants-section-wrapper,
   .cert-download-banner,
-  .winner-cert-download-banner, 
+  .winner-cert-download-banner,
   .feedback-submission-card,
   .feedbacks-display-section {
     display: none !important;
   }
 
   /* 2. Reset the main layout shell & body to fit on exactly ONE page */
-  body, html, .shell, .shell__layout, .shell__main, .event-details-page-wrapper {
+  body,
+  html,
+  .shell,
+  .shell__layout,
+  .shell__main,
+  .event-details-page-wrapper {
     margin: 0 !important;
     padding: 0 !important;
     height: 100vh !important;
@@ -64,7 +71,7 @@ body {
     page-break-before: avoid !important;
   }
 
-  .cert-print-container, 
+  .cert-print-container,
   .cert-print-container * {
     visibility: visible !important;
   }
@@ -75,4 +82,3 @@ body {
     margin: 0 !important;
   }
 }
-

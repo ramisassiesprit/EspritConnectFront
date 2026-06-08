@@ -1,8 +1,44 @@
 .interview-wrapper {
+  position: relative;
   max-width: 800px;
   margin: 0 auto;
   padding: 40px 20px;
   font-family: 'Inter', sans-serif;
+  background: var(--canvas);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+  position: relative;
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Loader overlay */
+.loader-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.loader {
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid var(--esprit-red, #dc3545);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 h2 {
@@ -37,7 +73,7 @@ p {
 }
 
 .btn-primary {
-  background: #6366f1;
+  background: var(--esprit-red, #dc3545);
   color: white;
   border: none;
   padding: 14px 28px;
@@ -54,6 +90,75 @@ p {
 }
 
 .btn-primary:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Card container */
+.mock-interview-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.header-icon {
+  margin-bottom: 12px;
+  color: var(--esprit-red, #dc3545);
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.section-description {
+  color: #475569;
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.recruiter-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #334155;
+}
+
+.icon-recruiter, .icon-tip {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.placeholder-text {
+  color: #94a3b8;
+}
+
+.error-card {
+  border-left: 4px solid #ef4444;
+  background: #fff5f5;
+}
+
+/* Primary button hover – darker brand red */
+.btn-primary:hover:not(:disabled) {
+  background: #b30000;
+}
+
   background: #94a3b8;
   cursor: not-allowed;
 }
@@ -89,10 +194,11 @@ p {
 
 .question-card {
   background: #f8fafc;
-  border-left: 4px solid #6366f1;
+  border-left: 4px solid var(--esprit-red, #dc3545);
   padding: 24px;
   border-radius: 0 12px 12px 0;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .question-card h3 {
