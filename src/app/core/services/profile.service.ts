@@ -58,6 +58,10 @@ export class ProfileService {
   deleteSkill(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/skills/${id}`);
   }
+  updateSkill(id: string, name: string): Observable<Skill> {
+  const payload = { name }; // conforme à @RequestBody SkillDTO côté backend
+  return this.http.put<Skill>(`${this.apiUrl}/skills/${id}`, payload);
+}
 
   // --- Willing to Help ---
   getMyHelps(): Observable<WillingToHelp[]> {

@@ -1,0 +1,83 @@
+<div class="interview-wrapper">
+  
+  <div class="setup-phase" *ngIf="questions.length === 0 && !scorecard">
+    <h2>Simulateur d'Entretiens par IA 🤖</h2>
+    <p>Préparez-vous pour votre prochain PFE ou emploi. Copiez-collez l'offre d'emploi ci-dessous.</p>
+    
+    <textarea 
+      [(ngModel)]="jobDescription" 
+      placeholder="Collez la description du poste ici..." 
+      rows="6" 
+      class="job-input">
+    </textarea>
+    
+    <button class="btn-primary" (click)="generateQuestions()" [disabled]="isLoading || !jobDescription">
+      {{ isLoading ? 'Analyse de l\'offre par l\'IA...' : 'Générer mon entretien' }}
+    </button>
+  </div>
+
+  <div class="interview-phase" *ngIf="questions.length > 0 && !scorecard">
+    <div class="progress-bar">
+      Question {{ currentQuestionIndex + 1 }} sur {{ questions.length }}
+    </div>
+    
+    <div class="question-card">
+      <h3>🗣️ Le Recruteur (IA) :</h3>
+      <p class="question-text">{{ questions[currentQuestionIndex] }}</p>
+    </div>
+
+    <div class="answer-section">
+      <textarea 
+        [(ngModel)]="userAnswer" 
+        placeholder="Tapez votre réponse ici (utilisez la méthode STAR si applicable)..." 
+        rows="5" 
+        class="answer-input">
+      </textarea>
+      
+      <button class="btn-primary" (click)="nextQuestion()" [disabled]="isLoading || !userAnswer">
+        {{ currentQuestionIndex === questions.length - 1 ? 'Terminer et Évaluer' : 'Question Suivante' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="scorecard-phase" *ngIf="scorecard">
+    <div class="scorecard-header">
+      <h2>Votre Scorecard 📊</h2>
+      <div class="score-circle" *ngIf="scorecard.score !== undefined">
+        <span class="score-number">{{ scorecard.score }}/10</span>
+      </div>
+    </div>
+    
+    <div class="feedback-card" *ngIf="scorecard.feedback; else noFeedback">
+      <h3>Feedback Général</h3>
+      <p>{{ scorecard.feedback }}</p>
+    </div>
+    <ng-template #noFeedback>
+      <div class="feedback-card" *ngIf="!scorecard.error">
+        <h3>Feedback Général</h3>
+        <p style="color:#94a3b8">Aucun feedback disponible pour cet entretien.</p>
+      </div>
+    </ng-template>
+
+    <div class="tips-card" *ngIf="scorecard.tips; else noTips">
+      <h3>💡 Conseils pour l'entretien réel</h3>
+      <p>{{ scorecard.tips }}</p>
+    </div>
+    <ng-template #noTips>
+      <div class="tips-card" *ngIf="!scorecard.error">
+        <h3>💡 Conseils pour l'entretien réel</h3>
+        <p style="color:#94a3b8">Aucun conseil disponible pour le moment.</p>
+      </div>
+    </ng-template>
+
+    <div class="feedback-card" *ngIf="scorecard.error" style="border-left: 4px solid #ef4444;">
+      <h3>⚠️ Erreur</h3>
+      <p>{{ scorecard.error }}</p>
+    </div>
+    
+    <button class="btn-outline" (click)="questions = []; scorecard = null; jobDescription = ''; answers = []">
+      Recommencer un autre entretien
+    </button>
+  </div>
+
+</div>

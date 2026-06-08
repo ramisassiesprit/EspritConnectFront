@@ -339,6 +339,41 @@
       </div>
     </div>
 
+    <!-- Skills Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="bi bi-star icon-red"></i>
+          <span>Skills</span>
+        </div>
+        <button (click)="toggleAddSkill()" class="btn-icon">
+          <i class="bi" [ngClass]="showAddSkill ? 'bi-dash-lg' : 'bi-plus-lg'"></i>
+        </button>
+      </div>
+
+      <div *ngIf="showAddSkill" class="add-form-panel">
+        <div class="edit-form-grid">
+          <div class="form-field">
+            <label>Skill Name</label>
+            <input [(ngModel)]="newSkillName" (keyup.enter)="addSkill()" placeholder="e.g. Angular, Spring Boot, Java">
+          </div>
+        </div>
+        <div class="form-actions mt-3">
+          <button (click)="addSkill()" class="btn-save">ADD</button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-4">
+        <div *ngFor="let skill of skills" class="bg-red-50 text-red-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2 border border-red-200">
+          {{ skill.name }}
+          <button (click)="deleteSkill(skill.id)" class="text-red-400 hover:text-red-700 focus:outline-none" title="Remove skill">
+            <i class="bi bi-x-circle-fill"></i>
+          </button>
+        </div>
+        <p *ngIf="skills.length === 0" class="empty-state w-full">No skills added yet.</p>
+      </div>
+    </div>
+
   </div>
 
   <!-- RIGHT SIDEBAR -->

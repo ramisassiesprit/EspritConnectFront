@@ -1,33 +1,28 @@
 <div class="events-container">
-  <!-- Header Banner -->
-  <div class="events-header">
-    <div class="header-overlay"></div>
-    <div class="header-shapes">
-      <div class="shape shape-1"></div>
-      <div class="shape shape-2"></div>
-    </div>
-    <div class="header-content">
-      <span class="header-tag">Plateforme Événementielle</span>
-      <h1 class="header-title">Esprit Connect Événements</h1>
-      <p class="header-subtitle">Découvrez, participez et organisez des ateliers, hackathons, conférences et compétitions pour booster vos compétences au sein de la communauté Esprit.</p>
-      
-      <div class="header-actions">
-        <button class="btn-create" (click)="openCreateModal()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Organiser un événement
-        </button>
+  
+  <!-- Hero Section -->
+  <section class="events-hero fade-in">
+    <div class="flex justify-between items-start gap-4 flex-wrap">
+      <div>
+        <p class="events-kicker">Plateforme Événementielle</p>
+        <h1>Esprit Connect Événements</h1>
+        <p class="events-copy">Découvrez, participez et organisez des ateliers, hackathons, conférences et compétitions pour booster vos compétences au sein de la communauté Esprit.</p>
       </div>
+      <button class="btn-create" (click)="openCreateModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Organiser un événement</span>
+      </button>
     </div>
-  </div>
+  </section>
 
   <!-- Stats Grid -->
   <div class="stats-grid fade-in">
     <div class="stat-card">
       <div class="stat-icon-wrapper red">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
           <line x1="16" y1="2" x2="16" y2="6"></line>
           <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -42,7 +37,7 @@
     
     <div class="stat-card">
       <div class="stat-icon-wrapper gold">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
           <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
@@ -55,7 +50,7 @@
 
     <div class="stat-card">
       <div class="stat-icon-wrapper dark">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 20h9"></path>
           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
         </svg>
@@ -68,58 +63,54 @@
   </div>
 
   <!-- Recommended Section -->
-  @if (recommendedEvents().length > 0 && activeTab() === 'all') {
-    <div class="recommended-section fade-in">
-      <div class="section-header-row">
-        <div class="section-tag-spark">
-          <svg class="spark-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-          Recommandé pour vous
-        </div>
-        <h2 class="section-title">Sélection Personnalisée</h2>
-        <p class="section-desc">Basé sur vos compétences, centres d'intérêt et domaine d'étude à l'Esprit.</p>
+  <div class="recommended-section fade-in" *ngIf="recommendedEvents().length > 0 && activeTab() === 'all'">
+    <div class="section-header-row">
+      <div class="section-tag-spark">
+        <svg class="spark-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        Recommandé pour vous
       </div>
-      <div class="recommended-grid">
-        @for (event of recommendedEvents().slice(0, 3); track event.id) {
-          <div class="event-card recommended-card" (click)="openDetails(event)">
-            <div class="card-image-wrapper">
-              <img [src]="event.coverUrl" alt="Cover Image" class="card-image">
-              <div class="card-type-badge">{{ getEventTypeLabel(event.eventType) }}</div>
-              <div class="recommended-card-glow"></div>
-            </div>
-            <div class="card-body">
-              <div class="date-badge">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span>{{ event.startAt | date:'dd MMM, HH:mm' }}</span>
-              </div>
-              <h3 class="card-title">{{ event.title }}</h3>
-              <p class="card-desc">{{ event.description }}</p>
-            </div>
+      <h2 class="section-title">Sélection Personnalisée</h2>
+      <p class="section-desc">Basé sur vos compétences, centres d'intérêt et domaine d'étude à l'Esprit.</p>
+    </div>
+    
+    <div class="recommended-grid">
+      <div class="event-card recommended-card fade-in" *ngFor="let event of recommendedEvents().slice(0, 3)" (click)="openDetails(event)">
+        <div class="card-image-wrapper">
+          <img [src]="event.coverUrl" alt="Cover Image" class="card-image">
+          <div class="card-type-badge">{{ getEventTypeLabel(event.eventType) }}</div>
+        </div>
+        <div class="card-body">
+          <div class="date-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>{{ event.startAt | date:'dd MMM, HH:mm' }}</span>
           </div>
-        }
+          <h3 class="card-title">{{ event.title }}</h3>
+          <p class="card-desc">{{ event.description }}</p>
+        </div>
       </div>
     </div>
-  }
+  </div>
 
   <!-- Filter & Tabs Row -->
-  <div class="filters-row">
+  <div class="filters-row fade-in">
     <div class="tabs-group">
       <button class="tab-btn" [class.active]="activeTab() === 'all'" (click)="activeTab.set('all')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
         Tous les événements
       </button>
       <button class="tab-btn" [class.active]="activeTab() === 'my-registrations'" (click)="activeTab.set('my-registrations')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
         Mes participations
       </button>
       <button class="tab-btn" [class.active]="activeTab() === 'my-created'" (click)="activeTab.set('my-created')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
         Mes créations
       </button>
     </div>
@@ -127,215 +118,193 @@
     <div class="select-wrapper">
       <select class="category-select" [ngModel]="selectedEventType()" (ngModelChange)="selectedEventType.set($event)">
         <option value="ALL">Toutes les catégories</option>
-        @for (type of eventTypes; track type) {
-          <option [value]="type">{{ getEventTypeLabel(type) }}</option>
-        }
+        <option *ngFor="let type of eventTypes" [value]="type">{{ getEventTypeLabel(type) }}</option>
       </select>
     </div>
   </div>
 
   <!-- Events Grid -->
-  @if (filteredEvents.length === 0) {
-    <div class="empty-state fade-in">
-      <div class="empty-icon-box">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="8" y1="12" x2="16" y2="12"></line>
-        </svg>
-      </div>
-      <h3>Aucun événement trouvé</h3>
-      <p>Il n'y a pas d'événements correspondant à vos critères de recherche en ce moment.</p>
+  <div class="empty-state fade-in" *ngIf="filteredEvents.length === 0">
+    <div class="empty-icon-box">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="8" y1="12" x2="16" y2="12"></line>
+      </svg>
     </div>
-  } @else {
-    <div class="events-grid">
-      @for (event of filteredEvents; track event.id) {
-        <div class="event-card fade-in" (click)="openDetails(event)">
-          <div class="card-image-wrapper">
-            <img [src]="event.coverUrl" alt="Cover Image" class="card-image">
-            <div class="card-type-badge">{{ getEventTypeLabel(event.eventType) }}</div>
-            
-            @if (event.status === 'PENDING') {
-              <div class="status-badge pending-badge">
-                <span class="status-dot pulsing"></span>
-                <span>Attente modération</span>
-              </div>
-            }
-          </div>
+    <h3>Aucun événement trouvé</h3>
+    <p>Il n'y a pas d'événements correspondant à vos critères en ce moment.</p>
+  </div>
 
-          <div class="card-body">
-            <div class="date-badge">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              <span>{{ event.startAt | date:'dd MMM yyyy à HH:mm' }}</span>
-            </div>
+  <div class="events-grid" *ngIf="filteredEvents.length > 0">
+    <div class="event-card fade-in" *ngFor="let event of filteredEvents" (click)="openDetails(event)">
+      <div class="card-image-wrapper">
+        <img [src]="event.coverUrl" alt="Cover Image" class="card-image">
+        <div class="card-type-badge">{{ getEventTypeLabel(event.eventType) }}</div>
+        
+        <div class="status-badge pending-badge" *ngIf="event.status === 'PENDING'">
+          <span class="status-dot pulsing"></span>
+          <span>Attente modération</span>
+        </div>
+      </div>
 
-            <h3 class="card-title">{{ event.title }}</h3>
-            <p class="card-desc">{{ event.description }}</p>
+      <div class="card-body">
+        <div class="date-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span>{{ event.startAt | date:'dd MMM yyyy à HH:mm' }}</span>
+        </div>
 
-            <div class="card-details-meta">
-              @if (event.location) {
-                <div class="info-item">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                  <span>{{ event.location }}</span>
-                </div>
-              }
-            </div>
+        <h3 class="card-title">{{ event.title }}</h3>
+        <p class="card-desc">{{ event.description }}</p>
 
-            <!-- Capacity Progress -->
-            @if (event.capacity) {
-              <div class="capacity-container">
-                <div class="capacity-header-label">
-                  <span>Inscriptions</span>
-                  <span>{{ event.registeredCount || 0 }} / {{ event.capacity }}</span>
-                </div>
-                <div class="progress-bar-track">
-                  <div class="progress-bar-fill" [style.width.%]="((event.registeredCount || 0) / event.capacity) * 100"></div>
-                </div>
-              </div>
-            } @else {
-              <div class="unlimited-capacity-badge">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                <span>Places illimitées ({{ event.registeredCount || 0 }} inscrits)</span>
-              </div>
-            }
-          </div>
-
-          <div class="card-footer">
-            @if (event.status === 'PENDING') {
-              <button class="btn-card-action btn-pending" disabled>
-                En attente d'approbation
-              </button>
-            } @else if (isRegistered(event.id)) {
-              <button class="btn-card-action btn-leave" (click)="unregister(event.id, $event)">
-                Se désinscrire
-              </button>
-            } @else {
-              @if (event.capacity && (event.registeredCount || 0) >= event.capacity) {
-                @if (event.waitlistEnabled) {
-                  <button class="btn-card-action btn-waitlist-join" (click)="register(event.id, $event)">
-                    Rejoindre la liste d'attente
-                  </button>
-                } @else {
-                  <button class="btn-card-action btn-disabled" disabled>
-                    Complet
-                  </button>
-                }
-              } @else {
-                <button class="btn-card-action btn-join" (click)="register(event.id, $event)">
-                  S'inscrire
-                </button>
-              }
-            }
+        <div class="card-details-meta">
+          <div class="info-item" *ngIf="event.location">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>{{ event.location }}</span>
           </div>
         </div>
-      }
+
+        <!-- Capacity progress -->
+        <div class="capacity-container" *ngIf="event.capacity; else unlimitedCap">
+          <div class="capacity-header-label">
+            <span>Inscriptions</span>
+            <span>{{ event.registeredCount || 0 }} / {{ event.capacity }}</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" [style.width.%]="((event.registeredCount || 0) / event.capacity) * 100"></div>
+          </div>
+        </div>
+        <ng-template #unlimitedCap>
+          <div class="unlimited-capacity-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            <span>Places illimitées ({{ event.registeredCount || 0 }} inscrits)</span>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn-card-action btn-disabled" *ngIf="event.status === 'PENDING'" disabled>
+          En attente d'approbation
+        </button>
+        <button class="btn-card-action btn-leave" *ngIf="event.status !== 'PENDING' && isRegistered(event.id)" (click)="unregister(event.id, $event)">
+          Se désinscrire
+        </button>
+        <button class="btn-card-action btn-join" *ngIf="event.status !== 'PENDING' && !isRegistered(event.id) && (!event.capacity || (event.registeredCount || 0) < event.capacity)" (click)="register(event.id, $event)">
+          S'inscrire
+        </button>
+        <button class="btn-card-action btn-waitlist-join" *ngIf="event.status !== 'PENDING' && !isRegistered(event.id) && event.capacity && (event.registeredCount || 0) >= event.capacity && event.waitlistEnabled" (click)="register(event.id, $event)">
+          Rejoindre la liste d'attente
+        </button>
+        <button class="btn-card-action btn-disabled" *ngIf="event.status !== 'PENDING' && !isRegistered(event.id) && event.capacity && (event.registeredCount || 0) >= event.capacity && !event.waitlistEnabled" disabled>
+          Complet
+        </button>
+      </div>
     </div>
-  }
+  </div>
 
   <!-- Creation Modal -->
-  @if (showCreateModal()) {
-    <div class="modal-overlay" (click)="closeCreateModal()">
-      <div class="create-modal fade-in" (click)="$event.stopPropagation()">
-        <div class="create-modal-header">
-          <h2>Organiser un événement</h2>
-          <button class="modal-close-btn" (click)="closeCreateModal()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+  <div class="modal-overlay" *ngIf="showCreateModal()" (click)="closeCreateModal()">
+    <div class="create-modal fade-in" (click)="$event.stopPropagation()">
+      <div class="create-modal-header">
+        <h2>Organiser un événement</h2>
+        <button class="modal-close-btn" (click)="closeCreateModal()" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form (ngSubmit)="submitEvent()" class="create-form">
+        <div class="form-row">
+          <div class="form-group col-12">
+            <label>Titre de l'événement *</label>
+            <input type="text" [(ngModel)]="newEvent.title" name="title" required placeholder="Ex: Hackathon Web3, Workshop Angular & Spring Boot...">
+          </div>
         </div>
 
-        <form (ngSubmit)="submitEvent()" class="create-form">
-          <div class="form-row">
-            <div class="form-group col-12">
-              <label>Titre de l'événement *</label>
-              <input type="text" [(ngModel)]="newEvent.title" name="title" required placeholder="Ex: Hackathon Web3, Workshop Angular & Spring Boot...">
-            </div>
+        <div class="form-row">
+          <div class="form-group col-12">
+            <label>Description *</label>
+            <textarea [(ngModel)]="newEvent.description" name="description" rows="4" placeholder="Décrivez l'objectif de l'événement, le programme, les prérequis éventuels..."></textarea>
           </div>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group col-12">
-              <label>Description *</label>
-              <textarea [(ngModel)]="newEvent.description" name="description" rows="4" placeholder="Décrivez l'objectif de l'événement, le programme, les prérequis éventuels..."></textarea>
-            </div>
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label>Catégorie de format *</label>
+            <select [(ngModel)]="newEvent.eventType" name="eventType">
+              <option *ngFor="let type of eventTypes" [value]="type">{{ getEventTypeLabel(type) }}</option>
+            </select>
           </div>
+          <div class="form-group col-6">
+            <label>Capacité maximale (Optionnel)</label>
+            <input type="number" [(ngModel)]="newEvent.capacity" name="capacity" min="1" placeholder="Ex: 50">
+          </div>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group col-6">
-              <label>Catégorie de format *</label>
-              <select [(ngModel)]="newEvent.eventType" name="eventType">
-                @for (type of eventTypes; track type) {
-                  <option [value]="type">{{ getEventTypeLabel(type) }}</option>
-                }
-              </select>
-            </div>
-            <div class="form-group col-6">
-              <label>Capacité maximale (Optionnel)</label>
-              <input type="number" [(ngModel)]="newEvent.capacity" name="capacity" min="1" placeholder="Ex: 50 participants maximum">
-            </div>
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label>Date et heure de début *</label>
+            <input type="datetime-local" [(ngModel)]="newEvent.startAt" name="startAt" required>
           </div>
+          <div class="form-group col-6">
+            <label>Date et heure de fin (Optionnel)</label>
+            <input type="datetime-local" [(ngModel)]="newEvent.endAt" name="endAt">
+          </div>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group col-6">
-              <label>Date et heure de début *</label>
-              <input type="datetime-local" [(ngModel)]="newEvent.startAt" name="startAt" required>
-            </div>
-            <div class="form-group col-6">
-              <label>Date et heure de fin (Optionnel)</label>
-              <input type="datetime-local" [(ngModel)]="newEvent.endAt" name="endAt">
-            </div>
+        <div class="form-row">
+          <div class="form-group col-12">
+            <label>Lieu physique / Salle</label>
+            <input type="text" [(ngModel)]="newEvent.location" name="location" placeholder="Ex: Bloc A - Amphi 2, Salle de réunion 4...">
           </div>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group col-12">
-              <label>Lieu physique / Salle</label>
-              <input type="text" [(ngModel)]="newEvent.location" name="location" placeholder="Ex: Bloc A - Amphi 2, Salle de réunion 4...">
+        <div class="form-row">
+          <div class="form-group col-12">
+            <label>Lien de visioconférence (Si en ligne ou hybride)</label>
+            <input type="url" [(ngModel)]="newEvent.meetingUrl" name="meetingUrl" placeholder="Ex: https://teams.microsoft.com/...">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-12">
+            <label>Image de couverture (Fichier)</label>
+            <input type="file" accept="image/*" (change)="onCoverFileSelected($event)">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-12">
+            <label>Image de couverture (Ou Saisir une URL)</label>
+            <input type="url" [(ngModel)]="newEvent.coverUrl" name="coverUrl" placeholder="Ex: https://images.unsplash.com/photo-...">
+            <div class="cover-preview" *ngIf="coverPreview" style="margin-top: 8px;">
+              <img [src]="coverPreview" alt="Aperçu de la couverture" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ececec;">
             </div>
           </div>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group col-12">
-              <label>Lien de visioconférence (Si en ligne ou hybride)</label>
-              <input type="url" [(ngModel)]="newEvent.meetingUrl" name="meetingUrl" placeholder="Ex: https://teams.microsoft.com/l/meetup-join/...">
-            </div>
+        <div class="form-row">
+          <div class="form-group col-12">
+            <label>Tags de l'événement (Mots-clés séparés par des virgules)</label>
+            <input type="text" [(ngModel)]="newEvent.tags" name="tags" placeholder="Ex: Spring Boot, Angular, Web3...">
+            <small style="color: #9ca3af; font-size: 11px; margin-top: 4px; display: block;">Ces tags seront utilisés par notre algorithme de recommandation.</small>
           </div>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group col-12">
-              <label>Image de couverture</label>
-              <input type="file" accept="image/*" (change)="onCoverFileSelected($event)">
-              <small style="color: #6b7280; font-size: 11px; margin-top: 4px; display: block;">Vous pouvez télécharger une image ou saisir une URL ci-dessous.</small>
-              <input type="url" [(ngModel)]="newEvent.coverUrl" name="coverUrl" placeholder="Ex: https://images.unsplash.com/photo-1540575467063-178a50c2df87...">
-              @if (coverPreview) {
-                <div class="cover-preview" style="margin-top:8px;">
-                  <img [src]="coverPreview" alt="Aperçu image" style="max-width:100%; height:auto; border-radius:6px;" />
-                </div>
-              }
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group col-12">
-              <label>Tags de l'événement (Mots-clés séparés par des virgules)</label>
-              <input type="text" [(ngModel)]="newEvent.tags" name="tags" placeholder="Ex: Spring Boot, Angular, Web3, Hackathon...">
-              <small style="color: #6b7280; font-size: 11px; margin-top: 4px; display: block;">Ces tags seront utilisés par notre algorithme pour recommander cet événement aux étudiants pertinents.</small>
-            </div>
-          </div>
-
-          <div class="form-actions-bar">
-            <button type="button" class="btn-cancel-action" (click)="closeCreateModal()">Annuler</button>
-            <button type="submit" class="btn-submit-action">Créer l'événement</button>
-          </div>
-        </form>
-      </div>
+        <div class="form-actions-bar">
+          <button type="button" class="btn-cancel-action" (click)="closeCreateModal()">Annuler</button>
+          <button type="submit" class="btn-submit-action">Créer l'événement</button>
+        </div>
+      </form>
     </div>
-  }
+  </div>
 </div>

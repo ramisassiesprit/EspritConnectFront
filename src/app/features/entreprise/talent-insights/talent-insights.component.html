@@ -1,0 +1,24 @@
+<div class="dashboard-wrapper">
+  <div class="dashboard-header">
+    <h2>Talent Insights</h2>
+    <p>Analysez les tendances du marché des talents à Esprit pour mieux cibler vos recrutements.</p>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Technologies les plus étudiées (Top 5)</h3>
+      <div class="chart-container doughnut-container">
+        <canvas #skillsCanvas id="skillsChart"></canvas>
+      </div>
+      <p class="insight-text" *ngIf="skillsInsight">💡 <strong>Insight AI:</strong> {{ skillsInsight }}</p>
+    </div>
+
+    <div class="chart-card">
+      <h3>Activité de Recherche de Stages / PFE</h3>
+      <div class="chart-container">
+        <canvas #activityCanvas id="activityChart"></canvas>
+      </div>
+      <p class="insight-text" *ngIf="activityInsight">💡 <strong>Insight AI:</strong> {{ activityInsight }}</p>
+    </div>
+  </div>
+</div>

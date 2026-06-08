@@ -25,6 +25,18 @@ export class EntrepriseShellComponent {
       link: '/entreprise/recommendations'
     },
     {
+      label: 'Mini-ATS',
+      icon: 'view_kanban',
+      description: 'Suivi de vos candidats IA',
+      link: '/entreprise/ats-board'
+    },
+    {
+      label: 'Talent Insights',
+      icon: 'insights',
+      description: 'Tendances et statistiques',
+      link: '/entreprise/insights'
+    },
+    {
       label: 'Mon profil',
       icon: 'person',
       description: 'Update your personal information',
