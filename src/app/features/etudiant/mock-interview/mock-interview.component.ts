@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -12,7 +12,48 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './mock-interview.component.html',
   styleUrls: ['./mock-interview.component.css']
 })
-export class MockInterviewComponent {
+
+export class MockInterviewComponent implements AfterViewChecked {
+  @ViewChild('cardContainer') cardContainer!: ElementRef;
+  // Track if we need to scroll after view updates
+  private shouldScroll = false;
+
+  // Simple markdown bold conversion ( **text** -> <strong>text</strong> )
+  formatText(text: string): string {
+    if (!text) return '';
+    // Escape HTML first to avoid XSS, then replace markdown bold
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    return escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  }
+
+  ngAfterViewChecked() {
+    if (this.shouldScroll && this.cardContainer) {
+      // Scroll to bottom of the container smoothly
+      this.cardContainer.nativeElement.scrollTo({ top: this.cardContainer.nativeElement.scrollHeight, behavior: 'smooth' });
+      this.shouldScroll = false;
+    }
+  }
+
+  // Call this after adding an answer to trigger scroll
+  nextQuestion() {
+    this.answers.push({
+      question: this.questions[this.currentQuestionIndex],
+      answer: this.userAnswer
+    });
+    this.userAnswer = '';
+    this.shouldScroll = true;
+    if (this.currentQuestionIndex < this.questions.length - 1) {
+      this.currentQuestionIndex++;
+    } else {
+      this.evaluate();
+    }
+  }
+
+  // Existing constructor and other methods remain unchanged
+
   jobDescription: string = '';
   questions: string[] = [];
   currentQuestionIndex: number = 0;
@@ -51,19 +92,7 @@ export class MockInterviewComponent {
       });
   }
 
-  nextQuestion() {
-    this.answers.push({
-      question: this.questions[this.currentQuestionIndex],
-      answer: this.userAnswer
-    });
-    this.userAnswer = '';
-    
-    if (this.currentQuestionIndex < this.questions.length - 1) {
-      this.currentQuestionIndex++;
-    } else {
-      this.evaluate();
-    }
-  }
+  
 
   evaluate() {
     this.isLoading = true;
