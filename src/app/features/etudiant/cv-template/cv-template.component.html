@@ -1,0 +1,233 @@
+<!-- This container is visually hidden but rendered for html2canvas to capture -->
+<div class="cv-hidden-container">
+  <div #cvContent class="cv-page" [ngClass]="'template-' + templateType" [style.--primary-color]="primaryColor">
+
+    <!-- ==================== TEMPLATE 1: ESPRIT CORPORATE ==================== -->
+    <ng-container *ngIf="templateType === 'esprit'">
+      <div class="esprit-header">
+        <div class="esprit-header-main" [style.border-left-color]="primaryColor">
+          <h1 [style.color]="primaryColor">{{ user?.firstName }} {{ user?.lastName }}</h1>
+          <h2 class="esprit-role" *ngIf="user?.jobTitle || espritProfile?.degree">
+            {{ user?.jobTitle || espritProfile?.degree }}
+          </h2>
+        </div>
+        <div class="esprit-qr">
+          <img *ngIf="qrCodeUrl" [src]="qrCodeUrl" alt="QR Code" class="qr-img" crossorigin="anonymous">
+          <span class="qr-text" [style.color]="primaryColor">Scannez mon profil</span>
+        </div>
+      </div>
+
+      <div class="esprit-layout">
+        <div class="esprit-left-col">
+          <div class="esprit-profile-pic">
+            <img *ngIf="user?.avatarUrl" [src]="user?.avatarUrl" alt="Profile" class="esprit-img"
+              crossorigin="anonymous">
+            <div *ngIf="!user?.avatarUrl" class="esprit-img-placeholder" [style.background-color]="primaryColor">
+              {{ user?.firstName?.charAt(0) | uppercase }}{{ user?.lastName?.charAt(0) | uppercase }}
+            </div>
+          </div>
+
+          <div class="esprit-section esprit-contact">
+            <h3 [style.color]="primaryColor"><i class="bi bi-person-lines-fill"></i> Contact</h3>
+            <p><i class="bi bi-envelope-fill"></i> {{ user?.email }}</p>
+            <p *ngIf="user?.numTel"><i class="bi bi-telephone-fill"></i> {{ user?.numTel }}</p>
+            <p *ngIf="user?.linkedinUrl"><i class="bi bi-linkedin"></i> LinkedIn</p>
+            <p *ngIf="user?.githubUrl"><i class="bi bi-github"></i> GitHub</p>
+          </div>
+
+          <div class="esprit-section esprit-skills" *ngIf="hasSkills()">
+            <h3 [style.color]="primaryColor"><i class="bi bi-tools"></i> Compétences</h3>
+            <div class="esprit-tags">
+              <span class="esprit-tag" *ngFor="let skill of skills">{{ skill.name }}</span>
+            </div>
+          </div>
+
+          <div class="esprit-section esprit-academic" *ngIf="espritProfile?.institution">
+            <h3 [style.color]="primaryColor"><i class="bi bi-award-fill"></i> Profil Esprit</h3>
+            <p><strong>Institution:</strong> {{ espritProfile?.institution }}</p>
+            <p><strong>Filière:</strong> {{ espritProfile?.fieldOfStudy }}</p>
+            <p><strong>Diplôme:</strong> {{ espritProfile?.degree }} <span *ngIf="espritProfile?.graduationYear">({{
+                espritProfile?.graduationYear }})</span></p>
+          </div>
+        </div>
+
+        <div class="esprit-right-col">
+          <div class="esprit-section" *ngIf="user?.bio">
+            <h3 [style.color]="primaryColor"><i class="bi bi-person-badge-fill"></i> Profil Personnel</h3>
+            <p class="esprit-bio">{{ user?.bio }}</p>
+          </div>
+
+          <div class="esprit-section" *ngIf="hasExperiences()">
+            <h3 [style.color]="primaryColor"><i class="bi bi-briefcase-fill"></i> Expériences Professionnelles</h3>
+            <div class="esprit-timeline">
+              <div class="esprit-item" *ngFor="let exp of experiences">
+                <div class="esprit-item-marker" [style.border-color]="primaryColor"></div>
+                <div class="esprit-item-content">
+                  <div class="esprit-item-header">
+                    <h4>{{ exp.jobTitle }}</h4>
+                    <span class="esprit-date" [style.color]="primaryColor">{{ formatDate(exp.startDate) }} - {{
+                      exp.isCurrent ? 'Présent' : formatDate(exp.endDate) }}</span>
+                  </div>
+                  <p class="esprit-company">{{ exp.company }} <span *ngIf="exp.industry">| {{ exp.industry }}</span></p>
+                  <p class="esprit-desc" *ngIf="exp.description">{{ exp.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="esprit-section" *ngIf="hasEducations()">
+            <h3 [style.color]="primaryColor"><i class="bi bi-mortarboard-fill"></i> Autres Formations</h3>
+            <div class="esprit-timeline">
+              <div class="esprit-item" *ngFor="let edu of educations">
+                <div class="esprit-item-marker" [style.border-color]="primaryColor"></div>
+                <div class="esprit-item-content">
+                  <div class="esprit-item-header">
+                    <h4>{{ edu.degree }}</h4>
+                    <span class="esprit-date" [style.color]="primaryColor">{{ edu.graduationYear }}</span>
+                  </div>
+                  <p class="esprit-company">{{ edu.institutionName }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ==================== TEMPLATE 2: ATS-FRIENDLY ==================== -->
+    <ng-container *ngIf="templateType === 'ats'">
+      <div class="ats-container">
+        <div class="ats-header">
+          <h1 class="ats-name" [style.color]="primaryColor">{{ user?.firstName | uppercase }} {{ user?.lastName |
+            uppercase }}</h1>
+          <p class="ats-title" *ngIf="user?.jobTitle">{{ user?.jobTitle }}</p>
+          <div class="ats-contact">
+            <span>{{ user?.email }}</span>
+            <span *ngIf="user?.numTel"> | {{ user?.numTel }}</span>
+            <span *ngIf="user?.linkedinUrl"> | LinkedIn</span>
+            <span *ngIf="user?.githubUrl"> | GitHub</span>
+          </div>
+        </div>
+
+        <div class="ats-section" *ngIf="user?.bio">
+          <h2 class="ats-section-title" [style.border-bottom-color]="primaryColor">PROFESSIONAL SUMMARY</h2>
+          <p class="ats-text">{{ user?.bio }}</p>
+        </div>
+
+        <div class="ats-section" *ngIf="hasExperiences()">
+          <h2 class="ats-section-title" [style.border-bottom-color]="primaryColor">PROFESSIONAL EXPERIENCE</h2>
+          <div class="ats-item" *ngFor="let exp of experiences">
+            <div class="ats-item-header">
+              <span class="ats-item-title"><strong>{{ exp.jobTitle }}</strong>, {{ exp.company }}</span>
+              <span class="ats-item-date">{{ formatDate(exp.startDate) }} - {{ exp.isCurrent ? 'Present' :
+                formatDate(exp.endDate) }}</span>
+            </div>
+            <p class="ats-text" *ngIf="exp.description">{{ exp.description }}</p>
+          </div>
+        </div>
+
+        <div class="ats-section" *ngIf="espritProfile?.institution || hasEducations()">
+          <h2 class="ats-section-title" [style.border-bottom-color]="primaryColor">EDUCATION</h2>
+          <div class="ats-item" *ngIf="espritProfile?.institution">
+            <div class="ats-item-header">
+              <span class="ats-item-title"><strong>{{ espritProfile?.degree }} in {{ espritProfile?.fieldOfStudy
+                  }}</strong>, {{ espritProfile?.institution }}</span>
+              <span class="ats-item-date">{{ espritProfile?.graduationYear }}</span>
+            </div>
+          </div>
+          <div class="ats-item" *ngFor="let edu of educations">
+            <div class="ats-item-header">
+              <span class="ats-item-title"><strong>{{ edu.degree }}</strong>, {{ edu.institutionName }}</span>
+              <span class="ats-item-date">{{ edu.graduationYear }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ats-section" *ngIf="hasSkills()">
+          <h2 class="ats-section-title" [style.border-bottom-color]="primaryColor">TECHNICAL SKILLS</h2>
+          <p class="ats-text">
+            <ng-container *ngFor="let skill of skills; let last = last">
+              {{ skill.name }}{{ !last ? ', ' : '' }}
+            </ng-container>
+          </p>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ==================== TEMPLATE 3: CREATIVE DARK ==================== -->
+    <ng-container *ngIf="templateType === 'dark'">
+      <div class="dark-layout">
+        <div class="dark-sidebar">
+          <div class="dark-profile-pic">
+            <img *ngIf="user?.avatarUrl" [src]="user?.avatarUrl" alt="Profile" class="dark-img" crossorigin="anonymous"
+              [style.border-color]="primaryColor">
+            <div *ngIf="!user?.avatarUrl" class="dark-img-placeholder" [style.background-color]="primaryColor">
+              {{ user?.firstName?.charAt(0) | uppercase }}{{ user?.lastName?.charAt(0) | uppercase }}
+            </div>
+          </div>
+          <h1 class="dark-name" [style.color]="primaryColor">{{ user?.firstName }}<br>{{ user?.lastName }}</h1>
+          <h2 class="dark-role">{{ user?.jobTitle || espritProfile?.degree }}</h2>
+
+          <div class="dark-section dark-contact">
+            <h3 [style.color]="primaryColor">CONTACT</h3>
+            <p><i class="bi bi-envelope"></i> {{ user?.email }}</p>
+            <p *ngIf="user?.numTel"><i class="bi bi-phone"></i> {{ user?.numTel }}</p>
+            <p *ngIf="user?.linkedinUrl"><i class="bi bi-linkedin"></i> LinkedIn</p>
+            <p *ngIf="user?.githubUrl"><i class="bi bi-github"></i> GitHub</p>
+          </div>
+
+          <div class="dark-section dark-skills" *ngIf="hasSkills()">
+            <h3 [style.color]="primaryColor">SKILLS</h3>
+            <div class="dark-skills-list">
+              <span class="dark-skill-tag" *ngFor="let skill of skills" [style.border-color]="primaryColor"
+                [style.color]="primaryColor">{{ skill.name }}</span>
+            </div>
+          </div>
+
+          <div class="dark-qr" *ngIf="qrCodeUrl">
+            <img [src]="qrCodeUrl" alt="QR Code" class="dark-qr-img" crossorigin="anonymous">
+          </div>
+        </div>
+
+        <div class="dark-main">
+          <div class="dark-content-section" *ngIf="user?.bio">
+            <h2 class="dark-section-title" [style.color]="primaryColor">PROFILE</h2>
+            <p class="dark-bio">{{ user?.bio }}</p>
+          </div>
+
+          <div class="dark-content-section" *ngIf="hasExperiences()">
+            <h2 class="dark-section-title" [style.color]="primaryColor">EXPERIENCE</h2>
+            <div class="dark-item" *ngFor="let exp of experiences">
+              <div class="dark-item-header">
+                <h4>{{ exp.jobTitle }}</h4>
+                <span class="dark-company">{{ exp.company }}</span>
+                <span class="dark-date">{{ formatDate(exp.startDate) }} - {{ exp.isCurrent ? 'Present' :
+                  formatDate(exp.endDate) }}</span>
+              </div>
+              <p class="dark-desc" *ngIf="exp.description">{{ exp.description }}</p>
+            </div>
+          </div>
+
+          <div class="dark-content-section" *ngIf="hasEducations()">
+            <h2 class="dark-section-title" [style.color]="primaryColor">EDUCATION</h2>
+            <div class="dark-item" *ngIf="espritProfile?.institution">
+              <div class="dark-item-header">
+                <h4>{{ espritProfile?.degree }} in {{ espritProfile?.fieldOfStudy }}</h4>
+                <span class="dark-company">{{ espritProfile?.institution }}</span>
+                <span class="dark-date">{{ espritProfile?.graduationYear }}</span>
+              </div>
+            </div>
+            <div class="dark-item" *ngFor="let edu of educations">
+              <div class="dark-item-header">
+                <h4>{{ edu.degree }}</h4>
+                <span class="dark-company">{{ edu.institutionName }}</span>
+                <span class="dark-date">{{ edu.graduationYear }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</div>

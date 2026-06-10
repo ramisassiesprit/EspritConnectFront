@@ -8,11 +8,12 @@ import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } f
 import { User, UserStatus } from '../../../core/models/user.model';
 import { UserRole } from '../../../core/models/user-role.enum';
 import { HelpMentoringFormComponent } from '../../../shared/components/help-mentoring-form/help-mentoring-form.component';
+import { CvTemplateComponent } from '../cv-template/cv-template.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, HelpMentoringFormComponent],
+  imports: [CommonModule, FormsModule, HelpMentoringFormComponent, CvTemplateComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -62,6 +63,19 @@ export class ProfileComponent implements OnInit {
 
   cvFile: File | null = null;
   isUploadingCv: boolean = false;
+
+  // CV Settings for generation
+  isCvModalOpen = false;
+  selectedTemplate: 'esprit' | 'ats' | 'dark' = 'esprit';
+  selectedColor: string = '#ED1C24'; // Default Esprit red
+
+  openCvModal() {
+    this.isCvModalOpen = true;
+  }
+
+  closeCvModal() {
+    this.isCvModalOpen = false;
+  }
 
   programOptions = [
     { value: 'ESE-ESPRIT School of Engineering', label: 'ESE - ESPRIT School of Engineering' },

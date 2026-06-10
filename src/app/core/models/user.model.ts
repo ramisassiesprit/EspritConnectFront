@@ -66,11 +66,11 @@ export interface User {
   avatarUrl?: string;
   bannerUrl?: string;
   bio?: string;
-  code?:string;
-  companyName?:string;
-  jobTitle?:string;
-  jobFunction?:string;
-  industry?:string;
+  code?: string;
+  companyName?: string;
+  jobTitle?: string;
+  jobFunction?: string;
+  industry?: string;
   linkedinUrl?: string;
   githubUrl?: string;
   facebookUrl?: string;

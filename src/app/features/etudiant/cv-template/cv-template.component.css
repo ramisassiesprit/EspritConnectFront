@@ -1,0 +1,491 @@
+.cv-hidden-container {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  width: 210mm; /* A4 width */
+}
+
+.cv-page {
+  width: 210mm;
+  min-height: 297mm; /* A4 height */
+  background: white;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Roboto', 'Helvetica Neue', sans-serif;
+  color: #333;
+}
+
+/* ==================== TEMPLATE 1: ESPRIT CORPORATE ==================== */
+.template-esprit {
+  display: flex;
+  flex-direction: column;
+}
+
+.esprit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 50px 20px 50px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.esprit-header-main {
+  border-left-width: 6px;
+  border-left-style: solid;
+  padding-left: 20px;
+}
+
+.esprit-header-main h1 {
+  font-size: 38px;
+  margin: 0 0 5px 0;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.esprit-role {
+  font-size: 20px;
+  color: #555;
+  margin: 0;
+  font-weight: 500;
+}
+
+.esprit-qr {
+  text-align: center;
+}
+
+.qr-img {
+  width: 70px;
+  height: 70px;
+  border: 1px solid #ddd;
+  padding: 2px;
+  background: white;
+}
+
+.qr-text {
+  display: block;
+  font-size: 10px;
+  margin-top: 5px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.esprit-layout {
+  display: flex;
+  flex: 1;
+}
+
+.esprit-left-col {
+  width: 32%;
+  background-color: #f1f3f5;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.esprit-right-col {
+  width: 68%;
+  padding: 30px 40px;
+  box-sizing: border-box;
+}
+
+.esprit-profile-pic {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.esprit-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.esprit-img-placeholder {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  border: 4px solid white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.esprit-section {
+  margin-bottom: 35px;
+}
+
+.esprit-section h3 {
+  font-size: 18px;
+  text-transform: uppercase;
+  margin: 0 0 15px 0;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.esprit-contact p {
+  margin: 10px 0;
+  font-size: 13px;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  word-break: break-all;
+}
+
+.esprit-contact p i {
+  width: 16px;
+  text-align: center;
+}
+
+.esprit-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.esprit-tag {
+  background-color: white;
+  color: #444;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #ddd;
+}
+
+.esprit-academic p {
+  font-size: 13px;
+  margin: 8px 0;
+  color: #444;
+  line-height: 1.4;
+}
+
+.esprit-bio {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #444;
+  text-align: justify;
+}
+
+.esprit-timeline {
+  position: relative;
+  padding-left: 20px;
+}
+
+.esprit-timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  bottom: 0;
+  width: 2px;
+  background-color: #eee;
+}
+
+.esprit-item {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.esprit-item-marker {
+  position: absolute;
+  left: -20px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  border-width: 3px;
+  border-style: solid;
+}
+
+.esprit-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 5px;
+}
+
+.esprit-item-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.esprit-date {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.esprit-company {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.esprit-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #555;
+}
+
+
+/* ==================== TEMPLATE 2: ATS-FRIENDLY ==================== */
+.template-ats {
+  padding: 40px 50px;
+}
+
+.ats-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.ats-name {
+  font-size: 28px;
+  margin: 0 0 5px 0;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.ats-title {
+  font-size: 16px;
+  color: #444;
+  margin: 0 0 10px 0;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.ats-contact {
+  font-size: 12px;
+  color: #666;
+}
+
+.ats-section {
+  margin-bottom: 25px;
+}
+
+.ats-section-title {
+  font-size: 14px;
+  color: #333;
+  margin: 0 0 15px 0;
+  padding-bottom: 5px;
+  border-bottom-width: 1.5px;
+  border-bottom-style: solid;
+  letter-spacing: 1px;
+}
+
+.ats-text {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #444;
+  margin: 0;
+  text-align: justify;
+}
+
+.ats-item {
+  margin-bottom: 15px;
+}
+
+.ats-item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.ats-item-title {
+  font-size: 13px;
+  color: #333;
+}
+
+.ats-item-date {
+  font-size: 12px;
+  color: #666;
+}
+
+
+/* ==================== TEMPLATE 3: CREATIVE DARK ==================== */
+.template-dark {
+  display: flex;
+  flex-direction: row;
+  background-color: #ffffff;
+}
+
+.dark-layout {
+  display: flex;
+  width: 100%;
+}
+
+.dark-sidebar {
+  width: 35%;
+  background-color: #1a1a1a;
+  color: #f4f4f5;
+  padding: 40px 30px;
+  box-sizing: border-box;
+}
+
+.dark-profile-pic {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.dark-img {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border-width: 3px;
+  border-style: solid;
+}
+
+.dark-img-placeholder {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.dark-name {
+  font-size: 32px;
+  margin: 0 0 10px 0;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.dark-role {
+  font-size: 16px;
+  color: #a1a1aa;
+  margin: 0 0 40px 0;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.dark-section {
+  margin-bottom: 35px;
+}
+
+.dark-section h3 {
+  font-size: 16px;
+  margin: 0 0 15px 0;
+  letter-spacing: 2px;
+}
+
+.dark-contact p {
+  margin: 12px 0;
+  font-size: 13px;
+  color: #d4d4d8;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dark-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dark-skill-tag {
+  background-color: transparent;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.dark-qr {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.dark-qr-img {
+  width: 100px;
+  height: 100px;
+  background: white;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.dark-main {
+  width: 65%;
+  padding: 50px 40px;
+  box-sizing: border-box;
+}
+
+.dark-content-section {
+  margin-bottom: 40px;
+}
+
+.dark-section-title {
+  font-size: 20px;
+  margin: 0 0 20px 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e4e4e7;
+  padding-bottom: 10px;
+}
+
+.dark-bio {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #52525b;
+}
+
+.dark-item {
+  margin-bottom: 25px;
+}
+
+.dark-item-header {
+  margin-bottom: 8px;
+}
+
+.dark-item-header h4 {
+  margin: 0 0 4px 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #27272a;
+}
+
+.dark-company {
+  font-size: 14px;
+  color: #52525b;
+  font-weight: 600;
+}
+
+.dark-date {
+  font-size: 13px;
+  color: #a1a1aa;
+  float: right;
+  font-weight: 500;
+}
+
+.dark-desc {
+  margin: 5px 0 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #52525b;
+}

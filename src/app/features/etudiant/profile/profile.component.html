@@ -38,7 +38,12 @@
             <span class="meta-item font-bold text-red-600" *ngIf="user.companyName">{{ user.companyName }}</span>
           </div>
 
-          <button (click)="toggleEditProfile()" class="btn-edit-profile">EDIT PROFILE</button>
+          <div class="flex gap-2">
+            <button (click)="toggleEditProfile()" class="btn-edit-profile">EDIT PROFILE</button>
+            <button (click)="openCvModal()" class="btn-edit-profile" style="background-color: #ED1C24; border-color: #ED1C24;">
+              <i class="bi bi-file-earmark-pdf me-1"></i> GENERATE CV
+            </button>
+          </div>
 
           <div class="social-links">
             <a *ngIf="user.linkedinUrl" [href]="user.linkedinUrl" target="_blank"><i class="bi bi-linkedin"></i></a>
@@ -441,3 +446,51 @@
 <app-help-mentoring-form *ngIf="isEditingHelp" [initialHelp]="helps[0]" (save)="onHelpSaved($event)"
   (cancel)="toggleEditHelp()">
 </app-help-mentoring-form>
+
+<!-- CV Modal -->
+<div *ngIf="isCvModalOpen" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-900 bg-opacity-50 p-4">
+  <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+    <div class="mb-5 flex items-center justify-between">
+      <h3 class="text-xl font-bold text-gray-900">Download CV</h3>
+      <button (click)="closeCvModal()" class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-900">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Select Template</label>
+        <select [(ngModel)]="selectedTemplate" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#ED1C24] focus:ring-[#ED1C24] py-2 px-3 border">
+          <option value="esprit">Esprit Corporate (Modern)</option>
+          <option value="ats">ATS-Friendly (Minimalist)</option>
+          <option value="dark">Creative Dark (Tech/Design)</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Primary Color</label>
+        <input type="color" [(ngModel)]="selectedColor" class="w-full h-10 rounded-lg cursor-pointer border-0 p-0">
+      </div>
+    </div>
+    <div class="mt-6 flex justify-end gap-3">
+      <button (click)="closeCvModal()" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+      <button (click)="cvTemplate.generatePDF(); closeCvModal()" class="inline-flex items-center gap-2 rounded-lg bg-[#ED1C24] px-4 py-2 text-sm font-medium text-white hover:bg-[#D31920]">
+        <svg *ngIf="cvTemplate.isGenerating" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        {{ cvTemplate.isGenerating ? 'Generating...' : 'Generate PDF' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-cv-template #cvTemplate
+  [user]="user"
+  [espritProfile]="espritProfile"
+  [experiences]="experiences"
+  [educations]="educations"
+  [skills]="skills"
+  [templateType]="selectedTemplate"
+  [primaryColor]="selectedColor">
+</app-cv-template>

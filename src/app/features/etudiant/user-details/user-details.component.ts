@@ -10,11 +10,13 @@ import { RequestHelpModalComponent } from './request-help-modal/request-help-mod
 import { OfferHelpModalComponent } from './offer-help-modal/offer-help-modal.component';
 import { VideoChatModalComponent } from './video-chat-modal/video-chat-modal.component';
 import { MentorshipService } from '../../../core/services/mentorship.service';
+import { CvTemplateComponent } from '../cv-template/cv-template.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-user-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, RequestHelpModalComponent, OfferHelpModalComponent, VideoChatModalComponent],
+  imports: [CommonModule, RouterModule, RequestHelpModalComponent, OfferHelpModalComponent, VideoChatModalComponent, CvTemplateComponent, FormsModule],
   templateUrl: './user-details.component.html',
   styleUrl: './user-details.component.css'
 })
@@ -102,6 +104,19 @@ export class UserDetailsComponent implements OnInit {
   isRequestHelpModalOpen = false;
   isOfferHelpModalOpen = false;
   isVideoChatModalOpen = false;
+  isCvModalOpen = false;
+
+  // CV Settings
+  selectedTemplate: 'modern' | 'classic' = 'modern';
+  selectedColor: string = '#2563eb'; // Default blue
+
+  openCvModal() {
+    this.isCvModalOpen = true;
+  }
+
+  closeCvModal() {
+    this.isCvModalOpen = false;
+  }
 
   openVideoChatModal() {
     this.isVideoChatModalOpen = true;
