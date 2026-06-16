@@ -137,17 +137,17 @@
     </div>
   </section>
 
-  <!-- Main Dashboard Grid: 4 Widgets in 2x2 -->
+  <!-- Main Dashboard Grid: Widgets driven by tile settings -->
   <div class="grid gap-6 grid-cols-1 xl:grid-cols-2">
-    <app-my-community></app-my-community>
-    <app-recent-feed-posts></app-recent-feed-posts>
-    <app-jobs-board></app-jobs-board>
-    <app-facebook-widget></app-facebook-widget>
+    <app-my-community *ngIf="hasTile('community')"></app-my-community>
+    <app-recent-feed-posts *ngIf="hasTile('feed')"></app-recent-feed-posts>
+    <app-jobs-board *ngIf="hasTile('jobs')"></app-jobs-board>
+    <app-facebook-widget *ngIf="hasTile('social')"></app-facebook-widget>
   </div>
 
   <!-- Bottom Widget: Resources -->
   <div>
-    <app-resources-widget></app-resources-widget>
+    <app-resources-widget *ngIf="hasTile('resources')"></app-resources-widget>
   </div>
 
   <!-- Badge Modal -->

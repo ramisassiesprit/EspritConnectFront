@@ -96,62 +96,89 @@
         </div>
       </div>
 
-      <!-- Tile display settings placeholder -->
+      <!-- Tile display settings -->
       <div class="card">
         <div class="card-header">
           <div class="card-header__left">
             <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon"><path d="M3 5h18v2H3zM3 11h18v2H3zM3 17h18v2H3z"/></svg>
             <div>
               <h2>Tile display settings</h2>
-              <p class="card-subtitle">Choose the content and order you would like displayed on the homepage.</p>
+              <p class="card-subtitle">Manage which tiles appear and their order on web &amp; mobile.</p>
             </div>
           </div>
         </div>
-        <div class="card-body tile-settings">
-          <div class="tile-list">
-            <div *ngFor="let tile of tiles; let i = index" class="tile-row">
-              <div class="tile-order">{{ i + 1 }}</div>
-              <select [(ngModel)]="tiles[i]" class="tile-select">
-                <option *ngFor="let opt of availableTiles" [value]="opt">{{ opt }}</option>
-                <option [value]="tiles[i]">{{ tiles[i] }}</option>
-              </select>
-              <div class="tile-actions">
-                <button class="icon-btn" (click)="moveUp(i)" [disabled]="i===0" title="Move up">▲</button>
-                <button class="icon-btn" (click)="moveDown(i)" [disabled]="i===tiles.length-1" title="Move down">▼</button>
-                <button class="icon-btn icon-btn--danger" (click)="removeTile(i)" title="Remove">✕</button>
+        <div class="card-body tile-settings-body">
+          <div class="tile-columns">
+            <!-- Web tiles -->
+            <div class="tile-column">
+              <h3 class="tile-column__title">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H4V5h16v14z"/></svg>
+                Web
+              </h3>
+              <div class="tile-list">
+                @for (tile of settings.webTiles; track $index) {
+                  <div class="tile-row"
+                       draggable="true"
+                       (dragstart)="onDragStart($index)"
+                       (dragover)="onDragOver($event)"
+                       (drop)="onDrop($index, 'webTiles')"
+                       [class.tile-row--dragging]="draggedIndex === $index">
+                    <span class="tile-drag-handle" title="Drag to reorder">⠿</span>
+                    <div class="tile-order">{{ $index + 1 }}</div>
+                    <span class="tile-name">{{ tile }}</span>
+                    <div class="tile-actions">
+                      <button class="icon-btn icon-btn--danger" (click)="removeTile($index, 'webTiles')" title="Remove">✕</button>
+                    </div>
+                  </div>
+                }
+                @if (settings.webTiles.length === 0) {
+                  <p class="tile-empty">No web tiles configured.</p>
+                }
               </div>
+              @if (getRestorable('webTiles').length > 0) {
+                <div class="tile-restore">
+                  <span class="tile-restore__label">Restore:</span>
+                  @for (t of getRestorable('webTiles'); track t) {
+                    <button class="tile-restore__btn" (click)="restoreTile(t, 'webTiles')">{{ t }}</button>
+                  }
+                </div>
+              }
             </div>
 
-            <button class="add-tile" type="button" (click)="addTile()">+ ADD TILE</button>
-          </div>
-
-          <div class="tile-preview">
-            <h3>Order of tiles in desktop</h3>
-            <div class="preview-grid">
-              <div class="preview-col"></div>
-              <div class="preview-main">
-                <div class="preview-row">
-                  <div class="preview-box">1</div>
-                  <div class="preview-box">2</div>
-                </div>
-                <div class="preview-row">
-                  <div class="preview-box">3</div>
-                  <div class="preview-box">4</div>
-                </div>
-                <div class="preview-row">
-                  <div class="preview-box">5</div>
-                  <div class="preview-box">6</div>
-                </div>
+            <!-- Mobile tiles -->
+            <div class="tile-column">
+              <h3 class="tile-column__title">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z"/></svg>
+                Mobile
+              </h3>
+              <div class="tile-list">
+                @for (tile of settings.mobileTiles; track $index) {
+                  <div class="tile-row"
+                       draggable="true"
+                       (dragstart)="onDragStart($index)"
+                       (dragover)="onDragOver($event)"
+                       (drop)="onDrop($index, 'mobileTiles')"
+                       [class.tile-row--dragging]="draggedIndex === $index">
+                    <span class="tile-drag-handle" title="Drag to reorder">⠿</span>
+                    <div class="tile-order">{{ $index + 1 }}</div>
+                    <span class="tile-name">{{ tile }}</span>
+                    <div class="tile-actions">
+                      <button class="icon-btn icon-btn--danger" (click)="removeTile($index, 'mobileTiles')" title="Remove">✕</button>
+                    </div>
+                  </div>
+                }
+                @if (settings.mobileTiles.length === 0) {
+                  <p class="tile-empty">No mobile tiles configured.</p>
+                }
               </div>
-            </div>
-
-            <h3>Order of tiles in mobile</h3>
-            <div class="preview-stack">
-              <div class="preview-stack-item">1</div>
-              <div class="preview-stack-item">2</div>
-              <div class="preview-stack-item">3</div>
-              <div class="preview-stack-item">4</div>
-              <div class="preview-stack-item">5</div>
+              @if (getRestorable('mobileTiles').length > 0) {
+                <div class="tile-restore">
+                  <span class="tile-restore__label">Restore:</span>
+                  @for (t of getRestorable('mobileTiles'); track t) {
+                    <button class="tile-restore__btn" (click)="restoreTile(t, 'mobileTiles')">{{ t }}</button>
+                  }
+                </div>
+              }
             </div>
           </div>
         </div>

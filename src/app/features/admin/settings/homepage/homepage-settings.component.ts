@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule, HttpEventType } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../environments/environment';
 import { HomepageSettingsService, HomepageSettings } from '../../../../core/services/homepage-settings.service';
@@ -15,7 +15,7 @@ const COLOR_PRESETS = [
 @Component({
   selector: 'app-homepage-settings',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './homepage-settings.component.html',
   styleUrls: ['./homepage-settings.component.css']
 })
@@ -25,7 +25,7 @@ export class HomepageSettingsComponent {
   private settingsService = inject(HomepageSettingsService);
   readonly colorPresets = COLOR_PRESETS;
 
-  settings: HomepageSettings = { displayBanner: true, primaryColor: '#ed1c24', bannerImageUrl: '' };
+  settings: HomepageSettings = { displayBanner: true, primaryColor: '#ed1c24', bannerImageUrl: '', webTiles: [], mobileTiles: [] };
   saving = false;
   uploadProgress = 0;
   uploading = false;
@@ -34,8 +34,7 @@ export class HomepageSettingsComponent {
 
   previewUrl: string | null = null;
 
-  // Tile display placeholder data
-  readonly availableTiles = [
+  readonly allTiles = [
     'Catch up + Who\'s online',
     'Recent feed posts',
     'Jobs (Only)',
@@ -43,39 +42,6 @@ export class HomepageSettingsComponent {
     'Social media widget',
     'Resources',
   ];
-
-  tiles: string[] = [
-    'Catch up + Who\'s online',
-    'Recent feed posts',
-    'Jobs (Only)',
-    'Event',
-    'Social media widget',
-    'Resources',
-  ];
-
-  addTile() {
-    // add a placeholder tile
-    const next = this.availableTiles.find(t => !this.tiles.includes(t)) || 'Custom tile';
-    this.tiles.push(next);
-  }
-
-  removeTile(index: number) {
-    this.tiles.splice(index, 1);
-  }
-
-  moveUp(index: number) {
-    if (index <= 0) return;
-    const v = this.tiles[index];
-    this.tiles.splice(index, 1);
-    this.tiles.splice(index - 1, 0, v);
-  }
-
-  moveDown(index: number) {
-    if (index >= this.tiles.length - 1) return;
-    const v = this.tiles[index];
-    this.tiles.splice(index, 1);
-    this.tiles.splice(index + 1, 0, v);
-  }
 
   constructor() {
     this.load();
@@ -84,13 +50,73 @@ export class HomepageSettingsComponent {
   load() {
     this.http.get<HomepageSettings>(this.apiUrl).subscribe({
       next: (res) => {
-        this.settings = res;
+        this.settings = {
+          ...res,
+          webTiles: res.webTiles ?? [],
+          mobileTiles: res.mobileTiles ?? []
+        };
         if (res.bannerImageUrl) {
           this.previewUrl = res.bannerImageUrl;
         }
       },
       error: () => {}
     });
+  }
+
+  removeTile(index: number, key: 'webTiles' | 'mobileTiles') {
+    this.settings = {
+      ...this.settings,
+      [key]: this.settings[key].filter((_, i) => i !== index)
+    };
+  }
+
+  moveUp(index: number, key: 'webTiles' | 'mobileTiles') {
+    if (index <= 0) return;
+    const arr = [...this.settings[key]];
+    const v = arr[index];
+    arr.splice(index, 1);
+    arr.splice(index - 1, 0, v);
+    this.settings = { ...this.settings, [key]: arr };
+  }
+
+  moveDown(index: number, key: 'webTiles' | 'mobileTiles') {
+    if (index >= this.settings[key].length - 1) return;
+    const arr = [...this.settings[key]];
+    const v = arr[index];
+    arr.splice(index, 1);
+    arr.splice(index + 1, 0, v);
+    this.settings = { ...this.settings, [key]: arr };
+  }
+
+  restoreTile(tile: string, key: 'webTiles' | 'mobileTiles') {
+    if (this.settings[key].includes(tile)) return;
+    this.settings = {
+      ...this.settings,
+      [key]: [...this.settings[key], tile]
+    };
+  }
+
+  draggedIndex: number | null = null;
+
+  onDragStart(index: number) {
+    this.draggedIndex = index;
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  onDrop(index: number, key: 'webTiles' | 'mobileTiles') {
+    if (this.draggedIndex === null || this.draggedIndex === index) return;
+    const arr = [...this.settings[key]];
+    const v = arr.splice(this.draggedIndex, 1)[0];
+    arr.splice(index, 0, v);
+    this.settings = { ...this.settings, [key]: arr };
+    this.draggedIndex = null;
+  }
+
+  getRestorable(key: 'webTiles' | 'mobileTiles'): string[] {
+    return this.allTiles.filter(t => !this.settings[key].includes(t));
   }
 
   onFileSelected(event: Event) {
@@ -159,7 +185,11 @@ export class HomepageSettingsComponent {
 
     this.http.post<HomepageSettings>(this.apiUrl, this.settings).subscribe({
       next: (res) => {
-        this.settings = res;
+        this.settings = {
+          ...res,
+          webTiles: res.webTiles ?? [],
+          mobileTiles: res.mobileTiles ?? []
+        };
         if (res.bannerImageUrl) {
           this.previewUrl = res.bannerImageUrl;
         }

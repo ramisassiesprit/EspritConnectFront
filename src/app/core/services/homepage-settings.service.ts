@@ -7,6 +7,8 @@ export interface HomepageSettings {
   displayBanner: boolean;
   primaryColor: string;
   bannerImageUrl: string;
+  webTiles: string[];
+  mobileTiles: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -18,7 +20,9 @@ export class HomepageSettingsService {
   private settingsSubject = new BehaviorSubject<HomepageSettings>({
     displayBanner: true,
     primaryColor: '#ed1c24',
-    bannerImageUrl: ''
+    bannerImageUrl: '',
+    webTiles: ['Catch up + Who\'s online', 'Recent feed posts', 'Jobs (Only)', 'Event', 'Social media widget', 'Resources'],
+    mobileTiles: ['Catch up + Who\'s online', 'Recent feed posts', 'Jobs (Only)', 'Event', 'Social media widget', 'Resources']
   });
 
   settings$ = this.settingsSubject.asObservable();

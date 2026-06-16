@@ -504,6 +504,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'mentoring',
+        loadComponent: () =>
+          import('./features/admin/mentoring/mentoring-preferences/mentoring-preferences.component').then(
+            (m) => m.MentoringPreferencesComponent,
+          ),
+      },
+      {
         path: 'events',
         loadComponent: () =>
           import('./features/admin/events/admin-events.component').then(

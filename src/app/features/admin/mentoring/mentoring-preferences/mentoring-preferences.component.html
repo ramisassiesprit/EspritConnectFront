@@ -1,0 +1,128 @@
+<section class="mentoring-prefs">
+  <div class="page-header">
+    <div class="page-header__text">
+      <h1>Mentoring Preferences</h1>
+      <p>Control which mentoring & help sections are visible to users when they edit their preferences</p>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    <div class="settings-main">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header__left">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon">
+              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+            <div>
+              <h2>Visible Sections</h2>
+              <p class="card-subtitle">Toggle each section to show or hide it in the user mentoring settings form</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="sections-list">
+            @for (section of sections; track section.key) {
+              <div class="section-row">
+                <div class="section-row__info">
+                  <span class="section-row__label">{{ section.label }}</span>
+                  <span class="section-row__desc">{{ section.description }}</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" [(ngModel)]="prefs[section.key]" />
+                  <span class="toggle__slider"></span>
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header__left">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon">
+              <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+            </svg>
+            <div>
+              <h2>Preview</h2>
+              <p class="card-subtitle">How the user form will look with current settings</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="preview-form">
+            @if (prefs.showOfferHelp) {
+              <div class="preview-section">
+                <div class="preview-section__title">Offer Help</div>
+                <div class="preview-chips">
+                  <span class="preview-chip">Introduction to connections</span>
+                  <span class="preview-chip">Answer industry questions</span>
+                </div>
+              </div>
+            }
+            @if (prefs.showSeekHelp) {
+              <div class="preview-section">
+                <div class="preview-section__title">Seek Help</div>
+                <div class="preview-chips">
+                  <span class="preview-chip">Introduction to connections</span>
+                  <span class="preview-chip">Meet for coffee</span>
+                </div>
+              </div>
+            }
+            @if (prefs.showOfferMentoring) {
+              <div class="preview-section">
+                <div class="preview-section__title">Offer Mentoring</div>
+                <div class="preview-chips">
+                  <span class="preview-chip">Mentor a student</span>
+                  <span class="preview-chip">Career advice</span>
+                </div>
+              </div>
+            }
+            @if (prefs.showSeekMentoring) {
+              <div class="preview-section">
+                <div class="preview-section__title">Seek Mentoring</div>
+                <div class="preview-chips">
+                  <span class="preview-chip">Resume review</span>
+                  <span class="preview-chip">Internship</span>
+                </div>
+              </div>
+            }
+            @if (!prefs.showOfferHelp && !prefs.showSeekHelp && !prefs.showOfferMentoring && !prefs.showSeekMentoring) {
+              <div class="preview-empty">
+                <p>All sections are hidden. Users will not see the mentoring preferences form.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-sidebar">
+      <button class="btn-save" (click)="save()" [disabled]="saving">
+        @if (saving) {
+          <span class="btn-save__spinner"></span>
+          Saving&hellip;
+        } @else {
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          Save Preferences
+        }
+      </button>
+
+      @if (saveMessage) {
+        <div class="toast" [class.toast--success]="!saveError" [class.toast--error]="saveError" (click)="saveMessage = ''">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+            @if (!saveError) {
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            } @else {
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            }
+          </svg>
+          <span>{{ saveMessage }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>

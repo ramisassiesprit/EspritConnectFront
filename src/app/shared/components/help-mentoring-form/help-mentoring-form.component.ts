@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WillingToHelp } from '../../../core/models/profile.model';
+import { MentoringPreferencesService } from '../../../core/services/mentoring-preferences.service';
 
 @Component({
   selector: 'app-help-mentoring-form',
@@ -11,9 +12,16 @@ import { WillingToHelp } from '../../../core/models/profile.model';
   styleUrl: './help-mentoring-form.component.css'
 })
 export class HelpMentoringFormComponent implements OnInit {
+  private prefsService = inject(MentoringPreferencesService);
+
   @Input() initialHelp?: WillingToHelp;
   @Output() save = new EventEmitter<WillingToHelp>();
   @Output() cancel = new EventEmitter<void>();
+
+  showOfferHelp = true;
+  showSeekHelp = true;
+  showOfferMentoring = true;
+  showSeekMentoring = true;
 
   helpOptions = [
     'Introduction to connections',
@@ -39,6 +47,14 @@ export class HelpMentoringFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initHelpSelections();
+    this.prefsService.getPreferences().subscribe({
+      next: (prefs) => {
+        this.showOfferHelp = prefs.showOfferHelp;
+        this.showSeekHelp = prefs.showSeekHelp;
+        this.showOfferMentoring = prefs.showOfferMentoring;
+        this.showSeekMentoring = prefs.showSeekMentoring;
+      }
+    });
   }
 
   initHelpSelections(): void {

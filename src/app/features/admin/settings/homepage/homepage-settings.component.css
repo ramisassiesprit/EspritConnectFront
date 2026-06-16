@@ -581,23 +581,32 @@
   }
 }
 
-/* ── Tile settings placeholder ── */
-.tile-settings { display:flex; gap:18px; align-items:flex-start; }
-.tile-list { flex: 1; display:flex; flex-direction:column; gap:12px; }
-.tile-row { display:flex; align-items:center; gap:12px; padding:12px; border-radius:10px; background:#fafafa; border:1px solid #f0f0f0; }
-.tile-order { width:36px; height:36px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:#666; border:1px solid #eee; }
-.tile-select { flex:1; padding:10px 12px; border-radius:8px; border:1px solid #e6e6e6; background:#fff; }
-.tile-actions { display:flex; gap:8px; }
-.icon-btn { width:36px; height:36px; border-radius:8px; border:1px solid #e6e6e6; background:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
-.icon-btn--danger { border-color:#f5c6cb; background:#fff6f6; color:#c62828 }
-.add-tile { margin-top:8px; padding:10px 14px; border-radius:10px; background:transparent; border:1px dashed #cfcfcf; color:#1a1a1a; cursor:pointer; font-weight:600 }
+/* ── Tile settings ── */
+.tile-settings-body { padding: 20px 22px 22px; }
+.tile-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 700px) { .tile-columns { grid-template-columns: 1fr; } }
 
-.tile-preview { width:360px; display:flex; flex-direction:column; gap:12px; }
-.preview-grid { display:flex; gap:12px; align-items:flex-start; }
-.preview-col { width:60px; height:180px; background:#eef6fb; border-radius:8px; }
-.preview-main { flex:1; }
-.preview-row { display:flex; gap:12px; margin-bottom:12px }
-.preview-box { width:80px; height:60px; background:#f6f7fb; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#99a0aa; font-weight:700 }
-.preview-stack { display:flex; flex-direction:column; gap:8px; margin-top:6px }
-.preview-stack-item { height:36px; background:#f6f7fb; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#99a0aa }
+.tile-column__title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #444; margin: 0 0 10px 0; }
+
+.tile-list { display: flex; flex-direction: column; gap: 8px; }
+.tile-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: #fafafa; border: 1px solid #f0f0f0; cursor: default; transition: all 0.15s ease; }
+.tile-row:hover { border-color: #ddd; background: #f5f5f5; }
+.tile-row--dragging { opacity: 0.4; border-color: #ed1c24; background: #fef2f2; }
+.tile-drag-handle { font-size: 16px; color: #bbb; cursor: grab; user-select: none; line-height: 1; padding: 2px; flex-shrink: 0; transition: color 0.15s ease; }
+.tile-drag-handle:hover { color: #666; }
+.tile-drag-handle:active { cursor: grabbing; }
+.tile-order { width: 32px; height: 32px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: #666; border: 1px solid #eee; flex-shrink: 0; }
+.tile-name { flex: 1; font-size: 13px; color: #333; font-weight: 500; }
+.tile-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.icon-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e6e6e6; background: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.15s ease; }
+.icon-btn:hover { background: #f5f5f5; border-color: #ccc; }
+.icon-btn--danger { border-color: #f5c6cb; background: #fff6f6; color: #c62828; }
+.icon-btn--danger:hover { background: #fce4ec; border-color: #e57373; }
+
+.tile-empty { text-align: center; color: #aaa; font-size: 13px; padding: 16px; margin: 0; }
+
+.tile-restore { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e8e8e8; }
+.tile-restore__label { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+.tile-restore__btn { padding: 4px 10px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; font-size: 12px; color: #555; cursor: pointer; transition: all 0.15s ease; }
+.tile-restore__btn:hover { border-color: #ed1c24; color: #ed1c24; background: #fef2f2; }
 
