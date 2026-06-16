@@ -10,6 +10,7 @@ import { BadgeModalComponent } from './badge-modal/badge-modal.component';
 import { UserService } from '../../../core/services/User.service';
 import { BadgeService } from '../../../core/services/badge.service';
 import { User, Badge } from '../../../core/models/user.model';
+import { HomepageSettingsService, HomepageSettings } from '../../../core/services/homepage-settings.service';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +31,7 @@ export class HomeComponent implements OnInit {
   private userService = inject(UserService);
   private badgeService = inject(BadgeService);
   private router = inject(Router);
+  private settingsService = inject(HomepageSettingsService);
 
   user: User | null = null;
   completionPercentage: number = 0;
@@ -37,8 +39,11 @@ export class HomeComponent implements OnInit {
   isBadgeModalOpen: boolean = false;
   userBadges: Badge[] = [];
 
+  settings: HomepageSettings = { displayBanner: true, primaryColor: '#ed1c24', bannerImageUrl: '' };
+
   ngOnInit(): void {
     this.loadUserData();
+    this.settingsService.settings$.subscribe(s => this.settings = s);
   }
 
   private loadUserData(): void {

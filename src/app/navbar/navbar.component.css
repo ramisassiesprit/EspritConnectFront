@@ -1,6 +1,6 @@
 .navbar {
   height: var(--navbar-height, 65px); /* Increased height for wider navbar vertically */
-  background: var(--esprit-red, #ffffff); /* Solid color accent */
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center; /* Centers the container */

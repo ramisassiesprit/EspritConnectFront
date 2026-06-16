@@ -510,6 +510,15 @@ export const routes: Routes = [
             (m) => m.AdminEventsComponent,
           ),
       },
+      {
+        path: 'settings',
+        redirectTo: 'settings/homepage',
+        pathMatch: 'full',
+      },
+      {
+        path: 'settings/homepage',
+        loadComponent: () => import('./features/admin/settings/homepage/homepage-settings.component').then(m => m.HomepageSettingsComponent),
+      },
     ],
   },
 ];

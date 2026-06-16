@@ -4,7 +4,8 @@ import { CommonModule } from '@angular/common';
 
 interface NavItem {
   label: string;
-  route: string;
+  route?: string;
+  children?: { label: string; route: string }[];
 }
 
 @Component({
@@ -19,6 +20,8 @@ export class AdminSidebarComponent {
 
   isStudentView = localStorage.getItem('viewMode') === 'etudiant';
 
+  expandedGroup: string | null = 'Settings';
+
   switchView() {
     if (this.isStudentView) {
       this.isStudentView = false;
@@ -30,6 +33,11 @@ export class AdminSidebarComponent {
       this.router.navigate(['/etudiant/feed']);
     }
   }
+
+  toggleGroup(label: string) {
+    this.expandedGroup = this.expandedGroup === label ? null : label;
+  }
+
   navItems: NavItem[] = [
     { label: 'Dashboard', route: '/admin/home' },
     { label: 'Users', route: '/admin/users' },
@@ -41,6 +49,11 @@ export class AdminSidebarComponent {
     { label: 'Groups', route: '/admin/groups' },
     { label: 'Events', route: '/admin/events' },
     { label: 'Resources', route: '/admin/resources' },
-    { label: 'Settings', route: '/admin/settings' }
+    {
+      label: 'Settings',
+      children: [
+        { label: 'Homepage Settings', route: '/admin/settings/homepage' }
+      ]
+    }
   ];
 }

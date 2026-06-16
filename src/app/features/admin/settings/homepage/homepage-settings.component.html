@@ -1,0 +1,218 @@
+<section class="homepage-settings">
+  <div class="page-header">
+    <div class="page-header__text">
+      <h1>Homepage Settings</h1>
+      <p>Customize the look and feel of the homepage</p>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    <div class="settings-main">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header__left">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            <div>
+              <h2>Banner Image</h2>
+              <p class="card-subtitle">1560 &times; 440px recommended &middot; JPEG, PNG or WebP</p>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="settings.displayBanner" />
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+        <div class="card-body">
+          <div class="upload-zone"
+               [class.has-image]="!!previewUrl"
+               [class.is-disabled]="!settings.displayBanner"
+               (dragover)="onDragOver($event)"
+               (drop)="onDrop($event)">
+            <input type="file" id="bannerInput" accept="image/*" (change)="onFileSelected($event)" hidden />
+
+            @if (uploading) {
+              <div class="upload-progress">
+                <div class="upload-progress__bar">
+                  <div class="upload-progress__fill" [style.width.%]="uploadProgress"></div>
+                </div>
+                <span class="upload-progress__label">Uploading&hellip; {{ uploadProgress }}%</span>
+              </div>
+            } @else if (previewUrl) {
+              <div class="upload-preview">
+                <img [src]="bannerImageSrc()" alt="Banner preview" />
+                <div class="upload-preview__actions">
+                  <label for="bannerInput" class="btn-icon" title="Change image">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                  </label>
+                  <button class="btn-icon btn-icon--danger" type="button" (click)="removeImage()" title="Remove image">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <label for="bannerInput" class="upload-placeholder">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="upload-icon"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+                <span class="upload-placeholder__title">Drop an image here or click to browse</span>
+                <span class="upload-placeholder__hint">Supports JPEG, PNG, WebP up to 5MB</span>
+              </label>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header__left">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 10 6.5 10s1.5.67 1.5 1.5S7.33 13 6.5 13zm3-3C8.67 10 8 9.33 8 8.5S8.67 7 9.5 7s1.5.67 1.5 1.5S10.33 10 9.5 10zm3 3c-.83 0-1.5-.67-1.5-1.5S11.67 10 12.5 10s1.5.67 1.5 1.5S13.33 13 12.5 13zm3-3c-.83 0-1.5-.67-1.5-1.5S14.67 7 15.5 7s1.5.67 1.5 1.5S16.33 10 15.5 10z"/></svg>
+            <div>
+              <h2>Primary Color</h2>
+              <p class="card-subtitle">Used for the profile bar and accent elements</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="color-section">
+            <div class="color-presets">
+              @for (color of colorPresets; track color) {
+                <button class="color-swatch"
+                        [class.is-active]="settings.primaryColor === color"
+                        [style.background]="color"
+                        (click)="settings.primaryColor = color"
+                        [title]="color">
+                  @if (settings.primaryColor === color) {
+                    <svg viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  }
+                </button>
+              }
+            </div>
+            <div class="color-custom">
+              <label class="color-custom__label">Custom</label>
+              <div class="color-custom__input">
+                <input type="color" [(ngModel)]="settings.primaryColor" class="color-picker" />
+                <input type="text" [(ngModel)]="settings.primaryColor" class="color-hex" maxlength="7" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tile display settings placeholder -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header__left">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon"><path d="M3 5h18v2H3zM3 11h18v2H3zM3 17h18v2H3z"/></svg>
+            <div>
+              <h2>Tile display settings</h2>
+              <p class="card-subtitle">Choose the content and order you would like displayed on the homepage.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-body tile-settings">
+          <div class="tile-list">
+            <div *ngFor="let tile of tiles; let i = index" class="tile-row">
+              <div class="tile-order">{{ i + 1 }}</div>
+              <select [(ngModel)]="tiles[i]" class="tile-select">
+                <option *ngFor="let opt of availableTiles" [value]="opt">{{ opt }}</option>
+                <option [value]="tiles[i]">{{ tiles[i] }}</option>
+              </select>
+              <div class="tile-actions">
+                <button class="icon-btn" (click)="moveUp(i)" [disabled]="i===0" title="Move up">▲</button>
+                <button class="icon-btn" (click)="moveDown(i)" [disabled]="i===tiles.length-1" title="Move down">▼</button>
+                <button class="icon-btn icon-btn--danger" (click)="removeTile(i)" title="Remove">✕</button>
+              </div>
+            </div>
+
+            <button class="add-tile" type="button" (click)="addTile()">+ ADD TILE</button>
+          </div>
+
+          <div class="tile-preview">
+            <h3>Order of tiles in desktop</h3>
+            <div class="preview-grid">
+              <div class="preview-col"></div>
+              <div class="preview-main">
+                <div class="preview-row">
+                  <div class="preview-box">1</div>
+                  <div class="preview-box">2</div>
+                </div>
+                <div class="preview-row">
+                  <div class="preview-box">3</div>
+                  <div class="preview-box">4</div>
+                </div>
+                <div class="preview-row">
+                  <div class="preview-box">5</div>
+                  <div class="preview-box">6</div>
+                </div>
+              </div>
+            </div>
+
+            <h3>Order of tiles in mobile</h3>
+            <div class="preview-stack">
+              <div class="preview-stack-item">1</div>
+              <div class="preview-stack-item">2</div>
+              <div class="preview-stack-item">3</div>
+              <div class="preview-stack-item">4</div>
+              <div class="preview-stack-item">5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-sidebar">
+      <div class="card card--preview">
+        <div class="card-header">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon"><path d="M12 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm8-4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H4V4h16v12z"/></svg>
+          <h2>Preview</h2>
+        </div>
+        <div class="card-body">
+          <div class="preview-card">
+            <div class="preview-banner" [class.preview-banner--hidden]="!settings.displayBanner">
+              @if (previewUrl) {
+                <img [src]="bannerImageSrc()" alt="" />
+              } @else {
+                <div class="preview-banner__placeholder">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                  <span>No banner set</span>
+                </div>
+              }
+            </div>
+            <div class="preview-bar" [style.background]="settings.primaryColor">
+              <div class="preview-bar__avatar"></div>
+              <div class="preview-bar__lines">
+                <div class="preview-bar__line preview-bar__line--name"></div>
+                <div class="preview-bar__line preview-bar__line--role"></div>
+              </div>
+            </div>
+            <div class="preview-body">
+              <div class="preview-body__line"></div>
+              <div class="preview-body__line preview-body__line--short"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-save" (click)="save()" [disabled]="saving">
+        @if (saving) {
+          <span class="btn-save__spinner"></span>
+          Saving&hellip;
+        } @else {
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          Save Settings
+        }
+      </button>
+
+      @if (saveMessage) {
+        <div class="toast" [class.toast--success]="!saveError" [class.toast--error]="saveError" (click)="saveMessage = ''">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+            @if (!saveError) {
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            } @else {
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            }
+          </svg>
+          <span>{{ saveMessage }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,13 +1,16 @@
 <div class="home-container space-y-6">
   <!-- ===== WELCOME HEADER ===== -->
   <section
-    class="relative overflow-hidden rounded-2xl border-4 border-white bg-gradient-to-r from-red-300 via-red-50 to-red-400 p-4 shadow-[0_1px_2px_rgba(16,24,40,.04),0_8px_24px_rgba(225,29,42,.05)]">
+    class="relative overflow-hidden rounded-2xl border-4 border-white p-4 shadow-[0_1px_2px_rgba(16,24,40,.04),0_8px_24px_rgba(225,29,42,.05)]"
+    [style.background]="'linear-gradient(to right, ' + settings.primaryColor + '40, ' + settings.primaryColor + '10, ' + settings.primaryColor + '30)'">
     <!-- soft brand accents -->
     <div
-      class="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-gradient-to-br from-rose-100 via-rose-50 to-transparent blur-2xl">
+      class="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full blur-2xl"
+      [style.background]="'linear-gradient(to bottom right, ' + settings.primaryColor + '30, ' + settings.primaryColor + '10, transparent)'">
     </div>
     <div
-      class="pointer-events-none absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#e60028] via-rose-400 to-transparent opacity-70">
+      class="pointer-events-none absolute left-0 top-0 h-1 w-full opacity-70"
+      [style.background]="'linear-gradient(to right, ' + settings.primaryColor + ', ' + settings.primaryColor + '80, transparent)'">
     </div>
 
     <div class="relative flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
@@ -42,8 +45,10 @@
 
         <div class="flex flex-col gap-1">
           <span
-            class="inline-flex w-max items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-0.5 text-[11px] font-semibold text-[#e60028]">
-            <span class="h-1.5 w-1.5 rounded-full bg-[#e60028]"></span> Profile {{ completionPercentage }}% complete
+            class="inline-flex w-max items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
+            [style.background]="settings.primaryColor + '18'"
+            [style.color]="settings.primaryColor">
+            <span class="h-1.5 w-1.5 rounded-full" [style.background]="settings.primaryColor"></span> Profile {{ completionPercentage }}% complete
           </span>
           <h2 class="text-xl font-bold text-slate-900">Good afternoon, {{ user?.firstName || 'User' }}</h2>
           <p class="text-[12.5px] text-slate-900">Here's what's happening in your community today.</p>
@@ -55,9 +60,13 @@
 
         <!-- Update Profile -->
         <div
-          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 hover:border-red-500 cursor-pointer">
+          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 cursor-pointer"
+          [style.borderColor]="'transparent'"
+          (mouseenter)="0"
+          (mouseleave)="0">
           <div class="flex items-start gap-3">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500 text-white">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white"
+              [style.background]="settings.primaryColor">
               <svg class="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -66,7 +75,8 @@
             <p class="text-[12.5px] leading-snug text-slate-600">Complete your missing profile information</p>
           </div>
           <a (click)="navigateToProfile()"
-            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-[#e60028] transition-all group-hover:gap-1.5 cursor-pointer">
+            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide transition-all group-hover:gap-1.5 cursor-pointer"
+            [style.color]="settings.primaryColor">
             Update profile
             <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -76,9 +86,11 @@
 
         <!-- Badges -->
         <div
-          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 hover:border-red-500 cursor-pointer">
+          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 cursor-pointer"
+          [style.borderColor]="'transparent'">
           <div class="flex items-start gap-3">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500 text-white">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white"
+              [style.background]="settings.primaryColor">
               <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 <path fill="#fffbeb" d="M12 16l-3.5 2 1-4.2-3-2.8 4.2-.3L12 7l1.3 3.7 4.2.3-3 2.8 1 4.2z" />
@@ -88,7 +100,8 @@
                 user?.badges?.length || 0 }}</span> badges achieved!</p>
           </div>
           <a (click)="openBadgeModal()"
-            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-[#e60028] transition-all group-hover:gap-1.5 cursor-pointer">
+            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide transition-all group-hover:gap-1.5 cursor-pointer"
+            [style.color]="settings.primaryColor">
             See all
             <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -98,9 +111,11 @@
 
         <!-- Share -->
         <div
-          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 hover:border-red-500 cursor-pointer">
+          class="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 cursor-pointer"
+          [style.borderColor]="'transparent'">
           <div class="flex items-start gap-3">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500 text-white">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white"
+              [style.background]="settings.primaryColor">
               <svg class="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -109,7 +124,8 @@
             <p class="text-[12.5px] leading-snug text-slate-600">Share something with your community</p>
           </div>
           <a href="#"
-            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-[#e60028] transition-all group-hover:gap-1.5">
+            class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide transition-all group-hover:gap-1.5"
+            [style.color]="settings.primaryColor">
             Start sharing
             <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />

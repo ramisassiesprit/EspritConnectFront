@@ -82,3 +82,111 @@ body {
     margin: 0 !important;
   }
 }
+
+/* === Theme color overrides for red utility classes === */
+/* Text colors */
+.text-red-400, .text-red-500, .text-red-600, .text-red-700 {
+  color: var(--esprit-red, #dc3545) !important;
+}
+.hover\:text-red-500:hover, .hover\:text-red-600:hover, .hover\:text-red-700:hover {
+  color: var(--esprit-red, #dc3545) !important;
+}
+.text-\[\#ED1C24\], .text-\[\#e50043\], .text-\[\#e60028\], .text-\[\#cc0000\] {
+  color: var(--esprit-red, #dc3545) !important;
+}
+.hover\:text-\[\#ED1C24\]:hover, .hover\:text-\[\#e50043\]:hover, .hover\:text-\[\#e60028\]:hover {
+  color: var(--esprit-red, #dc3545) !important;
+}
+.group:hover .group-hover\:text-\[\#ED1C24\],
+.group:hover .group-hover\:text-\[\#e50043\],
+.group:hover .group-hover\:text-\[\#e60028\] {
+  color: var(--esprit-red, #dc3545) !important;
+}
+
+/* Background colors */
+.bg-red-400, .bg-red-500, .bg-red-600, .bg-red-700 {
+  background-color: var(--esprit-red, #dc3545) !important;
+}
+.hover\:bg-red-600:hover, .hover\:bg-red-700:hover {
+  background-color: var(--esprit-red, #dc3545) !important;
+}
+.bg-\[\#ED1C24\], .bg-\[\#e50043\], .bg-\[\#e60028\] {
+  background-color: var(--esprit-red, #dc3545) !important;
+}
+.hover\:bg-\[\#D31920\]:hover, .hover\:bg-\[\#C8161D\]:hover,
+.hover\:bg-\[\#d9262b\]:hover {
+  background-color: var(--esprit-red, #dc3545) !important;
+}
+.disabled\:bg-red-300:disabled {
+  background-color: var(--esprit-red, #dc3545) !important;
+}
+
+/* Border colors */
+.border-red-400, .border-red-500, .border-red-600 {
+  border-color: var(--esprit-red, #dc3545) !important;
+}
+.hover\:border-red-400:hover, .hover\:border-red-500:hover {
+  border-color: var(--esprit-red, #dc3545) !important;
+}
+.focus\:border-red-400:focus, .focus\:border-red-500:focus {
+  border-color: var(--esprit-red, #dc3545) !important;
+}
+.border-\[\#ED1C24\], .border-\[\#e50043\], .border-\[\#e60028\] {
+  border-color: var(--esprit-red, #dc3545) !important;
+}
+.hover\:border-\[\#ED1C24\]:hover {
+  border-color: var(--esprit-red, #dc3545) !important;
+}
+.border-l-\[\#ED1C24\] {
+  border-left-color: var(--esprit-red, #dc3545) !important;
+}
+
+/* Ring colors */
+.ring-red-400, .ring-red-500,
+.focus\:ring-red-400:focus, .focus\:ring-red-500:focus {
+  --tw-ring-color: var(--esprit-red, #dc3545) !important;
+}
+.focus\:ring-\[\#ED1C24\]:focus,
+.focus\:ring-\[\#e50043\]:focus {
+  --tw-ring-color: var(--esprit-red, #dc3545) !important;
+}
+.ring-\[\#ED1C24\] {
+  --tw-ring-color: var(--esprit-red, #dc3545) !important;
+}
+
+/* Outline colors */
+.outline-red-400, .outline-red-500,
+.focus\:outline-red-400:focus, .focus\:outline-red-500:focus {
+  outline-color: var(--esprit-red, #dc3545) !important;
+}
+
+/* Gradient colors */
+.from-red-300, .from-red-400, .from-red-500, .from-red-600,
+.from-\[\#ED1C24\] {
+  --tw-gradient-from: var(--esprit-red, #dc3545) !important;
+}
+.to-red-300, .to-red-400, .to-red-500, .to-red-600 {
+  --tw-gradient-to: var(--esprit-red, #dc3545) !important;
+}
+.from-red-50 {
+  --tw-gradient-from: color-mix(in srgb, var(--esprit-red, #dc3545) 15%, white) !important;
+}
+.via-red-50, .via-red-500 {
+  --tw-gradient-via: var(--esprit-red, #dc3545) !important;
+}
+
+/* Shadow colors */
+.shadow-red-200 {
+  --tw-shadow-color: var(--esprit-red, #dc3545) !important;
+}
+
+/* Spinner / loader border */
+.border-t-\[\#ED1C24\], .border-b-\[\#ED1C24\] {
+  border-top-color: var(--esprit-red, #dc3545) !important;
+  border-bottom-color: var(--esprit-red, #dc3545) !important;
+}
+
+/* Active tab indicator border-bottom */
+.border-b-\[\#ED1C24\] {
+  border-bottom-color: var(--esprit-red, #dc3545) !important;
+}
