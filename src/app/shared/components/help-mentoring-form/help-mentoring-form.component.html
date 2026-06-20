@@ -7,10 +7,12 @@
           <span>Offer Help</span>
         </div>
         <div class="checkbox-group">
-          <label *ngFor="let opt of helpOptions" class="checkbox-item">
-            <input type="checkbox" [(ngModel)]="helpSelections.offerHelp[opt]">
-            {{ opt }}
-          </label>
+          @for (opt of offerHelpOptions; track opt) {
+            <label class="checkbox-item">
+              <input type="checkbox" [(ngModel)]="helpSelections.offerHelp[opt]">
+              {{ opt }}
+            </label>
+          }
         </div>
       </div>
     }
@@ -21,10 +23,12 @@
           <span>Seek Help</span>
         </div>
         <div class="checkbox-group">
-          <label *ngFor="let opt of helpOptions" class="checkbox-item">
-            <input type="checkbox" [(ngModel)]="helpSelections.seekHelp[opt]">
-            {{ opt }}
-          </label>
+          @for (opt of seekHelpOptions; track opt) {
+            <label class="checkbox-item">
+              <input type="checkbox" [(ngModel)]="helpSelections.seekHelp[opt]">
+              {{ opt }}
+            </label>
+          }
         </div>
       </div>
     }
@@ -42,10 +46,12 @@
           <span>Offer Mentoring</span>
         </div>
         <div class="checkbox-group">
-          <label *ngFor="let opt of mentoringOptions" class="checkbox-item">
-            <input type="checkbox" [(ngModel)]="helpSelections.offerMentoring[opt]">
-            {{ opt }}
-          </label>
+          @for (opt of offerMentoringOptions; track opt) {
+            <label class="checkbox-item">
+              <input type="checkbox" [(ngModel)]="helpSelections.offerMentoring[opt]">
+              {{ opt }}
+            </label>
+          }
         </div>
       </div>
     }
@@ -56,10 +62,12 @@
           <span>Seek Mentoring</span>
         </div>
         <div class="checkbox-group">
-          <label *ngFor="let opt of mentoringOptions" class="checkbox-item">
-            <input type="checkbox" [(ngModel)]="helpSelections.seekMentoring[opt]">
-            {{ opt }}
-          </label>
+          @for (opt of seekMentoringOptions; track opt) {
+            <label class="checkbox-item">
+              <input type="checkbox" [(ngModel)]="helpSelections.seekMentoring[opt]">
+              {{ opt }}
+            </label>
+          }
         </div>
       </div>
     }

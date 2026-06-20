@@ -8,6 +8,10 @@ export interface MentoringPreferences {
   showSeekHelp: boolean;
   showOfferMentoring: boolean;
   showSeekMentoring: boolean;
+  offerHelpOptions?: string[];
+  seekHelpOptions?: string[];
+  offerMentorOptions?: string[];
+  seekMentorOptions?: string[];
 }
 
 @Injectable({ providedIn: 'root' })

@@ -126,12 +126,12 @@ export class HomepageSettingsComponent {
     }
   }
 
-  onDragOver(event: DragEvent) {
+  onDragOverUpload(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
   }
 
-  onDrop(event: DragEvent) {
+  onDropUpload(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
     const file = event.dataTransfer?.files[0];

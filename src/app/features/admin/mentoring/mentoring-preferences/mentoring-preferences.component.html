@@ -2,7 +2,7 @@
   <div class="page-header">
     <div class="page-header__text">
       <h1>Mentoring Preferences</h1>
-      <p>Control which mentoring & help sections are visible to users when they edit their preferences</p>
+      <p>Control which sections and individual options are visible to users when they edit their preferences</p>
     </div>
   </div>
 
@@ -15,23 +15,38 @@
               <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
             </svg>
             <div>
-              <h2>Visible Sections</h2>
-              <p class="card-subtitle">Toggle each section to show or hide it in the user mentoring settings form</p>
+              <h2>Sections &amp; Options</h2>
+              <p class="card-subtitle">Toggle entire sections on/off and select which individual options appear</p>
             </div>
           </div>
         </div>
         <div class="card-body">
           <div class="sections-list">
-            @for (section of sections; track section.key) {
-              <div class="section-row">
-                <div class="section-row__info">
-                  <span class="section-row__label">{{ section.label }}</span>
-                  <span class="section-row__desc">{{ section.description }}</span>
+            @for (section of sections; track section.toggleKey) {
+              <div class="section-block" [class.section-block--disabled]="!prefs[section.toggleKey]">
+                <div class="section-block__header">
+                  <div class="section-block__info">
+                    <span class="section-block__label">{{ section.label }}</span>
+                    <span class="section-block__desc">{{ section.description }}</span>
+                  </div>
+                  <label class="toggle">
+                    <input type="checkbox" [(ngModel)]="prefs[section.toggleKey]" />
+                    <span class="toggle__slider"></span>
+                  </label>
                 </div>
-                <label class="toggle">
-                  <input type="checkbox" [(ngModel)]="prefs[section.key]" />
-                  <span class="toggle__slider"></span>
-                </label>
+                @if (prefs[section.toggleKey]) {
+                  <div class="section-block__options">
+                    @for (opt of section.allOptions; track opt) {
+                      <label class="option-checkbox" [class.option-checkbox--disabled]="!isOptionChecked(section, opt) && visibleOptions(section).length === 1">
+                        <input type="checkbox"
+                               [checked]="isOptionChecked(section, opt)"
+                               (change)="toggleOption(section, opt, $any($event.target).checked)" />
+                        <span class="option-checkbox__mark"></span>
+                        <span class="option-checkbox__label">{{ opt }}</span>
+                      </label>
+                    }
+                  </div>
+                }
               </div>
             }
           </div>
@@ -52,41 +67,17 @@
         </div>
         <div class="card-body">
           <div class="preview-form">
-            @if (prefs.showOfferHelp) {
-              <div class="preview-section">
-                <div class="preview-section__title">Offer Help</div>
-                <div class="preview-chips">
-                  <span class="preview-chip">Introduction to connections</span>
-                  <span class="preview-chip">Answer industry questions</span>
+            @for (section of sections; track section.toggleKey) {
+              @if (prefs[section.toggleKey]) {
+                <div class="preview-section">
+                  <div class="preview-section__title">{{ section.label }}</div>
+                  <div class="preview-chips">
+                    @for (opt of visibleOptions(section); track opt) {
+                      <span class="preview-chip">{{ opt }}</span>
+                    }
+                  </div>
                 </div>
-              </div>
-            }
-            @if (prefs.showSeekHelp) {
-              <div class="preview-section">
-                <div class="preview-section__title">Seek Help</div>
-                <div class="preview-chips">
-                  <span class="preview-chip">Introduction to connections</span>
-                  <span class="preview-chip">Meet for coffee</span>
-                </div>
-              </div>
-            }
-            @if (prefs.showOfferMentoring) {
-              <div class="preview-section">
-                <div class="preview-section__title">Offer Mentoring</div>
-                <div class="preview-chips">
-                  <span class="preview-chip">Mentor a student</span>
-                  <span class="preview-chip">Career advice</span>
-                </div>
-              </div>
-            }
-            @if (prefs.showSeekMentoring) {
-              <div class="preview-section">
-                <div class="preview-section__title">Seek Mentoring</div>
-                <div class="preview-chips">
-                  <span class="preview-chip">Resume review</span>
-                  <span class="preview-chip">Internship</span>
-                </div>
-              </div>
+              }
             }
             @if (!prefs.showOfferHelp && !prefs.showSeekHelp && !prefs.showOfferMentoring && !prefs.showSeekMentoring) {
               <div class="preview-empty">

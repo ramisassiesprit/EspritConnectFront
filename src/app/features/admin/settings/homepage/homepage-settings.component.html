@@ -26,8 +26,8 @@
           <div class="upload-zone"
                [class.has-image]="!!previewUrl"
                [class.is-disabled]="!settings.displayBanner"
-               (dragover)="onDragOver($event)"
-               (drop)="onDrop($event)">
+               (dragover)="onDragOverUpload($event)"
+               (drop)="onDropUpload($event)">
             <input type="file" id="bannerInput" accept="image/*" (change)="onFileSelected($event)" hidden />
 
             @if (uploading) {

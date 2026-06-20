@@ -23,14 +23,19 @@ export class HelpMentoringFormComponent implements OnInit {
   showOfferMentoring = true;
   showSeekMentoring = true;
 
-  helpOptions = [
+  offerHelpOptions: string[] = [];
+  seekHelpOptions: string[] = [];
+  offerMentoringOptions: string[] = [];
+  seekMentoringOptions: string[] = [];
+
+  readonly allHelpOptions = [
     'Introduction to connections',
     'Answer industry specific questions',
     'Open doors at workplace',
     'Meet for coffee'
   ];
 
-  mentoringOptions = [
+  readonly allMentoringOptions = [
     'Mentor a young professional',
     'Mentor a student',
     'Career advice',
@@ -53,8 +58,18 @@ export class HelpMentoringFormComponent implements OnInit {
         this.showSeekHelp = prefs.showSeekHelp;
         this.showOfferMentoring = prefs.showOfferMentoring;
         this.showSeekMentoring = prefs.showSeekMentoring;
+
+        this.offerHelpOptions = this.resolveOptions(prefs.offerHelpOptions, this.allHelpOptions);
+        this.seekHelpOptions = this.resolveOptions(prefs.seekHelpOptions, this.allHelpOptions);
+        this.offerMentoringOptions = this.resolveOptions(prefs.offerMentorOptions, this.allMentoringOptions);
+        this.seekMentoringOptions = this.resolveOptions(prefs.seekMentorOptions, this.allMentoringOptions);
       }
     });
+  }
+
+  private resolveOptions(configured: string[] | undefined | null, all: string[]): string[] {
+    if (configured === undefined || configured === null) return all;
+    return all.filter(opt => configured.includes(opt));
   }
 
   initHelpSelections(): void {
@@ -71,16 +86,16 @@ export class HelpMentoringFormComponent implements OnInit {
     const seekMentors = (help.seekMentor || '').split(',').map(s => s.trim());
 
     this.helpSelections.offerHelp = {};
-    this.helpOptions.forEach(opt => this.helpSelections.offerHelp[opt] = offerHelps.includes(opt));
+    this.allHelpOptions.forEach(opt => this.helpSelections.offerHelp[opt] = offerHelps.includes(opt));
     
     this.helpSelections.seekHelp = {};
-    this.helpOptions.forEach(opt => this.helpSelections.seekHelp[opt] = seekHelps.includes(opt));
+    this.allHelpOptions.forEach(opt => this.helpSelections.seekHelp[opt] = seekHelps.includes(opt));
 
     this.helpSelections.offerMentoring = {};
-    this.mentoringOptions.forEach(opt => this.helpSelections.offerMentoring[opt] = offerMentors.includes(opt));
+    this.allMentoringOptions.forEach(opt => this.helpSelections.offerMentoring[opt] = offerMentors.includes(opt));
 
     this.helpSelections.seekMentoring = {};
-    this.mentoringOptions.forEach(opt => this.helpSelections.seekMentoring[opt] = seekMentors.includes(opt));
+    this.allMentoringOptions.forEach(opt => this.helpSelections.seekMentoring[opt] = seekMentors.includes(opt));
   }
 
   onSave(): void {
