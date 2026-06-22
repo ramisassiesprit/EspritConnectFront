@@ -90,6 +90,22 @@
               </div>
             </div>
           </div>
+
+          <div class="esprit-section" *ngIf="hasEvents()">
+            <h3 [style.color]="primaryColor"><i class="bi bi-calendar-event-fill"></i> Événements</h3>
+            <div class="esprit-timeline">
+              <div class="esprit-item" *ngFor="let evt of events">
+                <div class="esprit-item-marker" [style.border-color]="primaryColor"></div>
+                <div class="esprit-item-content">
+                  <div class="esprit-item-header">
+                    <h4>{{ evt.title }}</h4>
+                    <span class="esprit-date" [style.color]="primaryColor">{{ formatDate(evt.startAt) }}</span>
+                  </div>
+                  <p class="esprit-company">{{ evt.eventType === 'ONLINE' ? 'En ligne' : (evt.location || 'Sur place') }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </ng-container>
@@ -139,6 +155,16 @@
             <div class="ats-item-header">
               <span class="ats-item-title"><strong>{{ edu.degree }}</strong>, {{ edu.institutionName }}</span>
               <span class="ats-item-date">{{ edu.graduationYear }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ats-section" *ngIf="hasEvents()">
+          <h2 class="ats-section-title" [style.border-bottom-color]="primaryColor">EVENTS & PARTICIPATIONS</h2>
+          <div class="ats-item" *ngFor="let evt of events">
+            <div class="ats-item-header">
+              <span class="ats-item-title"><strong>{{ evt.title }}</strong>, {{ evt.eventType === 'ONLINE' ? 'Online' : (evt.location || 'On-site') }}</span>
+              <span class="ats-item-date">{{ formatDate(evt.startAt) }}</span>
             </div>
           </div>
         </div>
@@ -222,6 +248,17 @@
                 <h4>{{ edu.degree }}</h4>
                 <span class="dark-company">{{ edu.institutionName }}</span>
                 <span class="dark-date">{{ edu.graduationYear }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dark-content-section" *ngIf="hasEvents()">
+            <h2 class="dark-section-title" [style.color]="primaryColor">EVENTS</h2>
+            <div class="dark-item" *ngFor="let evt of events">
+              <div class="dark-item-header">
+                <h4>{{ evt.title }}</h4>
+                <span class="dark-company">{{ evt.eventType === 'ONLINE' ? 'Online' : (evt.location || 'On-site') }}</span>
+                <span class="dark-date">{{ formatDate(evt.startAt) }}</span>
               </div>
             </div>
           </div>

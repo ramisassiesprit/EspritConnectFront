@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { User, EspritProfile, WorkExperience, OtherEducation, Skill } from '../../../core/models/user.model';
+import { Event } from '../../../core/models/event.model';
 
 @Component({
   selector: 'app-cv-template',
@@ -17,6 +18,7 @@ export class CvTemplateComponent {
   @Input() experiences: WorkExperience[] = [];
   @Input() educations: OtherEducation[] = [];
   @Input() skills: Skill[] = [];
+  @Input() events: Event[] = [];
 
   @Input() templateType: 'esprit' | 'ats' | 'dark' = 'esprit';
   @Input() primaryColor: string = '#ED1C24'; // Default Esprit Red
@@ -88,5 +90,9 @@ export class CvTemplateComponent {
 
   hasSkills(): boolean {
     return this.skills && this.skills.length > 0;
+  }
+
+  hasEvents(): boolean {
+    return this.events && this.events.length > 0;
   }
 }

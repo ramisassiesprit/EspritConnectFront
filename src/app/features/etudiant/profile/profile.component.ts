@@ -7,6 +7,8 @@ import { UserService } from '../../../core/services/User.service';
 import { EspritProfile, WorkExperience, OtherEducation, Skill, WillingToHelp } from '../../../core/models/profile.model';
 import { User, UserStatus } from '../../../core/models/user.model';
 import { UserRole } from '../../../core/models/user-role.enum';
+import { Event } from '../../../core/models/event.model';
+import { EventService } from '../../../core/services/event.service';
 import { HelpMentoringFormComponent } from '../../../shared/components/help-mentoring-form/help-mentoring-form.component';
 import { CvTemplateComponent } from '../cv-template/cv-template.component';
 
@@ -20,6 +22,7 @@ import { CvTemplateComponent } from '../cv-template/cv-template.component';
 export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);
   private userService = inject(UserService);
+  private eventService = inject(EventService);
 
   user: User = {
     id: '',
@@ -49,6 +52,7 @@ export class ProfileComponent implements OnInit {
     offerMentor: '',
     seekMentor: ''
   }];
+  events: Event[] = [];
   isEditingHelp: boolean = false;
 
   newExperience: WorkExperience = this.resetExperience();
@@ -176,6 +180,15 @@ export class ProfileComponent implements OnInit {
     this.profileService.getMySkills().subscribe(skills => this.skills = skills);
     this.profileService.getMyHelps().subscribe(helps => {
       this.helps = helps && helps.length > 0 ? helps : [this.resetHelp()];
+    });
+    this.userService.getCurrentUser().subscribe(u => {
+      if (u && u.id) {
+        this.eventService.getUserEvents(u.id).subscribe(events => {
+          // Filtrer seulement les événements où le statut n'est pas annulé/brouillon,
+          // ou simplement prendre tous les événements retournés
+          this.events = events || [];
+        });
+      }
     });
   }
 
