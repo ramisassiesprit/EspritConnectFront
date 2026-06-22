@@ -10,6 +10,7 @@ import { BadgeModalComponent } from './badge-modal/badge-modal.component';
 import { UserService } from '../../../core/services/User.service';
 import { BadgeService } from '../../../core/services/badge.service';
 import { User, Badge } from '../../../core/models/user.model';
+import { HomepageSettingsService, HomepageSettings } from '../../../core/services/homepage-settings.service';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +31,7 @@ export class HomeComponent implements OnInit {
   private userService = inject(UserService);
   private badgeService = inject(BadgeService);
   private router = inject(Router);
+  private settingsService = inject(HomepageSettingsService);
 
   user: User | null = null;
   completionPercentage: number = 0;
@@ -37,8 +39,26 @@ export class HomeComponent implements OnInit {
   isBadgeModalOpen: boolean = false;
   userBadges: Badge[] = [];
 
+  settings: HomepageSettings = { displayBanner: true, primaryColor: '#ed1c24', bannerImageUrl: '', webTiles: [], mobileTiles: [] };
+  webTiles: string[] = [];
+
   ngOnInit(): void {
     this.loadUserData();
+    this.settingsService.settings$.subscribe(s => {
+      this.settings = s;
+      this.webTiles = s.webTiles ?? [];
+    });
+  }
+
+  hasTile(id: string): boolean {
+    const map: Record<string, string> = {
+      community: 'Catch up + Who\'s online',
+      feed: 'Recent feed posts',
+      jobs: 'Jobs (Only)',
+      social: 'Social media widget',
+      resources: 'Resources',
+    };
+    return this.webTiles.includes(map[id] ?? id);
   }
 
   private loadUserData(): void {

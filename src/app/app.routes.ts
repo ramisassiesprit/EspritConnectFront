@@ -504,11 +504,27 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'mentoring',
+        loadComponent: () =>
+          import('./features/admin/mentoring/mentoring-preferences/mentoring-preferences.component').then(
+            (m) => m.MentoringPreferencesComponent,
+          ),
+      },
+      {
         path: 'events',
         loadComponent: () =>
           import('./features/admin/events/admin-events.component').then(
             (m) => m.AdminEventsComponent,
           ),
+      },
+      {
+        path: 'settings',
+        redirectTo: 'settings/homepage',
+        pathMatch: 'full',
+      },
+      {
+        path: 'settings/homepage',
+        loadComponent: () => import('./features/admin/settings/homepage/homepage-settings.component').then(m => m.HomepageSettingsComponent),
       },
     ],
   },
