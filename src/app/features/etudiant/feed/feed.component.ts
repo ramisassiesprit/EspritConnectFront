@@ -13,6 +13,7 @@ import { JobOffer } from '../../../core/models/job.model';
 import { JobService } from '../../../core/services/job.service';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { DEFAULT_JOBS_SETTINGS, JobsSettings, JobsSettingsService } from '../../../core/services/jobs-settings.service';
 
 interface FeedPost {
   author: string;
@@ -68,6 +69,7 @@ export class FeedComponent implements OnInit, OnDestroy {
   private reactionService = inject(ReactionService);
   private commentService = inject(CommentService);
   private jobService = inject(JobService);
+  private jobsSettingsService = inject(JobsSettingsService);
 
   currentUser = this.authService.currentUser;
 
@@ -112,6 +114,7 @@ export class FeedComponent implements OnInit, OnDestroy {
   posts: PostDTO[] = [];
   allPosts: PostDTO[] = [];
   recentJobs: JobOffer[] = [];
+  jobsSettings: JobsSettings = DEFAULT_JOBS_SETTINGS;
 
   recentMembers: User[] = [];
   totalUsersCount = 0;
@@ -123,9 +126,16 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     window.addEventListener('click', this._windowClick);
+    this.jobsSettingsService.settings$.subscribe((settings) => {
+      this.jobsSettings = settings;
+      if (!settings.displayJobWidgetOnFeedPage) {
+        this.recentJobs = [];
+      } else {
+        this.loadRecentJobs();
+      }
+    });
     this.loadFeedPosts();
     this.loadOnlineUsers();
-    this.loadRecentJobs();
     this.loadRecentMembers();
 
     // Refresh every 30 seconds
@@ -155,6 +165,10 @@ export class FeedComponent implements OnInit, OnDestroy {
   }
 
   loadRecentJobs() {
+    if (!this.jobsSettings.displayJobWidgetOnFeedPage) {
+      this.recentJobs = [];
+      return;
+    }
     this.jobService.getAllJobs().subscribe({
       next: (offers) => {
         this.recentJobs = offers

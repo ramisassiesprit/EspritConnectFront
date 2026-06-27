@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { JobOffer } from '../../../../core/models/job.model';
+import { DEFAULT_JOBS_SETTINGS, JobsSettings, JobsSettingsService } from '../../../../core/services/jobs-settings.service';
 import { JobService } from '../../../../core/services/job.service';
 import { environment } from '../../../../../environments/environment';
 
@@ -13,14 +14,24 @@ import { environment } from '../../../../../environments/environment';
 })
 export class JobsBoardComponent implements OnInit {
   private readonly jobService = inject(JobService);
+  private readonly jobsSettingsService = inject(JobsSettingsService);
   private readonly router = inject(Router);
 
   jobs: JobOffer[] = [];
+  jobsSettings: JobsSettings = DEFAULT_JOBS_SETTINGS;
   loading = false;
   error = '';
 
   ngOnInit(): void {
-    this.loadJobs();
+    this.jobsSettingsService.settings$.subscribe((settings) => {
+      this.jobsSettings = settings;
+      if (!settings.displayJobWidgetOnFeedPage) {
+        this.jobs = [];
+        this.loading = false;
+        return;
+      }
+      this.loadJobs();
+    });
   }
 
   openJob(id?: string): void {
@@ -46,6 +57,9 @@ export class JobsBoardComponent implements OnInit {
   }
 
   private loadJobs(): void {
+    if (!this.jobsSettings.displayJobWidgetOnFeedPage) {
+      return;
+    }
     this.loading = true;
     this.error = '';
     this.jobService.getAllJobs().subscribe({

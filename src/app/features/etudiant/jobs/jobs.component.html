@@ -25,7 +25,7 @@
         <i class="bi bi-search search-icon"></i>
         <input type="text" 
                [(ngModel)]="search" 
-               (input)="toggleRecommendedOnly"
+               (input)="showRecommendedOnly = false"
                placeholder="Search jobs..." 
                class="search-input">
       </div>
@@ -88,6 +88,25 @@
   <!-- Sidebar Filters Panel -->
   <aside class="filters-card sticky top-6 space-y-6">
     <h2>Filter options</h2>
+
+    <div class="external-jobs-widget" *ngIf="showExternalJobsWidget">
+      <img
+        *ngIf="externalJobsWidget.bannerImageUrl"
+        [src]="resolveSettingsImageUrl(externalJobsWidget.bannerImageUrl)"
+        alt="External jobs"
+      />
+      <div class="external-jobs-widget__body">
+        <h3 *ngIf="externalJobsWidget.title">{{ externalJobsWidget.title }}</h3>
+        <p *ngIf="externalJobsWidget.description">{{ externalJobsWidget.description }}</p>
+        <button
+          type="button"
+          *ngIf="externalJobsWidget.linkUrl"
+          (click)="openExternalJobsWidget()"
+        >
+          {{ externalJobsWidget.buttonText || 'View jobs' }}
+        </button>
+      </div>
+    </div>
 
     <div>
       <label class="input-label mb-1">Company</label>

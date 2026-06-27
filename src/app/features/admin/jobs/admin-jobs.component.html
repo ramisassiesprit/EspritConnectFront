@@ -10,7 +10,142 @@
   <p class="alert alert--ok" *ngIf="message">{{ message }}</p>
   <p class="alert alert--error" *ngIf="error">{{ error }}</p>
 
-  <section class="panel panel--overview" *ngIf="!isCreateMode">
+  <section class="jobs-config" *ngIf="isAdminMode && !isCreateMode">
+    <nav class="jobs-admin-tabs" aria-label="Jobs admin sections">
+      <button type="button" [class.active]="adminJobsTab === 'settings'" (click)="setAdminJobsTab('settings')">Settings</button>
+      <button type="button" [class.active]="adminJobsTab === 'import'" (click)="setAdminJobsTab('import')">Import Jobs</button>
+      <button type="button" [class.active]="adminJobsTab === 'manage'" (click)="setAdminJobsTab('manage')">Manage Jobs</button>
+    </nav>
+
+    <section class="panel jobs-settings-panel" *ngIf="adminJobsTab === 'settings'">
+      <h2>Settings</h2>
+
+      <div class="settings-block">
+        <h3>Employment types</h3>
+        <div class="employment-list">
+          <div class="employment-row" *ngFor="let type of jobsSettings.employmentTypes; let i = index">
+            <span>{{ type }}</span>
+            <button type="button" class="text-button" (click)="removeEmploymentType(i)">Remove</button>
+          </div>
+        </div>
+        <div class="inline-add">
+          <input type="text" [(ngModel)]="newEmploymentType" placeholder="Add employment type" (keyup.enter)="addEmploymentType()" />
+          <button type="button" class="text-button text-button--primary" (click)="addEmploymentType()">ADD</button>
+        </div>
+      </div>
+
+      <div class="settings-switches">
+        <label class="switch-row">
+          <span>Display job widget on the feed page</span>
+          <input type="checkbox" [(ngModel)]="jobsSettings.displayJobWidgetOnFeedPage" />
+          <span class="switch-slider"></span>
+        </label>
+        <label class="switch-row">
+          <span>Display external job listing widget on the jobs page</span>
+          <input type="checkbox" [(ngModel)]="jobsSettings.displayExternalJobListingWidgetOnJobsPage" />
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+
+      <div class="external-widget-form">
+        <h3>External jobs listing widget</h3>
+
+        <label class="banner-upload">
+          <span>Banner image (will resize to 328x176px)</span>
+          <input type="file" accept="image/*" (change)="onJobsBannerSelected($event)" hidden #jobsBannerInput />
+          <div class="banner-preview" (click)="jobsBannerInput.click()">
+            <img *ngIf="jobsSettings.externalJobsWidget.bannerImageUrl" [src]="jobsBannerSrc()" alt="Jobs widget banner" />
+            <span *ngIf="!jobsSettings.externalJobsWidget.bannerImageUrl">Click to upload banner</span>
+          </div>
+        </label>
+        <div class="upload-status" *ngIf="jobsSettingsUploading">Uploading... {{ jobsSettingsUploadProgress }}%</div>
+        <button type="button" class="text-button text-button--danger" *ngIf="jobsSettings.externalJobsWidget.bannerImageUrl" (click)="removeJobsBanner()">Remove image</button>
+
+        <div class="widget-fields">
+          <label>
+            Language
+            <select [(ngModel)]="jobsSettings.externalJobsWidget.language">
+              <option value="en-GB">English (UK)</option>
+              <option value="en-US">English (US)</option>
+              <option value="fr-FR">French</option>
+              <option value="ar-TN">Arabic</option>
+            </select>
+          </label>
+          <label>
+            Title
+            <input type="text" [(ngModel)]="jobsSettings.externalJobsWidget.title" />
+          </label>
+          <label>
+            Description
+            <input type="text" [(ngModel)]="jobsSettings.externalJobsWidget.description" />
+          </label>
+          <label>
+            Link URL
+            <input type="url" [(ngModel)]="jobsSettings.externalJobsWidget.linkUrl" />
+          </label>
+          <label>
+            Button Text
+            <input type="text" [(ngModel)]="jobsSettings.externalJobsWidget.buttonText" />
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-actions">
+        <button class="btn btn--primary" type="button" (click)="saveJobsSettings()" [disabled]="jobsSettingsSaving">
+          {{ jobsSettingsSaving ? 'Saving...' : 'Save' }}
+        </button>
+      </div>
+      <p class="alert alert--ok" *ngIf="jobsSettingsMessage">{{ jobsSettingsMessage }}</p>
+      <p class="alert alert--error" *ngIf="jobsSettingsError">{{ jobsSettingsError }}</p>
+    </section>
+
+    <section class="panel import-panel" *ngIf="adminJobsTab === 'import'">
+      <h2>Import Jobs</h2>
+      <nav class="import-tabs">
+        <button type="button" class="active">Automated</button>
+        <button type="button">History</button>
+      </nav>
+
+      <div class="automated-feed-card">
+        <div class="automated-feed-card__head">
+          <h3>Automated Feed - 1</h3>
+          <span>-</span>
+        </div>
+
+        <div class="provider-options">
+          <label>
+            <input type="radio" name="importFeedProvider" value="handshake" [(ngModel)]="importFeedProvider" />
+            <span class="provider-logo provider-logo--handshake">handshake</span>
+          </label>
+          <label>
+            <input type="radio" name="importFeedProvider" value="symplicity" [(ngModel)]="importFeedProvider" />
+            <span class="provider-logo provider-logo--symplicity">symplicity</span>
+          </label>
+          <label>
+            <input type="radio" name="importFeedProvider" value="custom" [(ngModel)]="importFeedProvider" />
+            <span class="provider-logo provider-logo--custom">Custom</span>
+          </label>
+        </div>
+
+        <div class="feed-details">
+          <h3>Feed Details</h3>
+          <p>Fields marked with * are mandatory and must be completed before saving.</p>
+          <label>
+            Feed URL*
+            <input type="url" [(ngModel)]="importFeedUrl" />
+          </label>
+        </div>
+
+        <div class="import-actions">
+          <button class="btn btn--ghost" type="button" (click)="saveImportFeed()">Save</button>
+          <button class="text-button text-button--danger" type="button">Remove</button>
+        </div>
+        <p class="import-message" *ngIf="importFeedMessage">{{ importFeedMessage }}</p>
+      </div>
+    </section>
+  </section>
+
+  <section class="panel panel--overview" *ngIf="(!isAdminMode || adminJobsTab === 'manage') && !isCreateMode">
     <h2>Jobs Analytics</h2>
     <div class="chart-grid">
       <div class="chart-card">
@@ -170,7 +305,7 @@
     </div>
   </section>
 
-  <div class="layout jobs-workspace" *ngIf="!isCreateMode">
+  <div class="layout jobs-workspace" *ngIf="(!isAdminMode || adminJobsTab === 'manage') && !isCreateMode">
     <section class="panel jobs-list-panel">
       <div class="panel__top">
         <h2>{{ isAdminMode ? 'All Jobs' : 'My Jobs' }}</h2>
