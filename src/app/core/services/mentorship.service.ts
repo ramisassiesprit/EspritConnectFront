@@ -16,6 +16,58 @@ export interface MentoringRequest {
   updatedAt?: string;
 }
 
+export interface TopMentor {
+  firstName: string;
+  lastName: string;
+  completedSessions: number;
+  acceptedRequests: number;
+  totalReceived: number;
+  acceptanceRate: number;
+  avgRating: number | null;
+}
+
+export interface SessionFeedback {
+  mentorName: string;
+  menteeName: string;
+  rating: number | null;
+  feedback: string;
+  sessionDate: string;
+}
+
+export interface MentoringStats {
+  totalUsers: number;
+  totalMentors: number;
+  usersOfferingHelp: number;
+  usersSeekingHelp: number;
+  usersOfferingMentoring: number;
+  usersSeekingMentoring: number;
+  offerHelpPercentage: number;
+  seekHelpPercentage: number;
+  offerMentoringPercentage: number;
+  seekMentoringPercentage: number;
+  offerHelpByOption: Record<string, number>;
+  seekHelpByOption: Record<string, number>;
+  offerMentoringByOption: Record<string, number>;
+  seekMentoringByOption: Record<string, number>;
+  totalRequests: number;
+  pendingRequests: number;
+  acceptedRequests: number;
+  rejectedRequests: number;
+  completedRequests: number;
+  cancelledRequests: number;
+  requestsByStatus: Record<string, number>;
+  requestsByMonth: Record<string, number>;
+  requestsByFieldOfStudy: Record<string, number>;
+  totalSessions: number;
+  averageSessionRating: number | null;
+  topMentors: TopMentor[];
+  ratingDistribution: Record<string, number>;
+  recentFeedback: SessionFeedback[];
+  requestsByGraduationYear: Record<string, number>;
+  requestsByIndustry: Record<string, number>;
+  supplyVsDemandByOption: Record<string, [number, number]>;
+}
+
 export interface MentorMatch {
   user: User;
   espritProfile?: EspritProfile;
@@ -60,5 +112,9 @@ export class MentorshipService {
     return this.http.get<MentorMatch[]>(`${this.apiUrl}/recommendations`, {
       params: { userId }
     });
+  }
+
+  getStats(): Observable<MentoringStats> {
+    return this.http.get<MentoringStats>(`${this.apiUrl}/stats`);
   }
 }
