@@ -1,1 +1,106 @@
-<p>photos works!</p>
+<div class="photos-shell p-4 md:p-6">
+  <!-- Hero Section -->
+  <section class="photos-hero animate-fadeIn">
+    <div>
+      <p class="photos-kicker">Esprit Network</p>
+      <h1>Photos</h1>
+      <p class="photos-copy">Browse photos shared across the Esprit community.</p>
+    </div>
+  </section>
+
+  <!-- Actions Row -->
+  <div class="photos-actions-row">
+    <div class="search-container">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text"
+             [ngModel]="searchQuery()"
+             (ngModelChange)="onSearch($event)"
+             placeholder="Search photos by author or caption..."
+             class="search-input">
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-bold text-gray-500">Sort:</span>
+      <select [ngModel]="sortBy" (ngModelChange)="setSort($event)" class="text-xs font-bold text-[#ED1C24] bg-transparent border-none focus:ring-0 cursor-pointer p-0">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Info Bar -->
+  <div class="info-bar">
+    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{ filteredPhotos().length }} Photo{{ filteredPhotos().length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  <!-- Gallery Grid -->
+  @if (filteredPhotos().length > 0) {
+    <div class="photos-grid">
+      @for (photo of filteredPhotos(); track trackByUrl($index, photo)) {
+        <div class="photo-card animate-fadeInUp" (click)="openLightbox(photo)">
+          <div class="photo-thumb">
+            <img [src]="photo.url" [alt]="'Photo by ' + photo.authorName" loading="lazy">
+          </div>
+          <div class="photo-meta">
+            <div class="meta-author">
+              @if (photo.authorAvatar) {
+                <img [src]="photo.authorAvatar" class="author-avatar" alt="">
+              } @else {
+                <div class="author-avatar-placeholder">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+              }
+              <span class="author-name">{{ photo.authorName }}</span>
+            </div>
+            @if (photo.postContent) {
+              <p class="photo-caption line-clamp-1">{{ photo.postContent }}</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (filteredPhotos().length === 0) {
+    <div class="empty-state animate-fadeIn">
+      <i class="bi bi-images empty-icon"></i>
+      <h3>No photos found</h3>
+      @if (searchQuery()) {
+        <p>Try adjusting your search.</p>
+      } @else {
+        <p>No photos have been shared in the feed yet.</p>
+      }
+    </div>
+  }
+
+  <!-- Lightbox -->
+  @if (activeLightbox) {
+    <div class="lightbox-overlay" (click)="closeLightbox()">
+      <div class="lightbox-content" (click)="$event.stopPropagation()">
+        <button class="lightbox-close" (click)="closeLightbox()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+        <img [src]="activeLightbox.url" alt="Photo">
+        <div class="lightbox-info">
+          <div class="lightbox-author">
+            @if (activeLightbox.authorAvatar) {
+              <img [src]="activeLightbox.authorAvatar" class="lb-avatar" alt="">
+            } @else {
+              <div class="lb-avatar-placeholder">
+                <i class="bi bi-person-fill"></i>
+              </div>
+            }
+            <div>
+              <strong>{{ activeLightbox.authorName }}</strong>
+              <span class="lb-date">{{ activeLightbox.createdAt | date:'mediumDate' }}</span>
+            </div>
+          </div>
+          @if (activeLightbox.postContent) {
+            <p class="lb-caption">{{ activeLightbox.postContent }}</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
