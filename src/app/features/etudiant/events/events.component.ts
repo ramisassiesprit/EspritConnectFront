@@ -198,13 +198,48 @@ export class EventsComponent implements OnInit {
       return;
     }
     const file = input.files[0];
+
+    // Block files over 10 MB before even trying to process
+    if (file.size > 10 * 1024 * 1024) {
+      Swal.fire('Image trop volumineuse', 'Veuillez sélectionner une image de moins de 10 MB.', 'warning');
+      input.value = '';
+      return;
+    }
+
     this.selectedCoverFile = file;
+
+    // Compress via canvas before storing as base64
     const reader = new FileReader();
-    reader.onload = () => {
-      this.coverPreview = reader.result as string;
+    reader.onload = (e: any) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 800;
+        let { width, height } = img;
+
+        if (width > MAX_WIDTH) {
+          height = Math.round((height * MAX_WIDTH) / width);
+          width = MAX_WIDTH;
+        }
+        if (height > MAX_HEIGHT) {
+          width = Math.round((width * MAX_HEIGHT) / height);
+          height = MAX_HEIGHT;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Encode as JPEG at 75% quality → typically <500 KB
+        this.coverPreview = canvas.toDataURL('image/jpeg', 0.75);
+      };
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
+
 
   submitEvent() {
     if (!this.newEvent.title || !this.newEvent.startAt) {
@@ -235,7 +270,7 @@ export class EventsComponent implements OnInit {
           Swal.fire("Votre événement a été créé et publié avec succès !");
         }
       },
-      error: (err) => Swal.fire("Erreur lors de la création de l'événement")
+      error: (err) => Swal.fire('Erreur', err.error?.message || "Erreur lors de la création de l'événement", 'error')
     });
   }
 
