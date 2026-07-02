@@ -483,6 +483,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'users/by-role',
+        loadComponent: () =>
+          import('./features/admin/Users/users-by-role/users-by-role.component').then(
+            (m) => m.UsersByRoleComponent,
+          ),
+      },
+      {
         path: 'users/list',
         loadComponent: () =>
           import('./features/admin/Users/users-list.component').then(

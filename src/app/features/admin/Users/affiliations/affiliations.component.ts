@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { UserService } from '../../../../core/services/User.service';
 import { UserRole } from '../../../../core/models/user-role.enum';
 import { forkJoin } from 'rxjs';
@@ -20,7 +21,7 @@ interface AffiliationRow {
 @Component({
   selector: 'app-admin-affiliations',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './affiliations.component.html',
   styleUrl: './affiliations.component.css'
 })

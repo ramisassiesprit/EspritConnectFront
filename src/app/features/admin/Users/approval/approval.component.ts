@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
 import { UserService } from '../../../../core/services/User.service';
 import { User, UserStatus } from '../../../../core/models/user.model';
 import { UserRole } from '../../../../core/models/user-role.enum';
@@ -60,5 +61,13 @@ export class ApprovalComponent implements OnInit {
       },
       error: (err) => console.error('Error rejecting user', err)
     });
+  }
+
+  getAvatarUrl(url?: string): string {
+    if (!url) return 'assets/default-avatar.png';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('assets/')) {
+      return url;
+    }
+    return `${environment.apiUrl.replace(/\/$/, '')}/${url.startsWith('/') ? url.substring(1) : url}`;
   }
 }

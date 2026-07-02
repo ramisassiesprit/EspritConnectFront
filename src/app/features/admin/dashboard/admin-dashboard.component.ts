@@ -281,8 +281,10 @@ export class AdminDashboardComponent implements OnInit {
 
   getAvatarUrl(url?: string): string {
     if (!url) return '';
-    if (url.startsWith('http')) return url;
-    return `${environment.apiUrl.replace(/\/$/, '')}${url}`;
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('assets/')) {
+      return url;
+    }
+    return `${environment.apiUrl.replace(/\/$/, '')}/${url.startsWith('/') ? url.substring(1) : url}`;
   }
 
   getInitials(name: string): string {

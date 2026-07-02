@@ -39,7 +39,7 @@
           <tr *ngFor="let user of users">
             <td>
               <div class="user-info">
-                <img [src]="user.avatarUrl || 'assets/default-avatar.png'" alt="Avatar" class="user-avatar">
+                <img [src]="getAvatarUrl(user.avatarUrl)" alt="Avatar" class="user-avatar">
                 <div class="user-name">
                   <a [routerLink]="['/admin/users', user.id]" class="full-name clickable-name" title="Voir les détails">
                     {{ user.firstName }} {{ user.lastName }}

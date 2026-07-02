@@ -45,6 +45,7 @@ export class AdminSidebarComponent {
       children: [
         { label: 'Approval', route: '/admin/users/approval' },
         { label: 'Affiliations', route: '/admin/users/affiliations' },
+        { label: 'By Role', route: '/admin/users/by-role' },
         { label: 'Mailing', route: '/admin/users/mailing' }
       ]
     },

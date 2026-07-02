@@ -5,6 +5,7 @@ import { User, UserStatus } from '../../../core/models/user.model';
 import { UserRole } from '../../../core/models/user-role.enum';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-users-list',
@@ -69,5 +70,13 @@ export class UsersListComponent implements OnInit {
       case UserStatus.REJECTED: return 'status-rejected';
       default: return '';
     }
+  }
+
+  getAvatarUrl(url?: string): string {
+    if (!url) return 'assets/default-avatar.png';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('assets/')) {
+      return url;
+    }
+    return `${environment.apiUrl.replace(/\/$/, '')}/${url.startsWith('/') ? url.substring(1) : url}`;
   }
 }

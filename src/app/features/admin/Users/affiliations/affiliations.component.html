@@ -3,13 +3,6 @@
     <header class="affiliations-header">
       <h1>Affiliations</h1>
       <div class="export-actions">
-        <select [(ngModel)]="exportRole" class="role-select">
-          <option value="ALL">Tous les rôles</option>
-          <option value="ETUDIANT">Étudiants</option>
-          <option value="ALUMNI">Alumni</option>
-          <option value="ENSEIGNANT">Enseignants</option>
-          <option value="ENTREPRISE">Entreprises</option>
-        </select>
         <button class="btn-export" (click)="exportUsers()" [disabled]="exportLoading">
           <span *ngIf="!exportLoading">Exporter en Excel (CSV)</span>
           <span *ngIf="exportLoading">Exportation...</span>
@@ -59,10 +52,6 @@
       </table>
     </div>
     
-    <button class="fab-btn" title="Add affiliation">
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-      </svg>
-    </button>
+    
   </div>
 </div>
