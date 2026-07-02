@@ -446,11 +446,44 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'users',
+        redirectTo: 'home',
         pathMatch: 'full',
       },
       {
+        path: 'home',
+        loadComponent: () =>
+          import('./features/admin/dashboard/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent,
+          ),
+      },
+      {
         path: 'users',
+        redirectTo: 'users/approval',
+        pathMatch: 'full',
+      },
+      {
+        path: 'users/approval',
+        loadComponent: () =>
+          import('./features/admin/Users/approval/approval.component').then(
+            (m) => m.ApprovalComponent,
+          ),
+      },
+      {
+        path: 'users/affiliations',
+        loadComponent: () =>
+          import('./features/admin/Users/affiliations/affiliations.component').then(
+            (m) => m.AffiliationsComponent,
+          ),
+      },
+      {
+        path: 'users/mailing',
+        loadComponent: () =>
+          import('./features/admin/Users/mailing/mailing.component').then(
+            (m) => m.MailingComponent,
+          ),
+      },
+      {
+        path: 'users/list',
         loadComponent: () =>
           import('./features/admin/Users/users-list.component').then(
             (m) => m.UsersListComponent,
@@ -525,6 +558,10 @@ export const routes: Routes = [
       {
         path: 'settings/homepage',
         loadComponent: () => import('./features/admin/settings/homepage/homepage-settings.component').then(m => m.HomepageSettingsComponent),
+      },
+      {
+        path: 'settings/mailing',
+        loadComponent: () => import('./features/admin/settings/mailing-settings/mailing-settings.component').then(m => m.MailingSettingsComponent),
       },
     ],
   },

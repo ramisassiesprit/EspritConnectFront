@@ -1,0 +1,75 @@
+<div class="users-container">
+  <header class="users-header">
+    <div class="header-content">
+      <h1>Approbation des Utilisateurs</h1>
+      <p>Gérez les demandes d'accès en attente par rôle.</p>
+    </div>
+    
+    <div class="role-selector">
+      <label for="roleSelect">Filtrer par rôle:</label>
+      <select id="roleSelect" [(ngModel)]="selectedRole" (change)="onRoleChange()" class="form-select">
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="users-content">
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des demandes en attente...</p>
+    </div>
+
+    <div *ngIf="!loading && users.length === 0" class="empty-state">
+      <i class="bi bi-people"></i>
+      <p>Aucune demande en attente trouvée pour ce rôle.</p>
+    </div>
+
+    <div *ngIf="!loading && users.length > 0" class="table-container">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Utilisateur</th>
+            <th>Email</th>
+            <th>Statut</th>
+            <th>Date d'inscription</th>
+            <th class="actions-header">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>
+              <div class="user-info">
+                <img [src]="user.avatarUrl || 'assets/default-avatar.png'" alt="Avatar" class="user-avatar">
+                <div class="user-name">
+                  <a [routerLink]="['/admin/users', user.id]" class="full-name clickable-name" title="Voir les détails">
+                    {{ user.firstName }} {{ user.lastName }}
+                  </a>
+                  <span class="role-badge">{{ user.role }}</span>
+                </div>
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span class="status-badge status-pending">
+                {{ user.status }}
+              </span>
+            </td>
+            <td>{{ user.createdAt | date:'mediumDate' }}</td>
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button (click)="acceptUser(user.id)" class="btn-accept" title="Accepter">
+                  <i class="bi bi-check-lg"></i>
+                  <span>Accepter</span>
+                </button>
+                <button (click)="rejectUser(user.id)" class="btn-reject" title="Refuser">
+                  <i class="bi bi-x-lg"></i>
+                  <span>Refuser</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

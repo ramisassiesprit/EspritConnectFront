@@ -1,0 +1,198 @@
+.affiliations-container {
+  padding: 1.5rem;
+  background: transparent;
+  min-height: 100%;
+}
+
+.affiliations-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.affiliations-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.export-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.role-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  background-color: white;
+}
+
+.btn-export {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-export:hover:not(:disabled) {
+  background-color: #43a047;
+}
+
+.btn-export:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.affiliations-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  position: relative;
+  min-height: 400px;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.affiliations-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.affiliations-table th {
+  padding: 1rem 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #888;
+  border-bottom: 1px solid #eee;
+  white-space: normal;
+}
+
+.affiliations-table td {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #eee;
+  color: #555;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.affiliation-name {
+  color: #333;
+  font-weight: 500;
+}
+
+.members-count {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+.permission {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: #ccc;
+}
+
+.dot.green {
+  background-color: #4caf50;
+}
+
+.toggle-switch {
+  width: 44px;
+  height: 24px;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-switch.active {
+  background-color: #ff8a8a;
+}
+
+.toggle-knob {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s, background-color 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-switch.active .toggle-knob {
+  transform: translateX(20px);
+  background-color: #d32f2f;
+}
+
+.fab-btn {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.fab-btn:hover {
+  background-color: #b71c1c;
+  transform: scale(1.05);
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: #64748b;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #b10000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

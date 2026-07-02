@@ -40,7 +40,14 @@ export class AdminSidebarComponent {
 
   navItems: NavItem[] = [
     { label: 'Dashboard', route: '/admin/home' },
-    { label: 'Users', route: '/admin/users' },
+    {
+      label: 'User Management',
+      children: [
+        { label: 'Approval', route: '/admin/users/approval' },
+        { label: 'Affiliations', route: '/admin/users/affiliations' },
+        { label: 'Mailing', route: '/admin/users/mailing' }
+      ]
+    },
     { label: 'Feed', route: '/admin/feed' },
     { label: 'Directory', route: '/admin/directory' },
     { label: 'Mentoring', route: '/admin/mentoring' },
@@ -52,7 +59,8 @@ export class AdminSidebarComponent {
     {
       label: 'Settings',
       children: [
-        { label: 'Homepage Settings', route: '/admin/settings/homepage' }
+        { label: 'Homepage Settings', route: '/admin/settings/homepage' },
+        { label: 'Mailing Settings', route: '/admin/settings/mailing' }
       ]
     }
   ];
