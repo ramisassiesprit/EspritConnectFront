@@ -5,6 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { JobApplication, JobOffer } from '../../../core/models/job.model';
 import { JobService } from '../../../core/services/job.service';
+import { DEFAULT_JOBS_SETTINGS, JobsSettings, JobsSettingsService } from '../../../core/services/jobs-settings.service';
 import { ProfileService } from '../../../core/services/profile.service';
 import { environment } from '../../../../environments/environment';
 
@@ -21,6 +22,7 @@ export class JobsComponent implements OnInit {
   myApplicationsByJobId: Record<string, JobApplication> = {};
   studentFieldOfStudy = '';
   showRecommendedOnly = false;
+  jobsSettings: JobsSettings = DEFAULT_JOBS_SETTINGS;
 
   loading = false;
   applying = false;
@@ -81,6 +83,7 @@ export class JobsComponent implements OnInit {
 
   constructor(
     private readonly jobService: JobService,
+    private readonly jobsSettingsService: JobsSettingsService,
     private readonly profileService: ProfileService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -88,6 +91,10 @@ export class JobsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.jobsSettingsService.settings$.subscribe((settings) => {
+      this.jobsSettings = settings;
+      this.contractTypeOptions = this.buildContractTypeOptions(settings.employmentTypes);
+    });
     this.loadStudentFieldOfStudy();
     this.loadMyApplications();
     this.loadJobs();
@@ -137,6 +144,16 @@ export class JobsComponent implements OnInit {
       return this.filteredJobs;
     }
     return this.recommendedJobs;
+  }
+
+  get showExternalJobsWidget(): boolean {
+    const widget = this.jobsSettings.externalJobsWidget;
+    return this.jobsSettings.displayExternalJobListingWidgetOnJobsPage
+      && !!(widget.bannerImageUrl || widget.title || widget.description || widget.linkUrl || widget.buttonText);
+  }
+
+  get externalJobsWidget() {
+    return this.jobsSettings.externalJobsWidget;
   }
 
   toggleRecommendedOnly(): void {
@@ -247,6 +264,14 @@ export class JobsComponent implements OnInit {
     const url = this.selectedJob?.applyUrl?.trim();
     if (!url) {
       this.error = 'No apply link is available for this job.';
+      return;
+    }
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  openExternalJobsWidget(): void {
+    const url = this.externalJobsWidget.linkUrl?.trim();
+    if (!url) {
       return;
     }
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -368,6 +393,10 @@ export class JobsComponent implements OnInit {
     return `${base}${path}`;
   }
 
+  resolveSettingsImageUrl(url?: string): string {
+    return this.jobsSettingsService.resolveImageUrl(url || '');
+  }
+
   private loadJobs(): void {
     this.loading = true;
     this.jobService.getAllJobs().subscribe({
@@ -402,6 +431,40 @@ export class JobsComponent implements OnInit {
       .replace(/[\u0300-\u036f]/g, '')
       .trim()
       .toLowerCase();
+  }
+
+  private buildContractTypeOptions(employmentTypes: string[]): { label: string; value: string }[] {
+    const fallback = [
+      { label: 'CDI', value: 'CDI' },
+      { label: 'CDD', value: 'CDD' },
+      { label: 'Internship', value: 'INTERNSHIP' },
+      { label: 'Freelance', value: 'FREELANCE' },
+      { label: 'Part-time', value: 'PART_TIME' },
+      { label: 'Volunteer', value: 'VOLUNTEER' }
+    ];
+
+    if (!employmentTypes?.length) {
+      return fallback;
+    }
+
+    const mapped = employmentTypes.map((label) => ({
+      label,
+      value: this.employmentTypeToContractValue(label)
+    }));
+
+    return mapped.length ? mapped : fallback;
+  }
+
+  private employmentTypeToContractValue(label: string): string {
+    const normalized = label.trim().toLowerCase();
+    if (normalized.includes('part')) return 'PART_TIME';
+    if (normalized.includes('internship')) return 'INTERNSHIP';
+    if (normalized.includes('freelance')) return 'FREELANCE';
+    if (normalized.includes('volunteer')) return 'VOLUNTEER';
+    if (normalized.includes('cdd')) return 'CDD';
+    if (normalized.includes('job offer')) return 'CDI';
+    if (normalized.includes('full')) return 'CDI';
+    return label.trim().toUpperCase().replace(/\s+/g, '_');
   }
 
   private loadMyApplications(): void {

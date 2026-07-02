@@ -201,7 +201,7 @@
   <!-- ============ SIDEBAR ============ -->
   <div class="side-column">
     <!-- Recent Jobs -->
-    <div class="card side-card">
+    <div class="card side-card" *ngIf="jobsSettings.displayJobWidgetOnFeedPage">
       <div class="side-head">
         <h3>Recent jobs</h3>
         <span class="badge-count" *ngIf="recentJobs.length > 0">{{ recentJobs.length }}</span>

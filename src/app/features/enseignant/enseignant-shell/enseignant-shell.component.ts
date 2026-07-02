@@ -5,6 +5,7 @@ import { EnseignantSidebarComponent } from '../enseignant-sidebar/enseignant-sid
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { HomepageSettingsService } from '../../../core/services/homepage-settings.service';
+import { UserRole } from '../../../core/models/user-role.enum';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -22,7 +23,7 @@ export class EnseignantShellComponent implements OnInit, OnDestroy {
   private sub?: Subscription;
 
   ngOnInit(): void {
-    this.sub = this.settingsService.settings$.subscribe(s => {
+    this.sub = this.settingsService.settingsForRole$(UserRole.ENSEIGNANT).subscribe(s => {
       this.bannerImageUrl = s.bannerImageUrl;
       this.displayBanner = s.displayBanner;
     });

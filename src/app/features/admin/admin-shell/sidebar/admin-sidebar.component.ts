@@ -20,7 +20,7 @@ export class AdminSidebarComponent {
 
   isStudentView = localStorage.getItem('viewMode') === 'etudiant';
 
-  expandedGroup: string | null = 'Settings';
+  expandedGroup: string | null = 'Jobs';
 
   switchView() {
     if (this.isStudentView) {
@@ -51,7 +51,14 @@ export class AdminSidebarComponent {
     { label: 'Feed', route: '/admin/feed' },
     { label: 'Directory', route: '/admin/directory' },
     { label: 'Mentoring', route: '/admin/mentoring' },
-    { label: 'Jobs', route: '/admin/jobs' },
+    {
+      label: 'Jobs',
+      children: [
+        { label: 'Settings', route: '/admin/jobs/settings' },
+        { label: 'Import Jobs', route: '/admin/jobs/import' },
+        { label: 'Manage Jobs', route: '/admin/jobs/manage' }
+      ]
+    },
     { label: 'Photos', route: '/admin/photos' },
     { label: 'Groups', route: '/admin/groups' },
     { label: 'Events', route: '/admin/events' },

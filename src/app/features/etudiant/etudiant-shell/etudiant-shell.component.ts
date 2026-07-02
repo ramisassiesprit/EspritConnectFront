@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole } from '../../../core/models/user-role.enum';
-import { HomepageSettingsService } from '../../../core/services/homepage-settings.service';
+import { HomepageSettingsService, HomepageSettings } from '../../../core/services/homepage-settings.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -25,7 +25,7 @@ export class EtudiantShellComponent implements OnInit, OnDestroy {
   private sub?: Subscription;
 
   ngOnInit(): void {
-    this.sub = this.settingsService.settings$.subscribe(s => {
+    this.sub = this.settingsService.settingsForRole$(UserRole.ETUDIANT).subscribe(s => {
       this.bannerImageUrl = s.bannerImageUrl;
       this.displayBanner = s.displayBanner;
     });
@@ -59,8 +59,8 @@ export class EtudiantShellComponent implements OnInit, OnDestroy {
 
   get viewSwitchReturnRoute(): string {
     const role = this.authService.currentUser()?.role;
-    if (role === UserRole.ADMIN) return '/admin/home';
-    if (role === UserRole.ENSEIGNANT) return '/enseignant/home';
+    if (role === UserRole.ADMIN) return '/admin';
+    if (role === UserRole.ENSEIGNANT) return '/enseignant';
     if (role === UserRole.ENTREPRISE) return '/entreprise/jobs';
     return '/';
   }

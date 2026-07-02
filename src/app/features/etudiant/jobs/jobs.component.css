@@ -311,6 +311,53 @@
   color: #ed1c24;
 }
 
+.external-jobs-widget {
+  border: 1px solid #f1d4d6;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #fff8f8;
+  margin-bottom: 1.25rem;
+}
+
+.external-jobs-widget img {
+  width: 100%;
+  aspect-ratio: 328 / 176;
+  object-fit: cover;
+  display: block;
+  background: #f3f4f6;
+}
+
+.external-jobs-widget__body {
+  padding: 1rem;
+}
+
+.external-jobs-widget__body h3 {
+  margin: 0 0 0.35rem;
+  color: #111827;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.external-jobs-widget__body p {
+  margin: 0 0 0.9rem;
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.external-jobs-widget__body button {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  background: #ed1c24;
+  color: #ffffff;
+  padding: 0.65rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .filters-card input[type="text"] {
   width: 100%;
   border: none;

@@ -1,0 +1,299 @@
+<div class="email-shell p-4 md:p-6">
+  <!-- Hero -->
+  <section class="email-hero animate-fadeIn">
+    <div>
+      <p class="email-kicker">Admin</p>
+      <h1>Email Settings</h1>
+      <p class="email-copy">Send custom emails, view mail history, and manage automatic birthday emails.</p>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <nav class="email-tabs" aria-label="Email sections">
+    <button (click)="activeTab = 'send'" [class.active]="activeTab === 'send'">
+      <i class="bi bi-send"></i> Send Email
+    </button>
+    <button (click)="activeTab = 'history'" [class.active]="activeTab === 'history'">
+      <i class="bi bi-clock-history"></i> Mail History
+    </button>
+    <button (click)="activeTab = 'birthday'" [class.active]="activeTab === 'birthday'">
+      <i class="bi bi-gift"></i> Birthday Emails
+    </button>
+  </nav>
+
+  <!-- Stats Bar -->
+  @if (stats(); as s) {
+    <div class="stats-bar animate-fadeIn">
+      <div class="stat-item">
+        <span class="stat-value">{{ s.totalSent }}</span>
+        <span class="stat-label">Total Sent</span>
+      </div>
+      <div class="stat-item success">
+        <span class="stat-value">{{ s.successful }}</span>
+        <span class="stat-label">Successful</span>
+      </div>
+      <div class="stat-item danger">
+        <span class="stat-value">{{ s.failed }}</span>
+        <span class="stat-label">Failed</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{ s.uniqueRecipients }}</span>
+        <span class="stat-label">Unique Recipients</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{ s.sentToday }}</span>
+        <span class="stat-label">Sent Today</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{ s.sentThisMonth }}</span>
+        <span class="stat-label">This Month</span>
+      </div>
+    </div>
+  }
+
+  <!-- ==================== TAB: SEND ==================== -->
+  @if (activeTab === 'send') {
+    <div class="section-card animate-fadeInUp">
+      <h3 class="section-title"><i class="bi bi-envelope-paper"></i> Compose Custom Email</h3>
+
+      <div class="send-form">
+        <div class="form-group">
+          <label>Recipient Email *</label>
+          <input type="email" class="form-input" [(ngModel)]="sendModel.to" placeholder="user@example.com">
+        </div>
+
+        <div class="form-group">
+          <label>Subject *</label>
+          <input type="text" class="form-input" [(ngModel)]="sendModel.subject" placeholder="Email subject">
+        </div>
+
+        <div class="form-group">
+          <label>Message *</label>
+          <textarea class="form-textarea" [(ngModel)]="sendModel.message" rows="6" placeholder="Write your message here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Attach Image (optional)</label>
+          <div class="file-upload-area" (click)="fileInput.click()">
+            <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+            @if (!selectedFile) {
+              <div class="file-upload-placeholder">
+                <i class="bi bi-image"></i>
+                <span>Click to upload an image</span>
+              </div>
+            } @else {
+              <div class="file-upload-preview">
+                <i class="bi bi-check-circle-fill text-green-500"></i>
+                <span>{{ selectedFile.name }}</span>
+                <button class="file-remove" (click)="removeFile(); $event.stopPropagation()">&times;</button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Sent By</label>
+          <input type="text" class="form-input" [(ngModel)]="sendModel.sentBy" placeholder="Admin">
+        </div>
+
+        @if (sendResult) {
+          <div class="send-result" [class.success]="sendResult.success" [class.error]="!sendResult.success">
+            <i class="bi" [class.bi-check-circle-fill]="sendResult.success" [class.bi-x-circle-fill]="!sendResult.success"></i>
+            {{ sendResult.message }}
+          </div>
+        }
+
+        <button class="btn-primary" (click)="sendEmail()" [disabled]="sending">
+          @if (sending) {
+            <i class="bi bi-hourglass-split spinning"></i> Sending...
+          } @else {
+            <i class="bi bi-send-fill"></i> Send Email
+          }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ==================== TAB: HISTORY ==================== -->
+  @if (activeTab === 'history') {
+    <div class="section-card animate-fadeInUp">
+      <div class="section-header">
+        <h3 class="section-title"><i class="bi bi-clock-history"></i> Mail History</h3>
+        <div class="filter-group">
+          <label>Filter:</label>
+          <select [(ngModel)]="filterType" class="filter-select">
+            <option value="">All Types</option>
+            <option value="CUSTOM">Custom</option>
+            <option value="BIRTHDAY">Birthday</option>
+            <option value="PASSWORD_RESET">Password Reset</option>
+            <option value="EVENT">Event</option>
+          </select>
+        </div>
+      </div>
+
+      @if (loadingHistory) {
+        <div class="loading-state"><i class="bi bi-hourglass-split spinning"></i> Loading...</div>
+      } @else if (filteredHistory.length === 0) {
+        <div class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <h4>No email history</h4>
+          <p>Emails you send will appear here.</p>
+        </div>
+      } @else {
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Recipient</th>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of filteredHistory; track item.id) {
+                <tr>
+                  <td>
+                    <div class="recipient-cell">
+                      <i class="bi bi-person-circle"></i>
+                      <div>
+                        <span class="recipient-name">{{ item.recipientName || item.recipientEmail }}</span>
+                        @if (item.recipientName) {
+                          <span class="recipient-email">{{ item.recipientEmail }}</span>
+                        }
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="subject-cell">
+                      {{ item.subject }}
+                      @if (item.hasImage) {
+                        <i class="bi bi-image text-gray-400 ml-1" title="Contains image"></i>
+                      }
+                    </span>
+                  </td>
+                  <td><span class="type-badge" [class.custom]="item.emailType === 'CUSTOM'" [class.birthday]="item.emailType === 'BIRTHDAY'">{{ item.emailType }}</span></td>
+                  <td class="date-cell">{{ item.sentAt | date:'MMM d, y, h:mm a' }}</td>
+                  <td>
+                    <span class="status-badge" [class.sent]="item.status === 'SENT'" [class.failed]="item.status === 'FAILED'">
+                      {{ item.status }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalPages > 1) {
+          <div class="pagination">
+            <button (click)="historyPage = historyPage - 1" [disabled]="historyPage === 1">&laquo;</button>
+            <span>{{ historyPage }} / {{ totalPages }}</span>
+            <button (click)="historyPage = historyPage + 1" [disabled]="historyPage === totalPages">&raquo;</button>
+          </div>
+        }
+      }
+    </div>
+  }
+
+  <!-- ==================== TAB: BIRTHDAY ==================== -->
+  @if (activeTab === 'birthday') {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      <!-- Settings -->
+      <div class="section-card animate-fadeInUp">
+        <h3 class="section-title"><i class="bi bi-gear"></i> Birthday Email Settings</h3>
+
+        <div class="toggle-row">
+          <div>
+            <strong>Enable Automatic Birthday Emails</strong>
+            <p class="text-gray-500 text-xs mt-1">Send automated birthday wishes to users on their special day.</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="birthdayEnabled">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group mt-6">
+          <label>Email HTML Template</label>
+          <p class="text-gray-400 text-xs mb-2">Use <code>{{ templatePlaceholder }}</code> as a placeholder for the recipient's name.</p>
+          <textarea class="form-textarea font-mono text-xs" [(ngModel)]="birthdayTemplate" rows="12"></textarea>
+        </div>
+
+        @if (birthdayMessage) {
+          <div class="send-result success">
+            <i class="bi bi-check-circle-fill"></i> {{ birthdayMessage }}
+          </div>
+        }
+
+        <div class="flex gap-3 mt-4">
+          <button class="btn-primary" (click)="saveBirthdaySettings()" [disabled]="savingBirthdaySettings">
+            @if (savingBirthdaySettings) {
+              <i class="bi bi-hourglass-split spinning"></i> Saving...
+            } @else {
+              <i class="bi bi-check-lg"></i> Save Settings
+            }
+          </button>
+          <button class="btn-secondary" (click)="loadBirthdaySettings()">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset to Saved
+          </button>
+        </div>
+      </div>
+
+      <!-- Upcoming Birthdays -->
+      <div class="section-card animate-fadeInUp">
+        <div class="section-header">
+          <h3 class="section-title"><i class="bi bi-gift"></i> Upcoming Birthdays</h3>
+          <button class="btn-sm" (click)="loadUpcomingBirthdays()" title="Refresh">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+
+        @if (upcomingBirthdays().length === 0) {
+          <div class="empty-state py-8">
+            <i class="bi bi-calendar-heart"></i>
+            <h4>No birthdays found</h4>
+            <p>Users need to set their date of birth in their profile.</p>
+          </div>
+        } @else {
+          <div class="birthday-list">
+            @for (b of upcomingBirthdays(); track b.id) {
+              <div class="birthday-item" [class.today]="b.isToday">
+                <div class="birthday-avatar">
+                  <i class="bi" [class.bi-gift-fill]="b.isToday" [class.bi-person]="!b.isToday"></i>
+                </div>
+                <div class="birthday-info">
+                  <strong>{{ b.firstName }} {{ b.lastName }}</strong>
+                  <span class="birthday-date">{{ b.dateOfBirth | date:'MMM d' }}</span>
+                </div>
+                <div class="birthday-badge">
+                  @if (b.isToday) {
+                    <span class="today-badge">Today!</span>
+                  } @else {
+                    <span class="days-badge">{{ b.daysUntilBirthday }}d</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          @if (birthdaySentCount > 0) {
+            <div class="send-result success mb-3">
+              <i class="bi bi-check-circle-fill"></i> {{ birthdaySentCount }} birthday email(s) sent!
+            </div>
+          }
+          <button class="btn-primary w-full" (click)="sendBirthdayEmailsToday()" [disabled]="sendingBirthdayEmails">
+            @if (sendingBirthdayEmails) {
+              <i class="bi bi-hourglass-split spinning"></i> Sending...
+            } @else {
+              <i class="bi bi-send-fill"></i> Send Birthday Emails for Today
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

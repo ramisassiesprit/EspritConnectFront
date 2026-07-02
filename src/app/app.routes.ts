@@ -530,6 +530,27 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'jobs/settings',
+        loadComponent: () =>
+          import('./features/admin/jobs/admin-jobs.component').then(
+            (m) => m.AdminJobsComponent,
+          ),
+      },
+      {
+        path: 'jobs/import',
+        loadComponent: () =>
+          import('./features/admin/jobs/admin-jobs.component').then(
+            (m) => m.AdminJobsComponent,
+          ),
+      },
+      {
+        path: 'jobs/manage',
+        loadComponent: () =>
+          import('./features/admin/jobs/admin-jobs.component').then(
+            (m) => m.AdminJobsComponent,
+          ),
+      },
+      {
         path: 'jobs/:id/applicants',
         loadComponent: () =>
           import('./features/entreprise/job-applicants/job-applicants.component').then(

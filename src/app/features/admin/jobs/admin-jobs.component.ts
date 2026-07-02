@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 import {
   ContractType,
   JobOffer,
@@ -9,6 +11,7 @@ import {
 } from '../../../core/models/job.model';
 import { UserRole } from '../../../core/models/user-role.enum';
 import { AuthService } from '../../../core/services/auth.service';
+import { DEFAULT_JOBS_SETTINGS, JobsSettings, JobsSettingsService } from '../../../core/services/jobs-settings.service';
 import { JobService } from '../../../core/services/job.service';
 import { UserService } from '../../../core/services/User.service';
 
@@ -62,12 +65,28 @@ export class AdminJobsComponent implements OnInit {
     private readonly jobService: JobService,
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly http: HttpClient,
+    private readonly jobsSettingsService: JobsSettingsService,
     private readonly router: Router,
     private readonly route: ActivatedRoute
   ) {}
 
+  private readonly jobsSettingsApiUrl = `${environment.apiUrl}api/admin/settings/jobs`;
+  adminJobsTab: 'settings' | 'import' | 'manage' = 'settings';
+  jobsSettings: JobsSettings = this.defaultJobsSettings();
+  jobsSettingsSaving = false;
+  jobsSettingsUploading = false;
+  jobsSettingsUploadProgress = 0;
+  jobsSettingsMessage = '';
+  jobsSettingsError = '';
+  newEmploymentType = '';
+  importFeedProvider: 'handshake' | 'symplicity' | 'custom' = 'handshake';
+  importFeedUrl = '';
+  importFeedMessage = '';
+
   ngOnInit(): void {
     this.currentRole = this.authService.currentUser()?.role || null;
+    this.adminJobsTab = this.initialAdminJobsTab();
     if (this.currentRole === UserRole.ENTREPRISE) {
       this.userService.getCurrentUser().subscribe({
         next: (user) => {
@@ -83,6 +102,7 @@ export class AdminJobsComponent implements OnInit {
       });
     }
     this.loadJobs();
+    this.loadJobsSettings();
 
     if (this.isCompanyMode && this.isCreateRoute()) {
       this.startCreate();
@@ -385,6 +405,97 @@ export class AdminJobsComponent implements OnInit {
     });
   }
 
+  addEmploymentType(): void {
+    const value = this.newEmploymentType.trim();
+    if (!value || this.jobsSettings.employmentTypes.includes(value)) {
+      return;
+    }
+    this.jobsSettings = {
+      ...this.jobsSettings,
+      employmentTypes: [...this.jobsSettings.employmentTypes, value]
+    };
+    this.newEmploymentType = '';
+  }
+
+  removeEmploymentType(index: number): void {
+    this.jobsSettings = {
+      ...this.jobsSettings,
+      employmentTypes: this.jobsSettings.employmentTypes.filter((_, i) => i !== index)
+    };
+  }
+
+  onJobsBannerSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+    this.uploadJobsBanner(file);
+    input.value = '';
+  }
+
+  removeJobsBanner(): void {
+    this.jobsSettings = {
+      ...this.jobsSettings,
+      externalJobsWidget: {
+        ...this.jobsSettings.externalJobsWidget,
+        bannerImageUrl: ''
+      }
+    };
+  }
+
+  jobsBannerSrc(): string {
+    return this.jobsSettingsService.resolveImageUrl(this.jobsSettings.externalJobsWidget.bannerImageUrl);
+  }
+
+  saveJobsSettings(): void {
+    this.jobsSettingsSaving = true;
+    this.jobsSettingsMessage = '';
+    this.jobsSettingsError = '';
+
+    this.http.post<JobsSettings>(this.jobsSettingsApiUrl, this.jobsSettings).subscribe({
+      next: (settings) => {
+        this.jobsSettings = this.normalizeJobsSettings(settings);
+        this.jobsSettingsSaving = false;
+        this.jobsSettingsMessage = 'Jobs settings saved successfully.';
+        this.jobsSettingsService.refresh();
+      },
+      error: () => {
+        this.jobsSettingsSaving = false;
+        this.jobsSettingsError = 'Unable to save jobs settings.';
+      }
+    });
+  }
+
+  saveImportFeed(): void {
+    if (!this.importFeedUrl.trim()) {
+      this.importFeedMessage = 'Feed URL is required before saving.';
+      return;
+    }
+    this.jobsSettings = {
+      ...this.jobsSettings,
+      automatedFeed: {
+        provider: this.importFeedProvider,
+        feedUrl: this.importFeedUrl.trim()
+      }
+    };
+    this.saveJobsSettings();
+    this.importFeedMessage = 'Automated feed settings saved.';
+  }
+
+  setAdminJobsTab(tab: 'settings' | 'import' | 'manage'): void {
+    this.adminJobsTab = tab;
+    if (!this.isAdminMode) {
+      return;
+    }
+    const routeByTab = {
+      settings: '/admin/jobs/settings',
+      import: '/admin/jobs/import',
+      manage: '/admin/jobs/manage'
+    };
+    this.router.navigate([routeByTab[tab]]);
+  }
+
   approveJob(job: JobOffer): void {
     if (!job.id || !this.isAdminMode) {
       return;
@@ -484,6 +595,81 @@ export class AdminJobsComponent implements OnInit {
     });
   }
 
+  private loadJobsSettings(): void {
+    this.http.get<JobsSettings>(this.jobsSettingsApiUrl).subscribe({
+      next: (settings) => {
+        this.jobsSettings = this.normalizeJobsSettings(settings);
+        this.importFeedProvider = this.jobsSettings.automatedFeed.provider;
+        this.importFeedUrl = this.jobsSettings.automatedFeed.feedUrl;
+      },
+      error: () => {
+        this.jobsSettings = this.defaultJobsSettings();
+        this.importFeedProvider = this.jobsSettings.automatedFeed.provider;
+        this.importFeedUrl = this.jobsSettings.automatedFeed.feedUrl;
+      }
+    });
+  }
+
+  private uploadJobsBanner(file: File): void {
+    this.jobsSettingsUploading = true;
+    this.jobsSettingsUploadProgress = 0;
+    this.jobsSettingsMessage = '';
+    this.jobsSettingsError = '';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    this.http.post<{ url: string }>(`${this.jobsSettingsApiUrl}/banner`, formData, {
+      reportProgress: true,
+      observe: 'events'
+    }).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.jobsSettingsUploadProgress = Math.round((event.loaded / event.total) * 100);
+        } else if (event.type === HttpEventType.Response && event.body) {
+          this.jobsSettings = {
+            ...this.jobsSettings,
+            externalJobsWidget: {
+              ...this.jobsSettings.externalJobsWidget,
+              bannerImageUrl: event.body.url
+            }
+          };
+          this.jobsSettingsUploading = false;
+        }
+      },
+      error: () => {
+        this.jobsSettingsUploading = false;
+        this.jobsSettingsError = 'Unable to upload jobs widget banner.';
+      }
+    });
+  }
+
+  private defaultJobsSettings(): JobsSettings {
+    return {
+      ...DEFAULT_JOBS_SETTINGS,
+      employmentTypes: [...DEFAULT_JOBS_SETTINGS.employmentTypes],
+      externalJobsWidget: { ...DEFAULT_JOBS_SETTINGS.externalJobsWidget },
+      automatedFeed: { ...DEFAULT_JOBS_SETTINGS.automatedFeed }
+    };
+  }
+
+  private normalizeJobsSettings(settings: JobsSettings): JobsSettings {
+    return {
+      ...this.defaultJobsSettings(),
+      ...settings,
+      employmentTypes: settings.employmentTypes?.length
+        ? settings.employmentTypes
+        : [...DEFAULT_JOBS_SETTINGS.employmentTypes],
+      externalJobsWidget: {
+        ...DEFAULT_JOBS_SETTINGS.externalJobsWidget,
+        ...(settings.externalJobsWidget ?? {})
+      },
+      automatedFeed: {
+        ...DEFAULT_JOBS_SETTINGS.automatedFeed,
+        ...(settings.automatedFeed ?? {})
+      }
+    };
+  }
+
   private emptyJob(): JobOffer {
     return {
       title: '',
@@ -555,6 +741,17 @@ export class AdminJobsComponent implements OnInit {
 
   private isCreateRoute(): boolean {
     return this.route.snapshot.routeConfig?.path === 'jobs/new';
+  }
+
+  private initialAdminJobsTab(): 'settings' | 'import' | 'manage' {
+    const path = this.route.snapshot.routeConfig?.path;
+    if (path === 'jobs/import') {
+      return 'import';
+    }
+    if (path === 'jobs/manage') {
+      return 'manage';
+    }
+    return 'settings';
   }
 
   private initMap(): void {

@@ -1,119 +1,493 @@
 <section class="mentoring-prefs">
   <div class="page-header">
     <div class="page-header__text">
-      <h1>Mentoring Preferences</h1>
-      <p>Control which sections and individual options are visible to users when they edit their preferences</p>
+      <h1>Mentoring</h1>
+      <p>Manage mentoring preferences and view statistics</p>
     </div>
   </div>
 
-  <div class="settings-grid">
-    <div class="settings-main">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-header__left">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon">
-              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-            </svg>
-            <div>
-              <h2>Sections &amp; Options</h2>
-              <p class="card-subtitle">Toggle entire sections on/off and select which individual options appear</p>
+  <div class="tabs">
+    <button class="tab" [class.tab--active]="activeTab === 'settings'" (click)="switchTab('settings')">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 0 12 8.4a3.6 3.6 0 0 0 0 7.2z"/>
+      </svg>
+      Settings
+    </button>
+    <button class="tab" [class.tab--active]="activeTab === 'stats'" (click)="switchTab('stats')">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+      </svg>
+      Statistics
+    </button>
+  </div>
+
+  @if (activeTab === 'settings') {
+    <div class="settings-grid">
+      <div class="settings-main">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header__left">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              </svg>
+              <div>
+                <h2>Sections &amp; Options</h2>
+                <p class="card-subtitle">Toggle entire sections on/off and select which individual options appear</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="sections-list">
+              @for (section of sections; track section.toggleKey) {
+                <div class="section-block" [class.section-block--disabled]="!prefs[section.toggleKey]">
+                  <div class="section-block__header">
+                    <div class="section-block__info">
+                      <span class="section-block__label">{{ section.label }}</span>
+                      <span class="section-block__desc">{{ section.description }}</span>
+                    </div>
+                    <label class="toggle">
+                      <input type="checkbox" [(ngModel)]="prefs[section.toggleKey]" />
+                      <span class="toggle__slider"></span>
+                    </label>
+                  </div>
+                  @if (prefs[section.toggleKey]) {
+                    <div class="section-block__options">
+                      @for (opt of section.allOptions; track opt) {
+                        <label class="option-checkbox" [class.option-checkbox--disabled]="!isOptionChecked(section, opt) && visibleOptions(section).length === 1">
+                          <input type="checkbox"
+                                 [checked]="isOptionChecked(section, opt)"
+                                 (change)="toggleOption(section, opt, $any($event.target).checked)" />
+                          <span class="option-checkbox__mark"></span>
+                          <span class="option-checkbox__label">{{ opt }}</span>
+                        </label>
+                      }
+                    </div>
+                  }
+                </div>
+              }
             </div>
           </div>
         </div>
-        <div class="card-body">
-          <div class="sections-list">
-            @for (section of sections; track section.toggleKey) {
-              <div class="section-block" [class.section-block--disabled]="!prefs[section.toggleKey]">
-                <div class="section-block__header">
-                  <div class="section-block__info">
-                    <span class="section-block__label">{{ section.label }}</span>
-                    <span class="section-block__desc">{{ section.description }}</span>
-                  </div>
-                  <label class="toggle">
-                    <input type="checkbox" [(ngModel)]="prefs[section.toggleKey]" />
-                    <span class="toggle__slider"></span>
-                  </label>
-                </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header__left">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon">
+                <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+              </svg>
+              <div>
+                <h2>Preview</h2>
+                <p class="card-subtitle">How the user form will look with current settings</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="preview-form">
+              @for (section of sections; track section.toggleKey) {
                 @if (prefs[section.toggleKey]) {
-                  <div class="section-block__options">
-                    @for (opt of section.allOptions; track opt) {
-                      <label class="option-checkbox" [class.option-checkbox--disabled]="!isOptionChecked(section, opt) && visibleOptions(section).length === 1">
-                        <input type="checkbox"
-                               [checked]="isOptionChecked(section, opt)"
-                               (change)="toggleOption(section, opt, $any($event.target).checked)" />
-                        <span class="option-checkbox__mark"></span>
-                        <span class="option-checkbox__label">{{ opt }}</span>
-                      </label>
+                  <div class="preview-section">
+                    <div class="preview-section__title">{{ section.label }}</div>
+                    <div class="preview-chips">
+                      @for (opt of visibleOptions(section); track opt) {
+                        <span class="preview-chip">{{ opt }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              }
+              @if (!prefs.showOfferHelp && !prefs.showSeekHelp && !prefs.showOfferMentoring && !prefs.showSeekMentoring) {
+                <div class="preview-empty">
+                  <p>All sections are hidden. Users will not see the mentoring preferences form.</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-sidebar">
+        <button class="btn-save" (click)="save()" [disabled]="saving">
+          @if (saving) {
+            <span class="btn-save__spinner"></span>
+            Saving&hellip;
+          } @else {
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            Save Preferences
+          }
+        </button>
+
+        @if (saveMessage) {
+          <div class="toast" [class.toast--success]="!saveError" [class.toast--error]="saveError" (click)="saveMessage = ''">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              @if (!saveError) {
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              } @else {
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              }
+            </svg>
+            <span>{{ saveMessage }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (activeTab === 'stats') {
+    <div class="stats-page">
+      @if (loadingStats) {
+        <div class="stats-loading">
+          <div class="spinner"></div>
+          <p>Loading statistics&hellip;</p>
+        </div>
+      } @else if (statsError) {
+        <div class="stats-error">
+          <p>Failed to load statistics. Please try again later.</p>
+          <button class="btn-retry" (click)="loadStats()">Retry</button>
+        </div>
+      } @else if (stats) {
+        <!-- ════ KPI OVERVIEW ════ -->
+        <div class="kpi-grid">
+          <div class="kpi-tile kpi-tile--red">
+            <div class="kpi-tile__icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </div>
+            <div class="kpi-tile__body">
+              <div class="kpi-tile__value">{{ stats.totalUsers }}</div>
+              <div class="kpi-tile__label">Total Users</div>
+            </div>
+          </div>
+          <div class="kpi-tile kpi-tile--green">
+            <div class="kpi-tile__icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3z"/></svg>
+            </div>
+            <div class="kpi-tile__body">
+              <div class="kpi-tile__value">{{ stats.totalMentors ?? 0 }}</div>
+              <div class="kpi-tile__label">Active Mentors</div>
+            </div>
+          </div>
+          <div class="kpi-tile kpi-tile--blue">
+            <div class="kpi-tile__icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+            </div>
+            <div class="kpi-tile__body">
+              <div class="kpi-tile__value">{{ stats.totalRequests }}</div>
+              <div class="kpi-tile__label">Total Requests</div>
+            </div>
+          </div>
+          <div class="kpi-tile kpi-tile--purple">
+            <div class="kpi-tile__icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            </div>
+            <div class="kpi-tile__body">
+              <div class="kpi-tile__value">{{ stats.totalSessions }}</div>
+              <div class="kpi-tile__label">Sessions Held</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ WILLINGNESS METRICS ════ -->
+        <div class="stats-section">
+          <div class="stats-section__header">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            <h2>Community Willingness</h2>
+            <span class="stats-section__count">{{ stats.totalUsers }} users</span>
+          </div>
+
+          <div class="stat-cards">
+            <div class="stat-card">
+              <div class="stat-card__value">{{ stats.usersOfferingHelp }}</div>
+              <div class="stat-card__label">Offer Help</div>
+              <div class="stat-card__pct">{{ stats.offerHelpPercentage }}% of users</div>
+              <div class="stat-card__bar"><div class="stat-card__bar-fill" [style.width.%]="stats.offerHelpPercentage"></div></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__value">{{ stats.usersSeekingHelp }}</div>
+              <div class="stat-card__label">Seek Help</div>
+              <div class="stat-card__pct">{{ stats.seekHelpPercentage }}% of users</div>
+              <div class="stat-card__bar"><div class="stat-card__bar-fill fill-orange" [style.width.%]="stats.seekHelpPercentage"></div></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__value">{{ stats.usersOfferingMentoring }}</div>
+              <div class="stat-card__label">Offer Mentoring</div>
+              <div class="stat-card__pct">{{ stats.offerMentoringPercentage }}% of users</div>
+              <div class="stat-card__bar"><div class="stat-card__bar-fill fill-blue" [style.width.%]="stats.offerMentoringPercentage"></div></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__value">{{ stats.usersSeekingMentoring }}</div>
+              <div class="stat-card__label">Seek Mentoring</div>
+              <div class="stat-card__pct">{{ stats.seekMentoringPercentage }}% of users</div>
+              <div class="stat-card__bar"><div class="stat-card__bar-fill fill-purple" [style.width.%]="stats.seekMentoringPercentage"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ REQUEST OVERVIEW ════ -->
+        <div class="stats-section">
+          <div class="stats-section__header">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.07 9.62 14 12 14c2.38 0 4.53 1.07 6.24 2.19.48.38.76.97.76 1.58V19z"/></svg>
+            <h2>Mentoring Requests</h2>
+          </div>
+
+          <div class="stat-cards">
+            <div class="stat-card stat-card--warning">
+              <div class="stat-card__value">{{ stats.pendingRequests }}</div>
+              <div class="stat-card__label">Pending</div>
+            </div>
+            <div class="stat-card stat-card--success">
+              <div class="stat-card__value">{{ stats.acceptedRequests }}</div>
+              <div class="stat-card__label">Accepted</div>
+            </div>
+            <div class="stat-card stat-card--danger">
+              <div class="stat-card__value">{{ stats.rejectedRequests }}</div>
+              <div class="stat-card__label">Rejected</div>
+            </div>
+            <div class="stat-card stat-card--info">
+              <div class="stat-card__value">{{ stats.completedRequests }}</div>
+              <div class="stat-card__label">Completed</div>
+            </div>
+            <div class="stat-card stat-card--muted">
+              <div class="stat-card__value">{{ stats.cancelledRequests }}</div>
+              <div class="stat-card__label">Cancelled</div>
+            </div>
+          </div>
+
+          <div class="stats-grid-2col">
+            <div class="card">
+              <div class="card-header"><h3>Status Distribution</h3></div>
+              <div class="card-body card-body--center chart-body">
+                <canvas baseChart
+                       [data]="statusDoughnutData"
+                       [options]="statusDoughnutOptions"
+                       type="doughnut"></canvas>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>Requests by Field of Study</h3></div>
+              <div class="card-body">
+                @if (objectKeys(stats.requestsByFieldOfStudy).length === 0) {
+                  <div class="stats-empty">No data</div>
+                } @else {
+                  @for (key of objectKeys(stats.requestsByFieldOfStudy); track key) {
+                    <div class="bar-row">
+                      <span class="bar-label">{{ key }}</span>
+                      <div class="bar-track">
+                        <div class="bar-fill bar-fill--purple" [style.width.%]="barWidth(stats.requestsByFieldOfStudy[key], maxValue(stats.requestsByFieldOfStudy))"></div>
+                      </div>
+                      <span class="bar-val">{{ stats.requestsByFieldOfStudy[key] }}</span>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Monthly Request Trend</h3>
+              <span class="card-subtitle">Requests created per month</span>
+            </div>
+            <div class="card-body chart-body chart-body--wide">
+              @if (objectKeys(stats.requestsByMonth).length === 0) {
+                <div class="stats-empty">No data</div>
+              } @else {
+                <canvas baseChart
+                       [data]="monthlyBarData"
+                       [options]="monthlyBarOptions"
+                       type="bar"></canvas>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ TOP MENTORS LEADERBOARD ════ -->
+        <div class="stats-section">
+          <div class="stats-section__header">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M7 21h10v-2H7v2zm5-4c3.31 0 6-2.69 6-6V3H6v8c0 3.31 2.69 6 6 6z"/></svg>
+            <h2>Top Mentors</h2>
+            <span class="stats-section__count">By completed sessions</span>
+          </div>
+
+          <div class="card">
+            <div class="card-body card-body--table">
+              @if (!stats.topMentors || stats.topMentors.length === 0) {
+                <div class="stats-empty">No mentor activity yet</div>
+              } @else {
+                <table class="leaderboard">
+                  <thead>
+                    <tr>
+                      <th class="leaderboard__rank">#</th>
+                      <th>Mentor</th>
+                      <th class="leaderboard__num">Sessions</th>
+                      <th class="leaderboard__num">Received</th>
+                      <th class="leaderboard__num">Acceptance</th>
+                      <th class="leaderboard__num">Avg Rating</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (m of stats.topMentors; track $index) {
+                      <tr>
+                        <td class="leaderboard__rank">
+                          <span class="rank-badge" [class.rank-badge--gold]="$index === 0"
+                                [class.rank-badge--silver]="$index === 1"
+                                [class.rank-badge--bronze]="$index === 2">{{ $index + 1 }}</span>
+                        </td>
+                        <td>
+                          <div class="mentor-cell">
+                            <span class="mentor-avatar" [style.background]="mentorAvatarColor(m.firstName, m.lastName)">{{ mentorInitials(m.firstName, m.lastName) }}</span>
+                            <span class="mentor-name">{{ m.firstName }} {{ m.lastName }}</span>
+                          </div>
+                        </td>
+                        <td class="leaderboard__num"><strong>{{ m.completedSessions }}</strong></td>
+                        <td class="leaderboard__num">{{ m.totalReceived }}</td>
+                        <td class="leaderboard__num">
+                          <span class="acceptance-pill" [class.acceptance-pill--high]="m.acceptanceRate >= 60"
+                                [class.acceptance-pill--low]="m.acceptanceRate < 30">{{ m.acceptanceRate }}%</span>
+                        </td>
+                        <td class="leaderboard__num">
+                          <span class="rating-cell">
+                            <span class="rating-cell__star">★</span>{{ starString(m.avgRating) }}
+                          </span>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ SESSIONS & RATINGS ════ -->
+        <div class="stats-section">
+          <div class="stats-section__header">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79 2.73 2.71 7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58 3.51-3.47 9.14-3.47 12.65 0L21 3v7.12zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8h1.5z"/></svg>
+            <h2>Sessions &amp; Ratings</h2>
+          </div>
+
+          <div class="stat-cards">
+            <div class="stat-card">
+              <div class="stat-card__value">{{ stats.totalSessions }}</div>
+              <div class="stat-card__label">Total Sessions</div>
+            </div>
+            <div class="stat-card stat-card--info">
+              <div class="stat-card__value">{{ stats.averageSessionRating != null ? stats.averageSessionRating : 'N/A' }}</div>
+              <div class="stat-card__label">Avg Rating</div>
+            </div>
+          </div>
+
+          <div class="stats-grid-2col">
+            <div class="card">
+              <div class="card-header">
+                <h3>Rating Distribution</h3>
+                <span class="card-subtitle">Session ratings</span>
+              </div>
+              <div class="card-body chart-body">
+                <canvas baseChart
+                       [data]="ratingBarData"
+                       [options]="ratingBarOptions"
+                       type="bar"></canvas>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>Recent Feedback</h3></div>
+              <div class="card-body">
+                @if (!stats.recentFeedback || stats.recentFeedback.length === 0) {
+                  <div class="stats-empty">No feedback yet</div>
+                } @else {
+                  <div class="feedback-list">
+                    @for (f of stats.recentFeedback; track $index) {
+                      <div class="feedback-item">
+                        <div class="feedback-item__top">
+                          <span class="feedback-item__mentor">{{ f.mentorName }}</span>
+                          @if (f.rating != null) {
+                            <span class="feedback-item__rating"><span class="rating-cell__star">★</span>{{ f.rating }}</span>
+                          }
+                        </div>
+                        <p class="feedback-item__text">&ldquo;{{ f.feedback }}&rdquo;</p>
+                        <div class="feedback-item__meta">{{ f.menteeName }} &middot; {{ formatFeedbackDate(f.sessionDate) }}</div>
+                      </div>
                     }
                   </div>
                 }
               </div>
-            }
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-header__left">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="card-icon">
-              <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
-            </svg>
-            <div>
-              <h2>Preview</h2>
-              <p class="card-subtitle">How the user form will look with current settings</p>
             </div>
           </div>
         </div>
-        <div class="card-body">
-          <div class="preview-form">
-            @for (section of sections; track section.toggleKey) {
-              @if (prefs[section.toggleKey]) {
-                <div class="preview-section">
-                  <div class="preview-section__title">{{ section.label }}</div>
-                  <div class="preview-chips">
-                    @for (opt of visibleOptions(section); track opt) {
-                      <span class="preview-chip">{{ opt }}</span>
-                    }
-                  </div>
-                </div>
+
+        <!-- ════ SUPPLY VS DEMAND ════ -->
+        <div class="stats-section">
+          <div class="stats-section__header">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+            <h2>Supply vs Demand</h2>
+            <span class="stats-section__count">Offers vs seeks per topic</span>
+          </div>
+
+          <div class="card">
+            <div class="card-body chart-body chart-body--wide">
+              @if (objectKeys(stats.supplyVsDemandByOption).length === 0) {
+                <div class="stats-empty">No data</div>
+              } @else {
+                <canvas baseChart
+                       [data]="supplyDemandBarData"
+                       [options]="supplyDemandBarOptions"
+                       type="bar"></canvas>
               }
-            }
-            @if (!prefs.showOfferHelp && !prefs.showSeekHelp && !prefs.showOfferMentoring && !prefs.showSeekMentoring) {
-              <div class="preview-empty">
-                <p>All sections are hidden. Users will not see the mentoring preferences form.</p>
-              </div>
-            }
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="settings-sidebar">
-      <button class="btn-save" (click)="save()" [disabled]="saving">
-        @if (saving) {
-          <span class="btn-save__spinner"></span>
-          Saving&hellip;
-        } @else {
-          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-          </svg>
-          Save Preferences
-        }
-      </button>
+        <!-- ════ COHORT & INDUSTRY BREAKDOWN ════ -->
+        <div class="stats-section">
+          <div class="stats-section__header">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            <h2>Breakdowns</h2>
+          </div>
 
-      @if (saveMessage) {
-        <div class="toast" [class.toast--success]="!saveError" [class.toast--error]="saveError" (click)="saveMessage = ''">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-            @if (!saveError) {
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            } @else {
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-            }
-          </svg>
-          <span>{{ saveMessage }}</span>
+          <div class="stats-grid-2col">
+            <div class="card">
+              <div class="card-header"><h3>By Graduation Year</h3></div>
+              <div class="card-body">
+                @if (objectKeys(stats.requestsByGraduationYear).length === 0) {
+                  <div class="stats-empty">No data</div>
+                } @else {
+                  @for (key of objectKeys(stats.requestsByGraduationYear); track key) {
+                    <div class="bar-row">
+                      <span class="bar-label">{{ key }}</span>
+                      <div class="bar-track">
+                        <div class="bar-fill bar-fill--blue" [style.width.%]="barWidth(stats.requestsByGraduationYear[key], maxValue(stats.requestsByGraduationYear))"></div>
+                      </div>
+                      <span class="bar-val">{{ stats.requestsByGraduationYear[key] }}</span>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>By Mentor Industry</h3></div>
+              <div class="card-body">
+                @if (objectKeys(stats.requestsByIndustry).length === 0) {
+                  <div class="stats-empty">No data</div>
+                } @else {
+                  @for (key of objectKeys(stats.requestsByIndustry); track key) {
+                    <div class="bar-row">
+                      <span class="bar-label">{{ key }}</span>
+                      <div class="bar-track">
+                        <div class="bar-fill bar-fill--green" [style.width.%]="barWidth(stats.requestsByIndustry[key], maxValue(stats.requestsByIndustry))"></div>
+                      </div>
+                      <span class="bar-val">{{ stats.requestsByIndustry[key] }}</span>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          </div>
         </div>
       }
     </div>
-  </div>
+  }
 </section>
