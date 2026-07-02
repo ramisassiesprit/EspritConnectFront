@@ -11,6 +11,8 @@ import { UserService } from '../../../core/services/User.service';
 import { BadgeService } from '../../../core/services/badge.service';
 import { User, Badge } from '../../../core/models/user.model';
 import { HomepageSettingsService, HomepageSettings } from '../../../core/services/homepage-settings.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserRole } from '../../../core/models/user-role.enum';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +34,7 @@ export class HomeComponent implements OnInit {
   private badgeService = inject(BadgeService);
   private router = inject(Router);
   private settingsService = inject(HomepageSettingsService);
+  private authService = inject(AuthService);
 
   user: User | null = null;
   completionPercentage: number = 0;
@@ -44,10 +47,18 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserData();
-    this.settingsService.settings$.subscribe(s => {
+    const role = this.resolveRole();
+    this.settingsService.settingsForRole$(role).subscribe(s => {
       this.settings = s;
       this.webTiles = s.webTiles ?? [];
     });
+  }
+
+  private resolveRole(): UserRole {
+    const url = this.router.url;
+    if (url.includes('/ancien/')) return UserRole.ALUMNI;
+    if (url.includes('/enseignant/')) return UserRole.ENSEIGNANT;
+    return UserRole.ETUDIANT;
   }
 
   hasTile(id: string): boolean {
