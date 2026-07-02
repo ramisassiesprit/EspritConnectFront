@@ -547,6 +547,10 @@ export const routes: Routes = [
         path: 'settings/homepage',
         loadComponent: () => import('./features/admin/settings/homepage/homepage-settings.component').then(m => m.HomepageSettingsComponent),
       },
+      {
+        path: 'settings/email',
+        loadComponent: () => import('./features/admin/settings/email-settings/email-settings.component').then(m => m.EmailSettingsComponent),
+      },
     ],
   },
 ];

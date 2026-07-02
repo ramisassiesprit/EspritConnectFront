@@ -59,7 +59,8 @@ export class AdminSidebarComponent {
     {
       label: 'Settings',
       children: [
-        { label: 'Homepage Settings', route: '/admin/settings/homepage' }
+        { label: 'Homepage Settings', route: '/admin/settings/homepage' },
+        { label: 'Email Settings', route: '/admin/settings/email' }
       ]
     }
   ];
