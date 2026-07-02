@@ -1,0 +1,251 @@
+.history-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  min-height: 400px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.history-header h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.btn-refresh {
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background-color: #b71c1c;
+}
+
+.btn-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.alert-danger {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  color: #888;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #d32f2f;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  padding: 4rem 0;
+  text-align: center;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.history-table-wrapper {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.history-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background-color: #f8f9fa;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.history-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.history-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.cell-date {
+  white-space: nowrap;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.cell-subject {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipient-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.recipient-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.recipient-email {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.type-badge {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status-sent {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-failed {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.btn-details {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.btn-details:hover {
+  border-color: #d32f2f;
+  color: #d32f2f;
+}
+
+.detail-row td {
+  padding: 0;
+  background-color: #fafafa;
+}
+
+.email-detail {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.detail-section {
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.detail-section strong {
+  color: #333;
+  margin-right: 0.5rem;
+}
+
+.detail-error {
+  background-color: #fff3e0;
+  padding: 0.75rem;
+  border-radius: 6px;
+  color: #e65100;
+}
+
+.detail-message {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.message-preview {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.message-preview :deep(img) {
+  max-width: 100%;
+  border-radius: 4px;
+}

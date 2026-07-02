@@ -1,0 +1,81 @@
+<div class="birthday-container">
+  <div class="birthday-grid">
+    <!-- Settings Panel -->
+    <div class="settings-panel">
+      <h2>Paramètres des anniversaires</h2>
+
+      <div *ngIf="loadingSettings" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement...</p>
+      </div>
+
+      <div *ngIf="!loadingSettings">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <strong>Envoi automatique</strong>
+            <p>Activer l'envoi automatique des emails d'anniversaire chaque jour à 8h00.</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="settings.enabled" (change)="toggleEnabled()" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+        <div class="form-group">
+          <label for="template">Template d'email</label>
+          <p class="form-help">Utilisez <code ngNonBindable>{{firstName}}</code> pour le prénom et <code ngNonBindable>{{frontendUrl}}</code> pour l'URL du site.</p>
+          <textarea id="template" [(ngModel)]="settings.template" class="form-control" rows="12"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-primary" (click)="saveSettings()" [disabled]="saving">
+            <span *ngIf="!saving">Enregistrer le template</span>
+            <span *ngIf="saving" class="btn-spinner"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Birthdays Panel -->
+    <div class="birthdays-panel">
+      <div class="birthdays-header">
+        <h2>Anniversaires à venir</h2>
+        <button class="btn-send-today" (click)="sendToday()" [disabled]="sending || !settings.enabled" [title]="!settings.enabled ? 'Activez d\'abord l\'envoi automatique' : 'Envoyer les emails d\'anniversaire pour aujourd\'hui'">
+          <span *ngIf="!sending">Envoyer aujourd'hui</span>
+          <span *ngIf="sending" class="btn-spinner"></span>
+        </button>
+      </div>
+
+      <div *ngIf="sendResult" class="alert" [class.alert-success]="!sendResult.includes('Erreur')" [class.alert-danger]="sendResult.includes('Erreur')">
+        {{ sendResult }}
+      </div>
+
+      <div *ngIf="loadingBirthdays" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement des anniversaires...</p>
+      </div>
+
+      <div *ngIf="!loadingBirthdays && upcomingBirthdays.length === 0" class="empty-state">
+        <p>Aucun anniversaire à venir.</p>
+      </div>
+
+      <div *ngIf="!loadingBirthdays && upcomingBirthdays.length > 0" class="birthday-list">
+        <div class="birthday-item" *ngFor="let b of upcomingBirthdays" [class.today]="isToday(b)">
+          <div class="birthday-avatar">{{ b.firstName.charAt(0) }}{{ b.lastName.charAt(0) }}</div>
+          <div class="birthday-info">
+            <span class="birthday-name">{{ b.firstName }} {{ b.lastName }}</span>
+            <span class="birthday-email">{{ b.email }}</span>
+            <span class="birthday-date">{{ b.dateOfBirth | date:'dd MMMM' }}</span>
+          </div>
+          <div class="birthday-countdown">
+            <span *ngIf="isToday(b)" class="badge-today">Aujourd'hui</span>
+            <span *ngIf="!isToday(b)" class="days-until">{{ b.daysUntilBirthday }} jour(s)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
