@@ -1,0 +1,200 @@
+<section class="dashboard">
+
+  <!-- Header -->
+  <div class="dashboard__header">
+    <div class="dashboard__header-left">
+      <div class="dashboard__greeting">
+        <span class="dashboard__greeting-wave">👋</span>
+        <div>
+          <h1>{{ greeting }}, {{ adminName }}</h1>
+          <p>Voici un aperçu de la plateforme EspritConnect</p>
+        </div>
+      </div>
+    </div>
+    <div class="dashboard__header-right">
+      <div class="dashboard__date">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/></svg>
+        {{ today | date: 'EEEE d MMMM yyyy' : '' : 'fr' }}
+      </div>
+      @if (pendingCount > 0) {
+        <a [routerLink]="'/admin/users/approval'" class="dashboard__alert-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          {{ pendingCount }} en attente
+        </a>
+      }
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <!-- Skeleton Loading -->
+    <div class="dashboard__skeleton">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    </div>
+  } @else {
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      @for (kpi of kpis; track kpi.label) {
+        <div class="kpi-card" [style.--accent]="kpi.color">
+          <div class="kpi-card__icon-wrap">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+              <path [attr.d]="kpi.icon"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <span class="kpi-card__label">{{ kpi.label }}</span>
+            <span class="kpi-card__value">{{ kpi.value }}</span>
+            @if (kpi.delta) {
+              <span class="kpi-card__delta" [class.positive]="kpi.deltaPositive" [class.negative]="!kpi.deltaPositive">
+                {{ kpi.delta }}
+              </span>
+            }
+          </div>
+          <div class="kpi-card__glow"></div>
+        </div>
+      }
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+
+      <!-- Donut Chart — Répartition par rôle -->
+      <div class="chart-card chart-card--donut">
+        <div class="chart-card__header">
+          <div class="chart-card__title">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            Répartition des rôles
+          </div>
+        </div>
+        <div class="chart-card__body donut-wrap">
+          <div class="donut-chart">
+            <svg viewBox="0 0 42 42" class="donut-svg">
+              <circle class="donut-ring" cx="21" cy="21" r="15.915"/>
+              @for (seg of roleDistribution; track seg.role; let i = $index) {
+                <circle
+                  class="donut-segment"
+                  cx="21" cy="21" r="15.915"
+                  [attr.stroke]="seg.color"
+                  [attr.stroke-dasharray]="seg.percent + ' ' + (100 - seg.percent)"
+                  [attr.stroke-dashoffset]="getDonutOffset(i)">
+                </circle>
+              }
+            </svg>
+            <div class="donut-center">
+              <span class="donut-total">{{ donutTotal }}</span>
+              <span class="donut-label">membres</span>
+            </div>
+          </div>
+          <div class="donut-legend">
+            @for (seg of roleDistribution; track seg.role) {
+              <div class="donut-legend__item">
+                <span class="donut-legend__dot" [style.background]="seg.color"></span>
+                <span class="donut-legend__name">{{ seg.role }}</span>
+                <span class="donut-legend__count">{{ seg.count }}</span>
+                <span class="donut-legend__pct">{{ seg.percent }}%</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart — Inscriptions par semaine -->
+      <div class="chart-card chart-card--bar">
+        <div class="chart-card__header">
+          <div class="chart-card__title">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+            Nouvelles inscriptions
+          </div>
+          <span class="chart-card__subtitle">4 dernières semaines</span>
+        </div>
+        <div class="chart-card__body bar-chart">
+          @for (val of activityData; track $index) {
+            <div class="bar-col">
+              <div class="bar-col__bar-wrap">
+                <div class="bar-col__bar" [style.height.%]="barHeight(val)" [style.--bar-color]="'#6366f1'">
+                  <span class="bar-col__tooltip">{{ val }}</span>
+                </div>
+              </div>
+              <span class="bar-col__label">{{ activityWeeks[$index] }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="bottom-row">
+
+      <!-- Recent Users -->
+      <div class="recent-card">
+        <div class="recent-card__header">
+          <div class="recent-card__title">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            Derniers inscrits
+          </div>
+          <a [routerLink]="'/admin/users/approval'" class="recent-card__see-all">Voir tout →</a>
+        </div>
+        <div class="recent-card__list">
+          @for (user of recentUsers; track user.name) {
+            <div class="recent-user">
+              <div class="recent-user__avatar">
+                @if (user.avatarUrl) {
+                  <img [src]="getAvatarUrl(user.avatarUrl)" [alt]="user.name" />
+                } @else {
+                  <span>{{ getInitials(user.name) }}</span>
+                }
+              </div>
+              <div class="recent-user__info">
+                <span class="recent-user__name">{{ user.name }}</span>
+                <span class="recent-user__role">{{ user.role }}</span>
+              </div>
+              <span class="recent-user__time">{{ timeAgo(user.createdAt) }}</span>
+            </div>
+          }
+          @if (recentUsers.length === 0) {
+            <p class="recent-card__empty">Aucun utilisateur récent.</p>
+          }
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <div class="quick-actions__header">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6.01-4.72 7.72L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05z"/></svg>
+          Actions rapides
+        </div>
+        <div class="quick-actions__grid">
+          @for (action of quickActions; track action.label) {
+            <a [routerLink]="action.route" class="quick-action-btn" [style.--action-color]="action.color">
+              <div class="quick-action-btn__icon">
+                @if (action.icon === 'check_circle') {
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                } @else if (action.icon === 'mail') {
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                } @else if (action.icon === 'event') {
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm-7-5h5v5h-5v-5zm0-4h5v2h-5V11zm-7 4h3v3H5v-3zm0-4h3v2H5V11z"/></svg>
+                } @else if (action.icon === 'work') {
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                } @else if (action.icon === 'group') {
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                } @else {
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                }
+              </div>
+              <div class="quick-action-btn__text">
+                <span class="quick-action-btn__label">{{ action.label }}</span>
+                <span class="quick-action-btn__desc">{{ action.description }}</span>
+              </div>
+              <svg class="quick-action-btn__arrow" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+            </a>
+          }
+        </div>
+      </div>
+
+    </div>
+
+  }
+
+</section>

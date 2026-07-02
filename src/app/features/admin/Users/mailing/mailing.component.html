@@ -1,0 +1,96 @@
+<div class="mailing-container">
+  <div class="mailing-content">
+    <header class="mailing-header">
+      <h1>Mailing</h1>
+      <p>Envoyez des communications aux membres de la plateforme.</p>
+    </header>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="mailForm" (ngSubmit)="onSubmit()" class="mailing-form">
+      <div class="form-layout">
+        <!-- Colonne gauche: Formulaire de mail -->
+        <div class="mail-composition">
+          <div class="form-group">
+            <label for="subject">Sujet de l'email</label>
+            <input type="text" id="subject" formControlName="subject" class="form-control" placeholder="Entrez le sujet de votre message" />
+            <div *ngIf="mailForm.get('subject')?.touched && mailForm.get('subject')?.invalid" class="error-text">
+              Le sujet est requis (minimum 3 caractères).
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" formControlName="message" class="form-control" rows="12" placeholder="Rédigez votre message ici..."></textarea>
+            <div *ngIf="mailForm.get('message')?.touched && mailForm.get('message')?.invalid" class="error-text">
+              Le message est requis (minimum 10 caractères).
+            </div>
+          </div>
+        </div>
+
+        <!-- Colonne droite: Sélection des utilisateurs -->
+        <div class="user-selection">
+          <div class="user-selection-header">
+            <h3>Destinataires <span class="badge">{{ getSelectedEmails().length }} sélectionnés</span></h3>
+          </div>
+          
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+            <input type="text" formControlName="searchUser" placeholder="Rechercher un utilisateur..." />
+          </div>
+
+          <div class="select-all-row" *ngIf="filteredUsers.length > 0">
+            <label class="checkbox-container">
+              <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll()" />
+              <span class="checkmark"></span>
+              Tout sélectionner ({{ filteredUsers.length }})
+            </label>
+          </div>
+
+          <div *ngIf="loading" class="loading-state">
+            <div class="spinner"></div>
+            <p>Chargement des utilisateurs...</p>
+          </div>
+
+          <div *ngIf="!loading && filteredUsers.length === 0" class="empty-state">
+            <p>Aucun utilisateur trouvé.</p>
+          </div>
+
+          <div class="users-list" *ngIf="!loading && filteredUsers.length > 0">
+            <div class="user-item" *ngFor="let user of filteredUsers" (click)="toggleUserSelection(user)" [class.selected]="user.selected">
+              <label class="checkbox-container" (click)="$event.stopPropagation()">
+                <input type="checkbox" [checked]="user.selected" (change)="toggleUserSelection(user)" />
+                <span class="checkmark"></span>
+              </label>
+              <div class="user-info">
+                <div class="user-avatar">
+                  {{ user.firstName?.charAt(0) || '' }}{{ user.lastName?.charAt(0) || 'U' }}
+                </div>
+                <div class="user-details">
+                  <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+                  <span class="user-role">{{ user.role }} • {{ user.email }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="sending || mailForm.invalid || getSelectedEmails().length === 0">
+          <span *ngIf="!sending">Envoyer l'email</span>
+          <span *ngIf="sending" class="btn-spinner"></span>
+          <span *ngIf="sending">Envoi en cours...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

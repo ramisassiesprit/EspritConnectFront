@@ -1,0 +1,85 @@
+<div class="mailing-settings-container">
+  <header class="mailing-settings-header">
+    <h1>Paramètres d'e-mails</h1>
+    <p>Gérez les notifications par e-mail pour les différents modules de la plateforme.</p>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des paramètres...</p>
+  </div>
+
+  <div *ngIf="!loading" class="mailing-settings-content">
+    
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <div class="settings-list">
+      
+      <!-- Auth / Registration -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <h3>Authentification & Inscription</h3>
+          <p>Envoi d'e-mails pour la création de compte et la réinitialisation de mot de passe.</p>
+        </div>
+        <div class="setting-action">
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="settings.authEmailsEnabled">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Events -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <h3>Événements</h3>
+          <p>Envoi d'e-mails lors de la création d'événements.</p>
+        </div>
+        <div class="setting-action">
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="settings.eventEmailsEnabled">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Mentoring -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <h3>Mentorat</h3>
+          <p>Envoi d'e-mails lors de demandes de mentorat ou de mises à jour.</p>
+        </div>
+        <div class="setting-action">
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="settings.mentoringEmailsEnabled">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Video Chat -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <h3>Appels Vidéo</h3>
+          <p>Envoi d'e-mails d'invitation aux réunions vidéo (Google Meet).</p>
+        </div>
+        <div class="setting-action">
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="settings.videoChatEmailsEnabled">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-primary" (click)="saveSettings()" [disabled]="saving">
+        <span *ngIf="!saving">Enregistrer</span>
+        <span *ngIf="saving">Enregistrement...</span>
+      </button>
+    </div>
+
+  </div>
+</div>

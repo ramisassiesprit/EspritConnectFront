@@ -1,0 +1,68 @@
+<div class="affiliations-container">
+  <div class="affiliations-content">
+    <header class="affiliations-header">
+      <h1>Affiliations</h1>
+      <div class="export-actions">
+        <select [(ngModel)]="exportRole" class="role-select">
+          <option value="ALL">Tous les rôles</option>
+          <option value="ETUDIANT">Étudiants</option>
+          <option value="ALUMNI">Alumni</option>
+          <option value="ENSEIGNANT">Enseignants</option>
+          <option value="ENTREPRISE">Entreprises</option>
+        </select>
+        <button class="btn-export" (click)="exportUsers()" [disabled]="exportLoading">
+          <span *ngIf="!exportLoading">Exporter en Excel (CSV)</span>
+          <span *ngIf="exportLoading">Exportation...</span>
+        </button>
+      </div>
+    </header>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des statistiques...</p>
+    </div>
+
+    <div *ngIf="!loading" class="table-container">
+      <table class="affiliations-table">
+        <thead>
+          <tr>
+            <th>Affiliation</th>
+            <th>Members</th>
+            <th>View pages</th>
+            <th>Post content</th>
+            <th>Who can they message</th>
+            <th>Whose contact details can they see</th>
+            <th>To who should they appear in the directory and search results</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows">
+            <td class="affiliation-name">{{ row.name }}</td>
+            <td class="members-count">{{ row.members }}</td>
+            <td>
+              <span class="permission"><span class="dot" [class.green]="row.viewPages !== 'None'"></span> {{ row.viewPages }}</span>
+            </td>
+            <td>
+              <span class="permission"><span class="dot" [class.green]="row.postContent !== 'None'"></span> {{ row.postContent }}</span>
+            </td>
+            <td>
+              <span class="permission"><span class="dot" [class.green]="row.message !== 'None'"></span> {{ row.message }}</span>
+            </td>
+            <td>
+              <span class="permission"><span class="dot" [class.green]="row.contactDetails !== 'None'"></span> {{ row.contactDetails }}</span>
+            </td>
+            <td>
+              <span class="permission"><span class="dot" [class.green]="row.directory !== 'None'"></span> {{ row.directory }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <button class="fab-btn" title="Add affiliation">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+      </svg>
+    </button>
+  </div>
+</div>
