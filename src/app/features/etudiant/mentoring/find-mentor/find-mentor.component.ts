@@ -5,9 +5,6 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MentorMatch, MentorshipService } from '../../../../core/services/mentorship.service';
 import { UserService } from '../../../../core/services/User.service';
-import { ProfileService } from '../../../../core/services/profile.service';
-import { catchError } from 'rxjs/operators';
-import { forkJoin, map, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-find-mentor',
@@ -35,7 +32,6 @@ export class FindMentorComponent implements OnInit {
   private authService = inject(AuthService);
   private mentorshipService = inject(MentorshipService);
   private userService = inject(UserService);
-  private profileService = inject(ProfileService);
 
   ngOnInit() {
     this.loadMentorsBySpeciality();
@@ -74,45 +70,23 @@ export class FindMentorComponent implements OnInit {
   }
 
   private loadMentorsBySpeciality() {
-    this.userService.getAllUsers().pipe(
-      switchMap(users => {
-        const mentorChecks = users.map(u => 
-          this.profileService.getWillingToHelpsByUserId(u.id).pipe(
-            catchError(() => of(null)),
-            map(helps => {
-              const isMentor = helps && helps.length > 0 && helps[0].offerMentor && helps[0].offerMentor.trim() !== '';
-              return { user: u, isMentor, helps: helps ? helps[0] : null };
-            })
-          )
+    this.userService.getUsers().subscribe({
+      next: (users) => {
+        const mentors = users.filter(u =>
+          u.willingToHelps?.some(w => w.offerMentor && w.offerMentor.trim() !== '')
         );
-        return mentorChecks.length ? forkJoin(mentorChecks) : of([]);
-      }),
-      switchMap((checks: any) => {
-        const mentors = checks.filter((c: any) => c.isMentor);
-        if (mentors.length === 0) return of([]);
 
-        const profileReqs = mentors.map((m: any) => 
-          this.profileService.getEspritProfileByUserId(m.user.id).pipe(
-            catchError(() => of(null)),
-            map(profile => {
-              return { ...m, profile };
-            })
-          )
-        );
-        return forkJoin(profileReqs);
-      })
-    ).subscribe({
-      next: (mentorsWithProfile: any) => {
-        if (!mentorsWithProfile || mentorsWithProfile.length === 0) {
+        if (mentors.length === 0) {
           this.categories = [];
           this.isLoading = false;
           return;
         }
 
-        const groups = mentorsWithProfile.reduce((acc: any, curr: any) => {
-          const field = curr.profile?.fieldOfStudy || curr.user.jobFunction || curr.user.industry || 'General';
+        const groups = mentors.reduce((acc: any, user: any) => {
+          const espritProfile = user.espritProfile;
+          const field = espritProfile?.fieldOfStudy || user.jobFunction || user.industry || 'General';
           if (!acc[field]) acc[field] = [];
-          acc[field].push(curr);
+          acc[field].push({ user, profile: espritProfile });
           return acc;
         }, {} as Record<string, any[]>);
 
