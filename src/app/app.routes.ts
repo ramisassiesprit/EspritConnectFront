@@ -481,6 +481,30 @@ export const routes: Routes = [
           import('./features/admin/Users/mailing/mailing.component').then(
             (m) => m.MailingComponent,
           ),
+        children: [
+          { path: '', redirectTo: 'compose', pathMatch: 'full' },
+          {
+            path: 'compose',
+            loadComponent: () =>
+              import('./features/admin/Users/mailing/mailing-compose/mailing-compose.component').then(
+                (m) => m.MailingComposeComponent,
+              ),
+          },
+          {
+            path: 'history',
+            loadComponent: () =>
+              import('./features/admin/Users/mailing/mailing-history/mailing-history.component').then(
+                (m) => m.MailingHistoryComponent,
+              ),
+          },
+          {
+            path: 'birthday',
+            loadComponent: () =>
+              import('./features/admin/Users/mailing/mailing-birthday/mailing-birthday.component').then(
+                (m) => m.MailingBirthdayComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'users/list',

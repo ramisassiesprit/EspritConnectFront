@@ -1,0 +1,85 @@
+<div class="history-container">
+  <div class="history-header">
+    <h2>Historique des emails</h2>
+    <button class="btn-refresh" (click)="loadHistory()" [disabled]="loading">
+      <span *ngIf="!loading">Actualiser</span>
+      <span *ngIf="loading" class="btn-spinner"></span>
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement de l'historique...</p>
+  </div>
+
+  <div *ngIf="!loading && history.length === 0" class="empty-state">
+    <p>Aucun email envoyé pour le moment.</p>
+  </div>
+
+  <div *ngIf="!loading && history.length > 0" class="history-table-wrapper">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Destinataire</th>
+          <th>Sujet</th>
+          <th>Type</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let email of history">
+          <td class="cell-date">{{ email.sentAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <div class="recipient-info">
+              <span class="recipient-name">{{ email.recipientName || email.recipientEmail }}</span>
+              <span class="recipient-email">{{ email.recipientName ? email.recipientEmail : '' }}</span>
+            </div>
+          </td>
+          <td class="cell-subject">{{ email.subject }}</td>
+          <td><span class="type-badge">{{ getTypeLabel(email.emailType) }}</span></td>
+          <td><span class="status-badge" [class]="getStatusClass(email.status)">{{ email.status === 'SENT' ? 'Envoyé' : 'Échec' }}</span></td>
+          <td>
+            <button class="btn-details" (click)="viewDetails(email)">
+              {{ selectedEmail?.id === email.id ? 'Masquer' : 'Détails' }}
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="selectedEmail" class="detail-row">
+          <td colspan="6">
+            <div class="email-detail">
+              <div class="detail-section">
+                <strong>De :</strong> Esprit Connect
+              </div>
+              <div class="detail-section">
+                <strong>À :</strong> {{ selectedEmail.recipientName ? selectedEmail.recipientName + ' &lt;' + selectedEmail.recipientEmail + '&gt;' : selectedEmail.recipientEmail }}
+              </div>
+              <div class="detail-section">
+                <strong>Sujet :</strong> {{ selectedEmail.subject }}
+              </div>
+              <div class="detail-section">
+                <strong>Date :</strong> {{ selectedEmail.sentAt | date:'dd/MM/yyyy HH:mm:ss' }}
+              </div>
+              <div class="detail-section">
+                <strong>Statut :</strong> 
+                <span class="status-badge" [class]="getStatusClass(selectedEmail.status)">
+                  {{ selectedEmail.status === 'SENT' ? 'Envoyé' : 'Échec' }}
+                </span>
+              </div>
+              <div *ngIf="selectedEmail.errorMessage" class="detail-section detail-error">
+                <strong>Erreur :</strong> {{ selectedEmail.errorMessage }}
+              </div>
+              <div class="detail-section detail-message">
+                <strong>Message :</strong>
+                <div class="message-preview" [innerHTML]="selectedEmail.messageBody"></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
