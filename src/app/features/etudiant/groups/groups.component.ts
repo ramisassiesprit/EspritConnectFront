@@ -33,6 +33,8 @@ export class GroupsComponent implements OnInit {
   allGroups: Group[] = [];
   availableLabels: string[] = [];
   selectedLabel: string | null = null;
+  availableAffiliations: string[] = ['student', 'Alumni', 'company', 'teacher/staff'];
+  selectedAffiliation: string | null = null;
   searchQuery: string = '';
   loading = false;
   error = '';
@@ -115,12 +117,22 @@ export class GroupsComponent implements OnInit {
     this.selectedLabel = label;
   }
 
+  selectAffiliation(affiliation: string | null) {
+    this.selectedAffiliation = affiliation;
+  }
+
   get filteredJoinedGroups(): Group[] {
     let filtered = this.joinedGroups;
     
     if (this.selectedLabel) {
       filtered = filtered.filter(g => 
         g.labels?.split(',').map(l => l.trim()).includes(this.selectedLabel!)
+      );
+    }
+
+    if (this.selectedAffiliation) {
+      filtered = filtered.filter(g =>
+        g.affiliation?.split(',').map(a => a.trim().toLowerCase()).includes(this.selectedAffiliation!.toLowerCase())
       );
     }
     
@@ -143,6 +155,12 @@ export class GroupsComponent implements OnInit {
     if (this.selectedLabel) {
       filtered = filtered.filter(g => 
         g.labels?.split(',').map(l => l.trim()).includes(this.selectedLabel!)
+      );
+    }
+
+    if (this.selectedAffiliation) {
+      filtered = filtered.filter(g =>
+        g.affiliation?.split(',').map(a => a.trim().toLowerCase()).includes(this.selectedAffiliation!.toLowerCase())
       );
     }
     

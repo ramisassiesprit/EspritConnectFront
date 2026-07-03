@@ -15,6 +15,7 @@ interface GroupMember {
   avatarUrl: string;
   isOnline?: boolean;
   role: string;
+  groupRole?: string;
   membershipStatus?: string;
 }
 
@@ -42,6 +43,10 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
   filterLastName = '';
   filterAffiliation = '';
   sortOption = 'Alphabetically';
+  showPending = false;
+  expandedSection: string | null = null;
+
+  readonly affiliationOptions = ['ETUDIANT', 'ALUMNI', 'ENSEIGNANT'];
 
   readonly Search = Search;
   readonly Users = Users;
@@ -86,6 +91,7 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
           avatarUrl: m.avatarUrl || '',
           isOnline: m.isOnline || false,
           role: m.userRole || 'ETUDIANT',
+          groupRole: m.role,
           membershipStatus: m.status || 'APPROVED'
         }));
         this.applyFiltersAndSorting();
@@ -120,6 +126,7 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
             avatarUrl: m.avatarUrl || '',
             isOnline: m.isOnline || false,
             role: m.userRole || 'ETUDIANT',
+            groupRole: m.role,
             membershipStatus: m.status || 'APPROVED'
           }));
           this.applyFiltersAndSorting();
@@ -137,8 +144,10 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
   applyFiltersAndSorting() {
     let temp = [...this.onlineMembers];
 
-    // Filter out PENDING members
-    temp = temp.filter(m => m.membershipStatus !== 'PENDING');
+    // Filter out PENDING members unless showPending is toggled
+    if (!this.showPending) {
+      temp = temp.filter(m => m.membershipStatus !== 'PENDING');
+    }
 
     // Search query filter (matches full name)
     if (this.searchQuery.trim()) {
@@ -160,6 +169,11 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
       temp = temp.filter(m => m.lastName.toLowerCase().includes(ln));
     }
 
+    // Affiliation filter (filters by user role: ETUDIANT, ALUMNI, ENSEIGNANT)
+    if (this.filterAffiliation) {
+      temp = temp.filter(m => m.role === this.filterAffiliation);
+    }
+
     // Sorting
     if (this.sortOption === 'Alphabetically') {
       temp.sort((a, b) => (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName));
@@ -177,7 +191,12 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
     this.filterLastName = '';
     this.filterAffiliation = '';
     this.sortOption = 'Alphabetically';
+    this.showPending = false;
     this.applyFiltersAndSorting();
+  }
+
+  toggleSection(section: string) {
+    this.expandedSection = this.expandedSection === section ? null : section;
   }
 
   disconnectWebSocket() {
@@ -211,6 +230,6 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
   }
 
   isCurrentUserAdmin(): boolean {
-    return !!this.onlineMembers.find(m => m.id === this.currentUserId && m.role === 'ADMIN');
+    return !!this.onlineMembers.find(m => m.id === this.currentUserId && m.groupRole === 'ADMIN');
   }
 }

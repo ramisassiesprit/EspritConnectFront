@@ -75,12 +75,47 @@ export class GroupsControlComponent implements OnInit {
     if (!confirm('Are you sure you want to remove this member?')) return;
     this.groupService.removeMember(this.group.id, userId).subscribe({
       next: () => {
-        // reload members
         this.groupService.getGroupMembers(this.group.id).subscribe({
           next: m => this.members = m,
           error: e => console.error('Failed load members', e)
         });
       },
+      error: e => console.error(e)
+    });
+  }
+
+  approveMember(userId: string) {
+    if (!this.group) return;
+    this.groupService.approveMember(this.group.id, userId).subscribe({
+      next: () => {
+        this.groupService.getGroupMembers(this.group.id).subscribe({
+          next: m => this.members = m,
+          error: e => console.error('Failed load members', e)
+        });
+      },
+      error: e => console.error(e)
+    });
+  }
+
+  rejectMember(userId: string) {
+    if (!this.group) return;
+    if (!confirm('Reject this membership request?')) return;
+    this.groupService.rejectMember(this.group.id, userId).subscribe({
+      next: () => {
+        this.groupService.getGroupMembers(this.group.id).subscribe({
+          next: m => this.members = m,
+          error: e => console.error('Failed load members', e)
+        });
+      },
+      error: e => console.error(e)
+    });
+  }
+
+  setGroupStatus(status: string) {
+    if (!this.group) return;
+    if (!confirm(`Change group status to ${status}?`)) return;
+    this.groupService.setGroupStatus(this.group.id, status as any).subscribe({
+      next: () => this.loadGroup(this.group.id),
       error: e => console.error(e)
     });
   }

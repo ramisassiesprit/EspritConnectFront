@@ -36,6 +36,7 @@ export interface Event {
   status?: EventStatus;
   coverUrl?: string;
   creatorId?: string;
+  groupId?: string;
   createdAt?: string;
   updatedAt?: string;
   matchScore?: number;
