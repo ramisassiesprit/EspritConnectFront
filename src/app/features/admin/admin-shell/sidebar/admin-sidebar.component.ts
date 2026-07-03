@@ -50,7 +50,6 @@ export class AdminSidebarComponent {
       ]
     },
     { label: 'Feed', route: '/admin/feed' },
-    { label: 'Directory', route: '/admin/directory' },
     { label: 'Mentoring', route: '/admin/mentoring' },
     {
       label: 'Jobs',
@@ -60,7 +59,6 @@ export class AdminSidebarComponent {
         { label: 'Manage Jobs', route: '/admin/jobs/manage' }
       ]
     },
-    { label: 'Photos', route: '/admin/photos' },
     { label: 'Groups', route: '/admin/groups' },
     { label: 'Events', route: '/admin/events' },
     {
