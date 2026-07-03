@@ -603,6 +603,55 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'widgets/automatic',
+        loadComponent: () =>
+          import('./features/admin/widgets/automatic/automatic-widgets.component').then(
+            (m) => m.AutomaticWidgetsComponent,
+          ),
+      },
+      {
+        path: 'widgets/custom',
+        loadComponent: () =>
+          import('./features/admin/widgets/custom/custom-widgets.component').then(
+            (m) => m.CustomWidgetsComponent,
+          ),
+      },
+      {
+        path: 'insights/engagement',
+        loadComponent: () =>
+          import('./features/admin/insights/engagement/engagement-analytics.component').then(
+            (m) => m.EngagementAnalyticsComponent,
+          ),
+      },
+      {
+        path: 'insights/willing-to-give',
+        loadComponent: () =>
+          import('./features/admin/insights/willing-to-give/willing-to-give.component').then(
+            (m) => m.WillingToGiveComponent,
+          ),
+      },
+      {
+        path: 'insights/case-metrics',
+        loadComponent: () =>
+          import('./features/admin/insights/case-metrics/case-metrics.component').then(
+            (m) => m.CaseMetricsComponent,
+          ),
+      },
+      {
+        path: 'insights/virtual-chat',
+        loadComponent: () =>
+          import('./features/admin/virtual-chat/virtual-chat-analytics.component').then(
+            (m) => m.VirtualChatAnalyticsComponent,
+          ),
+      },
+      {
+        path: 'insights/jobs',
+        loadComponent: () =>
+          import('./features/admin/insights/jobs/insights-jobs.component').then(
+            (m) => m.InsightsJobsComponent,
+          ),
+      },
+      {
         path: 'settings',
         redirectTo: 'settings/homepage',
         pathMatch: 'full',

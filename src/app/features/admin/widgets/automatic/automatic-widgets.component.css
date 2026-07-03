@@ -1,0 +1,310 @@
+/* ====================================================
+   Automatic Widgets — Admin Settings
+   ==================================================== */
+
+:host {
+  display: block;
+}
+
+.widgets-page {
+  padding: 2rem 2.5rem;
+  max-width: 1200px;
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.settings-container {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.setting-block {
+  padding: 1.5rem 2rem;
+}
+
+.setting-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting-block__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.setting-block__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+}
+
+.setting-block__desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.chevron-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, color 0.2s;
+}
+
+.chevron-btn:hover {
+  color: #475569;
+}
+
+.chevron-btn.open {
+  transform: rotate(180deg);
+}
+
+/* ── Social Media Body ── */
+.setting-block__body {
+  margin-top: 1.5rem;
+  padding-left: 1rem;
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+  margin-bottom: 2rem;
+}
+
+.social-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.social-col__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+}
+
+.social-col__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.fb-icon { color: #1877f2; font-size: 1.1rem; }
+.yt-icon { color: #ff0000; font-size: 1rem; }
+.x-icon { color: #0f1419; font-size: 1.1rem; }
+
+.btn-text-add {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s;
+}
+
+.btn-text-add:hover {
+  color: #b91c1c;
+}
+
+.social-col__links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.link-input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.input-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.5rem 0;
+  border: none;
+  border-bottom: 1px solid #cbd5e1;
+  background: transparent;
+  font-size: 0.85rem;
+  color: #334155;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-bottom-color: #ef4444;
+}
+
+.btn-remove {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  padding: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  margin-bottom: 0.2rem;
+}
+
+.btn-remove:hover {
+  color: #ef4444;
+}
+
+.setting-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-save {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.2s;
+}
+
+.btn-save:hover {
+  color: #64748b;
+}
+
+/* ── Toggles ── */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #e2e8f0;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+input:checked + .slider {
+  background-color: #ef4444;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* ── Inline Form ── */
+.inline-form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.inline-label {
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.form-input--small {
+  width: 60px;
+  text-align: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0.4rem;
+}
+
+.form-select {
+  padding: 0.4rem 2rem 0.4rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  background: #fff;
+  font-size: 0.85rem;
+  color: #334155;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1em;
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: #e2e8f0;
+  width: 100%;
+}

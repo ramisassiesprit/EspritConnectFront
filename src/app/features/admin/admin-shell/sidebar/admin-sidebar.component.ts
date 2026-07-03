@@ -63,6 +63,23 @@ export class AdminSidebarComponent {
     { label: 'Photos', route: '/admin/photos' },
     { label: 'Groups', route: '/admin/groups' },
     { label: 'Events', route: '/admin/events' },
+    {
+      label: 'Widgets',
+      children: [
+        { label: 'Automatic', route: '/admin/widgets/automatic' },
+        { label: 'Custom', route: '/admin/widgets/custom' }
+      ]
+    },
+    {
+      label: 'Insights & Analytics',
+      children: [
+        { label: 'Engagement', route: '/admin/insights/engagement' },
+        { label: 'Willing to Give', route: '/admin/insights/willing-to-give' },
+        { label: 'CASE Metrics', route: '/admin/insights/case-metrics' },
+        { label: 'Virtual Chat', route: '/admin/insights/virtual-chat' },
+        { label: 'Jobs', route: '/admin/insights/jobs' }
+      ]
+    },
     { label: 'Resources', route: '/admin/resources' },
     {
       label: 'Settings',

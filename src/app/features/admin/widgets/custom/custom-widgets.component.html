@@ -1,0 +1,96 @@
+<section class="custom-widgets-page" id="custom-widgets-page">
+
+  <div class="page-container">
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar__info">
+        <h1 class="top-bar__title">Custom Widgets</h1>
+        <p class="top-bar__subtitle">You may add up to 12 widgets</p>
+      </div>
+      <button class="btn-add" (click)="addWidget()">ADD WIDGET</button>
+    </div>
+
+    <!-- Select All Row -->
+    <div class="select-all-card">
+      <label class="custom-radio">
+        <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleSelectAll()">
+        <span class="radio-mark"></span>
+        Select All
+      </label>
+    </div>
+
+    <!-- Widgets List -->
+    <div class="widgets-list">
+      @for (widget of widgets; track widget.id) {
+        <div class="widget-card">
+          
+          <div class="widget-card__left">
+            <label class="custom-radio">
+              <input type="checkbox" [(ngModel)]="widget.selected" (change)="updateSelectAll()">
+              <span class="radio-mark"></span>
+            </label>
+            
+            <div class="widget-image" [style.background]="widget.imagePlaceholderColor">
+              @if (widget.isEspritLogo) {
+                <!-- Mock Esprit Logo -->
+                <div class="mock-esprit-logo">
+                  <span class="esprit-text">esprit<span class="red-arrow">▶</span></span>
+                  <span class="esprit-sub">Se former autrement</span>
+                  <div class="esprit-line"></div>
+                  <span class="esprit-footer">HONORIS UNITED UNIVERSITIES</span>
+                </div>
+              } @else {
+                <!-- Mock Job Search Image -->
+                <div class="mock-job-img">
+                  <span class="job-text">JOB SEARCH</span>
+                  <div class="job-graphics">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32" class="job-icon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32" class="job-icon"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="widget-card__center">
+            <div class="widget-row">
+              <span class="widget-label">Display widget</span>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="widget.display">
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <div class="widget-row">
+              <span class="widget-label">Title:</span>
+              <span class="widget-value widget-value--dark">{{ widget.title }}</span>
+            </div>
+
+            <div class="widget-row">
+              <span class="widget-label">Content:</span>
+              <span class="widget-value">{{ widget.content }}</span>
+            </div>
+
+            <div class="widget-row">
+              <span class="widget-label">Button Text:</span>
+              <span class="widget-value widget-value--red">{{ widget.buttonText }}</span>
+            </div>
+          </div>
+
+          <div class="widget-card__right">
+            <button class="icon-btn btn-menu" (click)="openWidgetMenu(widget)">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            </button>
+            <div class="drag-handle">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 15h18v-2H3v2zm0-4h18V9H3v2z"/></svg>
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+
+  </div>
+
+</section>

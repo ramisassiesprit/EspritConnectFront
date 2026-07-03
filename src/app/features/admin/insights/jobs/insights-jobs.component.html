@@ -1,0 +1,238 @@
+<section class="jobs-analytics" id="jobs-analytics-page">
+
+  <!-- Page Title -->
+  <div class="page-header">
+    <h1 class="page-header__title">Jobs Analytics</h1>
+    <button class="btn-print" id="printReportBtn" (click)="printReport()">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+        <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+      </svg>
+      PRINT REPORT
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="skeleton-grid">
+      <div class="skeleton-card skeleton-card--wide"></div>
+      <div class="skeleton-card skeleton-card--wide"></div>
+      <div class="skeleton-card skeleton-card--tall"></div>
+      <div class="skeleton-card skeleton-card--tall"></div>
+    </div>
+  } @else {
+
+    <!-- KPI Cards -->
+    <div class="kpi-row">
+      <div class="kpi-tile kpi-tile--green" id="totalJobsCard">
+        <div class="kpi-tile__content">
+          <div class="kpi-tile__label-row">
+            <span class="kpi-tile__label">Total Jobs</span>
+            <span class="kpi-tile__badge">● Active</span>
+          </div>
+          <span class="kpi-tile__value">{{ totalJobs }}</span>
+        </div>
+        <div class="kpi-tile__icon-wrap">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="kpi-tile kpi-tile--dark-green" id="pageVisitsCard">
+        <div class="kpi-tile__content">
+          <span class="kpi-tile__label">Main page visit (for the last 30 days)</span>
+          <span class="kpi-tile__value">{{ totalPageVisits }}</span>
+        </div>
+        <div class="kpi-tile__icon-wrap">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Range -->
+    <div class="controls-bar">
+      <div class="date-pickers">
+        <div class="date-field">
+          <label class="date-field__label" for="startDate">Start date</label>
+          <div class="date-field__input-wrap">
+            <input type="date" id="startDate" class="date-field__input" [(ngModel)]="startDate" (change)="onDateChange()" />
+            <svg class="date-field__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="date-field">
+          <label class="date-field__label" for="endDate">End date</label>
+          <div class="date-field__input-wrap">
+            <input type="date" id="endDate" class="date-field__input" [(ngModel)]="endDate" (change)="onDateChange()" />
+            <svg class="date-field__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Funnel + Total Applications Row -->
+    <div class="charts-row">
+
+      <!-- Application Funnel -->
+      <div class="card funnel-card" id="applicationFunnel">
+        <div class="card__header">
+          <h2 class="card__title">Application funnel</h2>
+          <button class="help-btn" title="How can this help me?">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="card__body funnel-body">
+          <span class="funnel-sublabel">How can this help me?</span>
+          @for (step of funnelSteps; track step.label; let i = $index) {
+            <div class="funnel-step">
+              <div class="funnel-bar-row">
+                <div class="funnel-bar" [style.width.%]="(step.value / funnelSteps[0].value) * 85 + 15" [style.background]="step.color">
+                  {{ step.value | number }}
+                </div>
+                <span class="funnel-bar__label">{{ step.label }}</span>
+              </div>
+              @if (i < funnelSteps.length - 1) {
+                <div class="funnel-pct">
+                  {{ ((funnelSteps[i + 1].value / step.value) * 100) | number:'1.0-0' }}%
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Total Applications Chart -->
+      <div class="card chart-card" id="totalApplicationsChart">
+        <div class="card__header">
+          <h2 class="card__title">Total Applications</h2>
+          <div class="card__header-actions">
+            <button class="help-btn" title="How can this help me?">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+              </svg>
+            </button>
+            <button class="icon-btn" (click)="downloadCsv()" title="Download CSV">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="card__body chart-body">
+          <canvas #applicationsCanvas class="chart-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Analytics Table -->
+    <div class="card table-card" id="jobAnalyticsTable">
+      <div class="card__header">
+        <h2 class="card__title">Job Analytics</h2>
+        <div class="card__header-actions">
+          <button class="help-btn" title="How can this help me?">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+            </svg>
+          </button>
+          <button class="icon-btn" (click)="downloadCsv()" title="Download CSV">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="card__body table-body">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name of position</th>
+                <th>Company</th>
+                <th>Date posted</th>
+                <th>End date</th>
+                <th>Location</th>
+                <th>User posted</th>
+                <th># of email applications</th>
+                <th>Total applications</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of jobRows; track row.title) {
+                <tr>
+                  <td class="td-title">{{ row.title }}</td>
+                  <td>{{ row.company }}</td>
+                  <td>{{ row.datePosted }}</td>
+                  <td>{{ row.endDate }}</td>
+                  <td>{{ row.location }}</td>
+                  <td>{{ row.userPosted }}</td>
+                  <td class="td-num">{{ row.emailApplications }}</td>
+                  <td class="td-num">{{ row.totalApplications }}</td>
+                </tr>
+              }
+              @if (jobRows.length === 0) {
+                <tr>
+                  <td colspan="8" class="td-empty">No job data found for the selected date range.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jobs Posted + Top Companies Row -->
+    <div class="charts-row">
+
+      <!-- Jobs Posted Chart -->
+      <div class="card chart-card" id="jobsPostedChart">
+        <div class="card__header">
+          <h2 class="card__title">Jobs Posted</h2>
+          <button class="icon-btn" (click)="downloadCsv()" title="Download CSV">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="card__body chart-body">
+          <canvas #jobsPostedCanvas class="chart-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Top Companies -->
+      <div class="card" id="topCompaniesCard">
+        <div class="card__header">
+          <h2 class="card__title">Top Companies</h2>
+          <button class="icon-btn" (click)="downloadCsv()" title="Download CSV">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="card__body">
+          <div class="companies-subtitle"># Jobs Posted</div>
+          @for (company of topCompanies; track company.name) {
+            <div class="company-row">
+              <span class="company-row__name">{{ company.name }}</span>
+              <div class="company-row__bar-wrap">
+                <div class="company-row__bar" [style.width.%]="(company.count / maxCompanyCount) * 100"></div>
+              </div>
+              <span class="company-row__count">{{ company.count }}</span>
+            </div>
+          }
+          @if (topCompanies.length === 0) {
+            <p class="empty-text">No company data available.</p>
+          }
+        </div>
+      </div>
+    </div>
+
+  }
+
+</section>

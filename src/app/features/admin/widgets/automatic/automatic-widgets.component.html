@@ -1,0 +1,196 @@
+<section class="widgets-page" id="automatic-widgets-page">
+
+  <div class="page-header">
+    <h1 class="page-header__title">Automatic Widgets</h1>
+  </div>
+
+  <div class="settings-container">
+
+    <!-- Social Media Section -->
+    <div class="setting-block">
+      <div class="setting-block__header" (click)="toggleSocialMedia()" style="cursor: pointer;">
+        <div class="setting-block__info">
+          <h2 class="setting-block__title">Social Media</h2>
+          <p class="setting-block__desc">Set links to social media pages</p>
+        </div>
+        <button class="chevron-btn" [class.open]="isSocialMediaExpanded">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </button>
+      </div>
+
+      @if (isSocialMediaExpanded) {
+        <div class="setting-block__body">
+          <div class="social-grid">
+            
+            <!-- Facebook Column -->
+            <div class="social-col">
+              <div class="social-col__header">
+                <div class="social-col__title">
+                  <span class="social-icon fb-icon">f</span>
+                  Facebook
+                </div>
+                <button class="btn-text-add" (click)="addFacebookLink()">ADD</button>
+              </div>
+              <div class="social-col__links">
+                @for (link of facebookLinks; track $index; let i = $index) {
+                  <div class="link-input-row">
+                    <div class="input-group">
+                      <label class="input-label">Link</label>
+                      <input type="text" class="form-input" [(ngModel)]="facebookLinks[i]" placeholder="https://www.facebook.com/..." />
+                    </div>
+                    <button class="btn-remove" (click)="removeFacebookLink(i)">
+                      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- YouTube Column -->
+            <div class="social-col">
+              <div class="social-col__header">
+                <div class="social-col__title">
+                  <span class="social-icon yt-icon">▶</span>
+                  Youtube
+                </div>
+                <button class="btn-text-add" (click)="addYoutubeLink()">ADD</button>
+              </div>
+              <div class="social-col__links">
+                @for (link of youtubeLinks; track $index; let i = $index) {
+                  <div class="link-input-row">
+                    <div class="input-group">
+                      <label class="input-label">Link</label>
+                      <input type="text" class="form-input" [(ngModel)]="youtubeLinks[i]" placeholder="https://www.youtube.com/..." />
+                    </div>
+                    <button class="btn-remove" (click)="removeYoutubeLink(i)">
+                      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- X (Twitter) Column -->
+            <div class="social-col">
+              <div class="social-col__header">
+                <div class="social-col__title">
+                  <span class="social-icon x-icon">𝕏</span>
+                  X
+                </div>
+                <button class="btn-text-add" (click)="addXLink()">ADD</button>
+              </div>
+              <div class="social-col__links">
+                @for (link of xLinks; track $index; let i = $index) {
+                  <div class="link-input-row">
+                    <div class="input-group">
+                      <label class="input-label">Link</label>
+                      <input type="text" class="form-input" [(ngModel)]="xLinks[i]" placeholder="https://x.com/..." />
+                    </div>
+                    <button class="btn-remove" (click)="removeXLink(i)">
+                      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+          </div>
+
+          <div class="setting-actions">
+            <button class="btn-save" (click)="saveSocialMedia()">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+              SAVE
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Profile Update Reminder Section -->
+    <div class="setting-block">
+      <div class="setting-block__header">
+        <div class="setting-block__info">
+          <h2 class="setting-block__title">Profile Update Reminder</h2>
+          <p class="setting-block__desc">A scheduled pop up that prompts to update the user's profile</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="profileUpdateReminder">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      @if (profileUpdateReminder) {
+        <div class="setting-block__body">
+          <div class="inline-form">
+            <span class="inline-label">Show popup every:</span>
+            <input type="number" class="form-input form-input--small" [(ngModel)]="profileUpdateInterval" min="1" />
+            <select class="form-select" [(ngModel)]="profileUpdateUnit">
+              <option value="Days">Days</option>
+              <option value="Weeks">Weeks</option>
+              <option value="Months">Months</option>
+            </select>
+          </div>
+
+          <div class="setting-actions" style="margin-top: 1.5rem;">
+            <button class="btn-save" (click)="saveProfileUpdateReminder()">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+              SAVE
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Donations Section -->
+    <div class="setting-block">
+      <div class="setting-block__header">
+        <div class="setting-block__info">
+          <h2 class="setting-block__title">Donations</h2>
+          <p class="setting-block__desc">Enable donations</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="donationsEnabled">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Recently Joined Members Section -->
+    <div class="setting-block">
+      <div class="setting-block__header">
+        <div class="setting-block__info">
+          <h2 class="setting-block__title">Recently Joined Members</h2>
+          <p class="setting-block__desc">Display new members widget on the feed page</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="recentlyJoinedMembers">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Events and Jobs on Landing Page Section -->
+    <div class="setting-block">
+      <div class="setting-block__header">
+        <div class="setting-block__info">
+          <h2 class="setting-block__title">Events and Jobs on Landing Page</h2>
+          <p class="setting-block__desc">Show events and jobs on the landing page</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="eventsAndJobsLanding">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+</section>
