@@ -54,6 +54,20 @@
       </div>
     </div>
 
+    <!-- Affiliation Filter Row -->
+    <div class="labels-filter-card animate-fadeIn">
+      <div class="labels-filter">
+        <span class="labels-label">Filter by Affiliation:</span>
+        <div class="labels-scroll-wrapper">
+          <span class="label-pill" [class.active]="!selectedAffiliation" (click)="selectAffiliation(null)">All</span>
+          <span *ngFor="let aff of availableAffiliations" class="label-pill"
+            [class.active]="selectedAffiliation === aff" (click)="selectAffiliation(aff)">
+            {{ aff }}
+          </span>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="loading" class="groups-loading">
       <div class="spinner"></div>
       <p>Loading groups…</p>
@@ -73,7 +87,7 @@
 
         <div *ngIf="!filteredJoinedGroups.length" class="groups-empty-card">
           <lucide-icon [img]="Info" class="empty-icon" size="24"></lucide-icon>
-          <p>{{ selectedLabel || searchQuery ? 'No groups match your search.' : 'You are not a member of any groups yet.' }}</p>
+          <p>{{ selectedLabel || selectedAffiliation || searchQuery ? 'No groups match your filters.' : 'You are not a member of any groups yet.' }}</p>
         </div>
 
         <div class="your-groups-grid" *ngIf="filteredJoinedGroups.length">
@@ -111,7 +125,7 @@
 
       <div *ngIf="!filteredAllGroups.length" class="groups-empty-card">
         <lucide-icon [img]="Info" class="empty-icon" size="24"></lucide-icon>
-        <p>{{ selectedLabel || searchQuery ? 'No groups match your search.' : 'No more suggested groups available.' }}</p>
+        <p>{{ selectedLabel || selectedAffiliation || searchQuery ? 'No groups match your filters.' : 'No more suggested groups available.' }}</p>
       </div>
 
       <div class="more-groups-list" *ngIf="filteredAllGroups.length">

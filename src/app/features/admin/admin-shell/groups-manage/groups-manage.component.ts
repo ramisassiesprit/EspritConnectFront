@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { GroupService } from '../../../../core/services/group.service';
 import { environment } from '../../../../../environments/environment';
@@ -8,7 +9,7 @@ import { environment } from '../../../../../environments/environment';
 @Component({
   selector: 'app-groups-manage',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './groups-manage.component.html',
   styleUrls: ['./groups-manage.component.css']
 })
@@ -22,6 +23,8 @@ export class GroupsManageComponent implements OnInit {
   rejectedGroups: any[] = [];
   loading = false;
   error = '';
+  searchQuery = '';
+  filterStatus = 'ALL';
 
   getImageUrl(path?: string) {
     if (!path) return null;
@@ -56,6 +59,26 @@ export class GroupsManageComponent implements OnInit {
     this.approvedGroups = this.groups.filter(g => g.status === 'APPROVED');
     this.pendingGroups = this.groups.filter(g => g.status === 'PENDING');
     this.rejectedGroups = this.groups.filter(g => g.status === 'REJECTED' || g.status === 'BANNED');
+  }
+
+  get filteredGroups(): any[] {
+    let result = [...this.groups];
+    if (this.filterStatus !== 'ALL') {
+      if (this.filterStatus === 'REJECTED') {
+        result = result.filter(g => g.status === 'REJECTED' || g.status === 'BANNED');
+      } else {
+        result = result.filter(g => g.status === this.filterStatus);
+      }
+    }
+    if (this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase();
+      result = result.filter(g =>
+        g.groupName?.toLowerCase().includes(q) ||
+        g.description?.toLowerCase().includes(q) ||
+        g.labels?.toLowerCase().includes(q)
+      );
+    }
+    return result;
   }
 
   viewGroup(id: string) {

@@ -125,7 +125,15 @@ export class GroupService {
   private groupPhotosSignal = signal<string[]>([]);
   groupPhotos = this.groupPhotosSignal.asReadonly();
 
+  setPhotos(urls: string[]) {
+    this.groupPhotosSignal.set(urls);
+  }
+
   addPhotos(urls: string[]) {
-    this.groupPhotosSignal.update((existing: string[]) => [...urls, ...existing]);
+    this.groupPhotosSignal.update((existing: string[]) => [...new Set([...urls, ...existing])]);
+  }
+
+  clearPhotos() {
+    this.groupPhotosSignal.set([]);
   }
 }

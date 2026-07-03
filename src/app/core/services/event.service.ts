@@ -11,8 +11,18 @@ export class EventService {
   private readonly apiUrl = `${environment.apiUrl}events`;
   private http = inject(HttpClient);
 
-  getAllEvents(): Observable<Event[]> {
-    return this.http.get<Event[]>(this.apiUrl);
+  getAllEvents(groupId?: string): Observable<Event[]> {
+    const params: any = {};
+    if (groupId) params.groupId = groupId;
+    return this.http.get<Event[]>(this.apiUrl, { params });
+  }
+
+  getGroupEvents(groupId: string): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/groups/${groupId}`);
+  }
+
+  createGroupEvent(groupId: string, event: Event): Observable<Event> {
+    return this.http.post<Event>(`${this.apiUrl}/groups/${groupId}`, event);
   }
 
   getEventById(id: string): Observable<Event> {

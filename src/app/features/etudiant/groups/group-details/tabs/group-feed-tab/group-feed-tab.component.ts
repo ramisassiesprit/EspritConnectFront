@@ -162,12 +162,14 @@ export class GroupFeedTabComponent implements OnInit, OnDestroy {
     this.postService.getGroupPosts(this.groupId).subscribe({
       next: (data) => {
         this.posts = data.map(p => this.mapBackendPostToGroupPost(p));
-        // Pre-add photos to the gallery tab if present
-        this.posts.forEach(p => {
+        // Set photos to the gallery tab (replaces on each load to avoid duplication)
+        const allImages = this.posts.reduce<string[]>((acc, p) => {
           if (p.images && p.images.length > 0) {
-            this.groupService.addPhotos(p.images);
+            acc.push(...p.images);
           }
-        });
+          return acc;
+        }, []);
+        this.groupService.setPhotos(allImages);
         this.loadingPosts = false;
       },
       error: (err) => {

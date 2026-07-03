@@ -58,18 +58,18 @@
                 <span class="badge-y" title="Help Available"><lucide-icon [img]="Info" size="10"></lucide-icon></span>
               </span>
             </div>
-            <span class="role-badge">{{ member.role === 'ALUMNI' ? 'Alumni' : 'Student' }}</span>
-            <p class="member-affiliation">{{ member.role === 'ALUMNI' ? 'Alumni - Esprit School of Engineering' :
-              'Student - Esprit School of Engineering' }}</p>
+            <span class="role-badge">{{ member.role === 'ALUMNI' ? 'Alumni' : member.role === 'ENSEIGNANT' ? 'Teacher/Staff' : 'Student' }}</span>
+            <p class="member-affiliation">{{ member.role === 'ALUMNI' ? 'Alumni - Esprit School of Engineering' : member.role === 'ENSEIGNANT' ? 'Teacher/Staff - Esprit School of Engineering' : 'Student - Esprit School of Engineering' }}</p>
+            <span class="pending-badge" *ngIf="member.membershipStatus === 'PENDING'">Pending</span>
           </div>
         </div>
-        <button class="member-arrow">
-          <lucide-icon [img]="ChevronRight" size="20"></lucide-icon>
-        </button>
         <div class="member-actions" *ngIf="member.membershipStatus === 'PENDING' && (groupCreatorId === currentUserId || isCurrentUserAdmin())">
           <button class="btn-approve" (click)="approveMember(member.id)">Approve</button>
           <button class="btn-reject" (click)="rejectMember(member.id)">Reject</button>
         </div>
+        <button class="member-arrow" *ngIf="member.membershipStatus !== 'PENDING'">
+          <lucide-icon [img]="ChevronRight" size="20"></lucide-icon>
+        </button>
       </div>
     </div>
   </div>
@@ -94,33 +94,70 @@
           placeholder="e.g. Doe">
       </div>
 
+      <div class="filter-group">
+        <label>Affiliation / Role</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="filterAffiliation" (ngModelChange)="applyFiltersAndSorting()" class="filter-input">
+            <option value="">All affiliations</option>
+            <option *ngFor="let aff of affiliationOptions" [value]="aff">
+              {{ aff === 'ETUDIANT' ? 'Student' : aff === 'ALUMNI' ? 'Alumni' : 'Teacher/Staff' }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="showPending" (ngModelChange)="applyFiltersAndSorting()">
+          <span>Show pending members</span>
+        </label>
+      </div>
+
       <div class="accordion-list">
         <div class="accordion-item">
-          <div class="accordion-header">
+          <div class="accordion-header" (click)="toggleSection('get-involved')">
             <lucide-icon [img]="Users" size="16" class="acc-icon"></lucide-icon>
             <span>Get Involved</span>
-            <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+            <lucide-icon [img]="ChevronDown" size="14" [class.rotated]="expandedSection === 'get-involved'"></lucide-icon>
+          </div>
+          <div class="accordion-content" *ngIf="expandedSection === 'get-involved'">
+            <p class="accordion-placeholder">Filter options coming soon.</p>
           </div>
         </div>
         <div class="accordion-item">
-          <div class="accordion-header">
+          <div class="accordion-header" (click)="toggleSection('mentoring')">
             <lucide-icon [img]="Users" size="16" class="acc-icon"></lucide-icon>
             <span>Mentoring</span>
-            <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+            <lucide-icon [img]="ChevronDown" size="14" [class.rotated]="expandedSection === 'mentoring'"></lucide-icon>
+          </div>
+          <div class="accordion-content" *ngIf="expandedSection === 'mentoring'">
+            <p class="accordion-placeholder">Filter options coming soon.</p>
           </div>
         </div>
         <div class="accordion-item">
-          <div class="accordion-header">
+          <div class="accordion-header" (click)="toggleSection('esprit')">
             <lucide-icon [img]="Building" size="16" class="acc-icon"></lucide-icon>
             <span>Esprit</span>
-            <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+            <lucide-icon [img]="ChevronDown" size="14" [class.rotated]="expandedSection === 'esprit'"></lucide-icon>
+          </div>
+          <div class="accordion-content" *ngIf="expandedSection === 'esprit'">
+            <label class="checkbox-label" *ngFor="let aff of affiliationOptions">
+              <input type="radio" name="affiliationRadio" [value]="aff"
+                [checked]="filterAffiliation === aff"
+                (change)="filterAffiliation = aff; applyFiltersAndSorting()">
+              <span>{{ aff === 'ETUDIANT' ? 'Student' : aff === 'ALUMNI' ? 'Alumni' : 'Teacher/Staff' }}</span>
+            </label>
+            <button class="btn-clear-radio" (click)="filterAffiliation = ''; applyFiltersAndSorting()" *ngIf="filterAffiliation">Clear</button>
           </div>
         </div>
         <div class="accordion-item">
-          <div class="accordion-header">
+          <div class="accordion-header" (click)="toggleSection('work-experience')">
             <lucide-icon [img]="Briefcase" size="16" class="acc-icon"></lucide-icon>
             <span>Work Experience</span>
-            <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+            <lucide-icon [img]="ChevronDown" size="14" [class.rotated]="expandedSection === 'work-experience'"></lucide-icon>
+          </div>
+          <div class="accordion-content" *ngIf="expandedSection === 'work-experience'">
+            <p class="accordion-placeholder">Filter options coming soon.</p>
           </div>
         </div>
       </div>
